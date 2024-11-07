@@ -3,7 +3,9 @@
   "package": "archives.tater.omnicrossbow.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BoatItemAccessor",
     "CrossbowItemMixin",
+    "EntityBucketItemAccessor",
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
     "PlayerEntityMixin"
