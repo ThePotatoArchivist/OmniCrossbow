@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "archives.tater.omnicrossbow.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CrossbowItemMixin",
+    "FallingBlockEntityInvoker",
+    "FallingBlockInvoker",
+    "PlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
