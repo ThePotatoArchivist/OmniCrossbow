@@ -1,22 +1,30 @@
 package archives.tater.omnicrossbow;
 
-import archives.tater.omnicrossbow.mixin.BoatItemAccessor;
-import archives.tater.omnicrossbow.mixin.EntityBucketItemAccessor;
-import archives.tater.omnicrossbow.mixin.FallingBlockInvoker;
+import archives.tater.omnicrossbow.entity.CrossbowSnowballEntity;
+import archives.tater.omnicrossbow.mixin.*;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +69,7 @@ public class OmniEnchantment extends Enchantment {
     public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack projectile) {
         if (projectile.isOf(Items.EGG)) return new EggEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_PEARL)) return new EnderPearlEntity(world, shooter);
-        if (projectile.isOf(Items.SNOWBALL)) return new SnowballEntity(world, shooter);
+        if (projectile.isOf(Items.SNOWBALL)) return new CrossbowSnowballEntity(world, shooter);
         if (projectile.isOf(Items.EXPERIENCE_BOTTLE)) return new ExperienceBottleEntity(world, shooter);
         if (projectile.isOf(Items.TRIDENT)) {
             projectile.damage(1, shooter, (livingEntity) -> {});
@@ -94,9 +102,9 @@ public class OmniEnchantment extends Enchantment {
             entity.setVariant(((BoatItemAccessor) boatItem).getType());
             return entity;
         }
-        if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) {
-            return null;
-        }
+        if (projectileItem instanceof MinecartItem minecartItem)
+            return AbstractMinecartEntity.create(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ(), ((MinecartItemAccessor) minecartItem).getType());
+        if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
         return null; // TODO: Generic projectile item
     }
 
@@ -129,7 +137,42 @@ public class OmniEnchantment extends Enchantment {
         entity.setVelocity(getProjectileVel(shooter, 1.5f));
     }
 
+    public static void shootSonicBoom(ServerWorld world, LivingEntity shooter) {
+        var start = shooter.getEyePos().add(0, -0.1f, 0);
+        var end = start.add(shooter.getRotationVector().multiply(15)); // range = 15
+        var hitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, FluidHandling.NONE, shooter));
+        var stop = hitResult.getPos();
+        var difference = stop.subtract(start);
+        var length = difference.length();
+        var direction = difference.normalize();
+
+        var areaBox = new Box(start, stop).expand(1);
+        var targets = world.getOtherEntities(shooter, areaBox, entity -> {
+            var box = entity.getBoundingBox().expand(1 + entity.getTargetingMargin());
+            return box.contains(start) || box.raycast(start, stop).isPresent();
+        });
+        var knockback = direction.multiply(2.5, 0.5, 2.5);
+        for (var entity : targets) {
+            if (entity instanceof LivingEntity || entity instanceof EndCrystalEntity)
+                entity.damage(world.getDamageSources().sonicBoom(shooter), 10);
+            var knockbackResist = entity instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) : 0;
+            entity.addVelocity(knockback.multiply(1 - knockbackResist));
+        }
+        shooter.addVelocity(knockback.multiply(-0.3));
+        shooter.velocityModified = true;
+
+        for (int i = 0; i < length; i++) {
+            var node = start.add(direction.multiply(i));
+            world.spawnParticles(ParticleTypes.SONIC_BOOM, node.x, node.y, node.z, 1, 0, 0, 0, 0);
+        }
+        world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_WARDEN_SONIC_BOOM, SoundCategory.PLAYERS, 3.0F, 1.0F);
+    }
+
     public static boolean shootProjectile(ServerWorld world, LivingEntity shooter, ItemStack projectile) {
+        if (projectile.isOf(Items.ECHO_SHARD)) {
+            shootSonicBoom(world, shooter);
+            return true;
+        }
         var entity = createProjectile(world, shooter, projectile);
         if (entity == null) return false;
         setupProjectile(entity, shooter, projectile);
@@ -138,7 +181,8 @@ public class OmniEnchantment extends Enchantment {
     }
 
     public static ItemStack getRemainder(ItemStack projectile) {
-        if (projectile.getItem() instanceof EntityBucketItem) return Items.BUCKET.getDefaultStack();
+        if (projectile.getItem() instanceof EntityBucketItem entityBucketItem) return ((BucketItemAccessor) entityBucketItem).getFluid().getBucketItem().getDefaultStack();
+        if (!projectile.isIn(OmniCrossbow.HAS_REMAINDER_TAG)) return ItemStack.EMPTY;
         return projectile.getRecipeRemainder();
     }
 }

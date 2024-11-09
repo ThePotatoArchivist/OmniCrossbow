@@ -4,10 +4,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BoatItemAccessor",
+    "BucketItemAccessor",
     "CrossbowItemMixin",
     "EntityBucketItemAccessor",
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
+    "MinecartItemAccessor",
     "PlayerEntityMixin"
   ],
   "injectors": {
