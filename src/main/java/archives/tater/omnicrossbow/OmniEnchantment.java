@@ -1,14 +1,14 @@
 package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.CrossbowSnowballEntity;
+import archives.tater.omnicrossbow.entity.DelayedShotEntity;
+import archives.tater.omnicrossbow.entity.DelayedSonicBoomEntity;
 import archives.tater.omnicrossbow.mixin.*;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -16,15 +16,11 @@ import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +39,21 @@ public class OmniEnchantment extends Enchantment {
     @Override
     protected boolean canAccept(Enchantment other) {
         return super.canAccept(other) && other != Enchantments.MULTISHOT && other != Enchantments.PIERCING;
+    }
+
+    public static boolean shouldUnloadImmediate(ItemStack projectile) {
+        return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
+    }
+
+    public static SoundEvent getSound(ItemStack projectile) {
+        if (projectile.isOf(Items.ECHO_SHARD)) return SoundEvents.ENTITY_WARDEN_SONIC_CHARGE;
+        if (projectile.isOf(Items.NETHER_STAR)) return SoundEvents.INTENTIONALLY_EMPTY;
+        if (projectile.isOf(Items.FIRE_CHARGE)) return SoundEvents.ITEM_FIRECHARGE_USE;
+        if (projectile.isOf(Items.DRAGON_BREATH)) return SoundEvents.ENTITY_ENDER_DRAGON_SHOOT;
+        if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW;
+        if (projectile.isOf(Items.ENDER_EYE)) return SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
+        if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
+        return SoundEvents.ITEM_CROSSBOW_SHOOT;
     }
 
     private static Vec3d getProjectileVel(LivingEntity shooter, double length) {
@@ -66,7 +77,11 @@ public class OmniEnchantment extends Enchantment {
         return entity;
     }
 
-    public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack projectile) {
+    public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
+        var x = shooter.getX();
+        var y = shooter.getEyeY() - 0.1f;
+        var z = shooter.getZ();
+
         if (projectile.isOf(Items.EGG)) return new EggEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_PEARL)) return new EnderPearlEntity(world, shooter);
         if (projectile.isOf(Items.SNOWBALL)) return new CrossbowSnowballEntity(world, shooter);
@@ -79,17 +94,18 @@ public class OmniEnchantment extends Enchantment {
             }
             return entity;
         }
-        if (projectile.isOf(Items.ENDER_EYE)) return new EyeOfEnderEntity(world, shooter.getX(), shooter.getBodyY(0.5), shooter.getZ());
-        if (projectile.isOf(Items.TNT)) return new TntEntity(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ(), shooter);
+        if (projectile.isOf(Items.ENDER_EYE)) return new EyeOfEnderEntity(world, x, shooter.getBodyY(0.5), z);
+        if (projectile.isOf(Items.TNT)) return new TntEntity(world, x, y, z, shooter);
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return shootExplosive(world, shooter, 1f, WitherSkullEntity::new);
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
-        if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new);
+        if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
         if (projectile.isOf(Items.ARMOR_STAND)) return create(world, EntityType.ARMOR_STAND, shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectile.isOf(Items.ECHO_SHARD)) return new DelayedSonicBoomEntity(world, shooter, crossbow);
 
         var projectileItem = projectile.getItem();
         if (projectileItem instanceof ThrowablePotionItem) return new PotionEntity(world, shooter);
         if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
-            var entity =  newFallingBlockEntity(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ(), fallingBlock.getDefaultState());
+            var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
             ((FallingBlockInvoker) fallingBlock).invokeConfigureFallingBlockEntity(entity);
             return entity;
         }
@@ -97,19 +113,21 @@ public class OmniEnchantment extends Enchantment {
         if (projectileItem instanceof SpawnEggItem spawnEggItem) return create(world, spawnEggItem.getEntityType(null), shooter, projectile, SpawnReason.SPAWN_EGG);
         if (projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
-                    ? new ChestBoatEntity(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ())
-                    : new BoatEntity(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+                    ? new ChestBoatEntity(world, x, y, z)
+                    : new BoatEntity(world, x, y, z);
             entity.setVariant(((BoatItemAccessor) boatItem).getType());
             return entity;
         }
         if (projectileItem instanceof MinecartItem minecartItem)
-            return AbstractMinecartEntity.create(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ(), ((MinecartItemAccessor) minecartItem).getType());
+            return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
         if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
-        return null; // TODO: Generic projectile item
+        var itemEntity = new ItemEntity(world, x, y, z, projectile);
+        itemEntity.setToDefaultPickupDelay();
+        return itemEntity; // TODO: Generic projectile item
     }
 
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack projectile) {
-        if (entity instanceof EyeOfEnderEntity) return;
+        if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) return;
 
         if (entity instanceof ExplosiveProjectileEntity) {
             // velocity already handled by constructor
@@ -137,43 +155,8 @@ public class OmniEnchantment extends Enchantment {
         entity.setVelocity(getProjectileVel(shooter, 1.5f));
     }
 
-    public static void shootSonicBoom(ServerWorld world, LivingEntity shooter) {
-        var start = shooter.getEyePos().add(0, -0.1f, 0);
-        var end = start.add(shooter.getRotationVector().multiply(15)); // range = 15
-        var hitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, FluidHandling.NONE, shooter));
-        var stop = hitResult.getPos();
-        var difference = stop.subtract(start);
-        var length = difference.length();
-        var direction = difference.normalize();
-
-        var areaBox = new Box(start, stop).expand(1);
-        var targets = world.getOtherEntities(shooter, areaBox, entity -> {
-            var box = entity.getBoundingBox().expand(1 + entity.getTargetingMargin());
-            return box.contains(start) || box.raycast(start, stop).isPresent();
-        });
-        var knockback = direction.multiply(2.5, 0.5, 2.5);
-        for (var entity : targets) {
-            if (entity instanceof LivingEntity || entity instanceof EndCrystalEntity)
-                entity.damage(world.getDamageSources().sonicBoom(shooter), 10);
-            var knockbackResist = entity instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) : 0;
-            entity.addVelocity(knockback.multiply(1 - knockbackResist));
-        }
-        shooter.addVelocity(knockback.multiply(-0.3));
-        shooter.velocityModified = true;
-
-        for (int i = 0; i < length; i++) {
-            var node = start.add(direction.multiply(i));
-            world.spawnParticles(ParticleTypes.SONIC_BOOM, node.x, node.y, node.z, 1, 0, 0, 0, 0);
-        }
-        world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_WARDEN_SONIC_BOOM, SoundCategory.PLAYERS, 3.0F, 1.0F);
-    }
-
-    public static boolean shootProjectile(ServerWorld world, LivingEntity shooter, ItemStack projectile) {
-        if (projectile.isOf(Items.ECHO_SHARD)) {
-            shootSonicBoom(world, shooter);
-            return true;
-        }
-        var entity = createProjectile(world, shooter, projectile);
+    public static boolean shootProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
+        var entity = createProjectile(world, shooter, crossbow, projectile);
         if (entity == null) return false;
         setupProjectile(entity, shooter, projectile);
         world.spawnEntity(entity);

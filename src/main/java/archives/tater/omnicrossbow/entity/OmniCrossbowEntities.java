@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -10,14 +11,31 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class OmniCrossbowEntities {
-    public static EntityType<CrossbowSnowballEntity> CROSSBOW_SNOWBALL = Registry.register(
-            Registries.ENTITY_TYPE,
-            new Identifier(OmniCrossbow.MOD_ID, "snowball"),
+    private static <T extends Entity> EntityType<T> register(Identifier id, EntityType<T> entityType) {
+        return Registry.register(Registries.ENTITY_TYPE, id, entityType);
+    }
+
+    private static <T extends Entity> EntityType<T> register(String path, EntityType<T> entityType) {
+        return register(new Identifier(OmniCrossbow.MOD_ID, path), entityType);
+    }
+
+    private static <T extends Entity> EntityType<T> register(String path, FabricEntityTypeBuilder<T> entityType) {
+        return register(new Identifier(OmniCrossbow.MOD_ID, path), entityType.build());
+    }
+
+    public static EntityType<CrossbowSnowballEntity> CROSSBOW_SNOWBALL = register(
+            "snowball",
             FabricEntityTypeBuilder.<CrossbowSnowballEntity>create(SpawnGroup.MISC, CrossbowSnowballEntity::new)
                     .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
                     .trackRangeChunks(4)
                     .trackedUpdateRate(10)
-                    .build()
+    );
+
+    public static EntityType<DelayedSonicBoomEntity> DELAYED_SONIC_BOOM = register(
+            "sonic_boom",
+            FabricEntityTypeBuilder.<DelayedSonicBoomEntity>create(SpawnGroup.MISC, DelayedSonicBoomEntity::new)
+                    .dimensions(EntityDimensions.fixed(0, 0))
+                    .trackRangeChunks(0)
     );
 
     public static void register() {};

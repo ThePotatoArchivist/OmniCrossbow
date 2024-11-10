@@ -5,6 +5,7 @@
   "mixins": [
     "BoatItemAccessor",
     "BucketItemAccessor",
+    "CrossbowItemInvoker",
     "CrossbowItemMixin",
     "EntityBucketItemAccessor",
     "FallingBlockEntityInvoker",
