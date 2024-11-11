@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.util.OmniUtil;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.ModelIdentifier;
@@ -21,22 +22,27 @@ public class OmniCrossbowRenderer {
     public static final ModelIdentifier DYNAMIC_CROSSBOW = new ModelIdentifier(OmniCrossbow.MOD_ID, "dynamic_crossbow", "inventory");
     public static final ModelIdentifier PULLED_CROSSBOW = new ModelIdentifier(OmniCrossbow.MOD_ID, "pulled_crossbow", "inventory");
 
+    public static void renderCrossbow(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+        var world = MinecraftClient.getInstance().world;
+        var projectile = OmniUtil.getMainProjectile(stack);
+        var loadedModel = itemRenderer.getModels().getModelManager().getModel(PULLED_CROSSBOW);
+        var leftHanded = mode == ModelTransformationMode.FIRST_PERSON_LEFT_HAND || mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
+
+        matrices.push();
+        matrices.translate(0.5, 0.5, 0.5); // go to center
+        loadedModel.getTransformation().getTransformation(mode).apply(leftHanded, matrices);
+        // TODO test what should be left handed
+        itemRenderer.renderItem(stack, ModelTransformationMode.NONE, false, matrices, vertexConsumers, light, overlay, loadedModel);
+        matrices.translate(0, 0, 0.0625); // up one pixel
+        itemSpecificTransform(projectile.getItem(), matrices);
+        matrices.scale(-1, 1, -1); // rotate 180 on y
+        itemRenderer.renderItem(projectile, ModelTransformationMode.FIXED, light, overlay, matrices, vertexConsumers, world, 0);
+        matrices.pop();
+    }
+
     public static void register() {
-        BuiltinItemRendererRegistry.INSTANCE.register(Items.CROSSBOW, (stack, mode, matrices, vertexConsumers, light, overlay) -> {
-            ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
-            var world = MinecraftClient.getInstance().world;
-            var projectile = OmniUtil.getMainProjectile(stack);
-            matrices.push();
-            matrices.translate(0.5, 0.5, 0.5);
-            var loadedModel = itemRenderer.getModels().getModelManager().getModel(PULLED_CROSSBOW);
-            loadedModel.getTransformation().getTransformation(mode).apply(false, matrices);
-            itemRenderer.renderItem(stack, ModelTransformationMode.NONE, false, matrices, vertexConsumers, light, overlay, loadedModel);
-            matrices.translate(0, 0, 0.0625); // up one pixel
-            itemSpecificTransform(projectile.getItem(), matrices);
-            matrices.scale(-1, 1, -1); // rotate 180 on y
-            itemRenderer.renderItem(projectile, ModelTransformationMode.FIXED, light, overlay, matrices, vertexConsumers, world, 0);
-            matrices.pop();
-        });
+        BuiltinItemRendererRegistry.INSTANCE.register(Items.CROSSBOW, OmniCrossbowRenderer::renderCrossbow);
     }
 
     public static boolean useDynamic(ItemStack maybeCrossbow) {
