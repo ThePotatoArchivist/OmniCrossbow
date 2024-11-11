@@ -1,11 +1,12 @@
 {
-	"required": true,
-	"package": "archives.tater.omnicrossbow.mixin.client",
-	"compatibilityLevel": "JAVA_17",
-	"client": [
-		"ExampleClientMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "archives.tater.omnicrossbow.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ItemModelsMixin",
+    "ModelLoaderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
