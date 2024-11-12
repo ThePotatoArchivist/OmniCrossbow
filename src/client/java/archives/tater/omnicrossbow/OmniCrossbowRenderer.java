@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.util.OmniUtil;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -32,7 +33,6 @@ public class OmniCrossbowRenderer {
         matrices.push();
         matrices.translate(0.5, 0.5, 0.5); // go to center
         loadedModel.getTransformation().getTransformation(mode).apply(leftHanded, matrices);
-        // TODO test what should be left handed
         itemRenderer.renderItem(stack, ModelTransformationMode.NONE, false, matrices, vertexConsumers, light, overlay, loadedModel);
         matrices.translate(0, 0, 0.0625); // up one pixel
         itemSpecificTransform(projectile.getItem(), matrices);
@@ -43,6 +43,8 @@ public class OmniCrossbowRenderer {
 
     public static void register() {
         BuiltinItemRendererRegistry.INSTANCE.register(Items.CROSSBOW, OmniCrossbowRenderer::renderCrossbow);
+
+        ModelLoadingPlugin.register(pluginContext -> pluginContext.addModels(DYNAMIC_CROSSBOW, PULLED_CROSSBOW));
     }
 
     public static boolean useDynamic(ItemStack maybeCrossbow) {
