@@ -38,5 +38,13 @@ public class OmniCrossbowEntities {
                     .trackRangeChunks(0)
     );
 
+    public static EntityType<GenericItemProjectile> GENERIC_ITEM_PROJECTILE = register(
+            "item_projectile",
+            FabricEntityTypeBuilder.<GenericItemProjectile>create(SpawnGroup.MISC, GenericItemProjectile::new)
+                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
+                    .trackedUpdateRate(4)
+                    .trackedUpdateRate(10)
+    );
+
     public static void register() {};
 }

@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.CrossbowSnowballEntity;
 import archives.tater.omnicrossbow.entity.DelayedShotEntity;
 import archives.tater.omnicrossbow.entity.DelayedSonicBoomEntity;
+import archives.tater.omnicrossbow.entity.GenericItemProjectile;
 import archives.tater.omnicrossbow.mixin.*;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
@@ -121,9 +122,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectileItem instanceof MinecartItem minecartItem)
             return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
         if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
-        var itemEntity = new ItemEntity(world, x, y, z, projectile);
-        itemEntity.setToDefaultPickupDelay();
-        return itemEntity; // TODO: Generic projectile item
+        return new GenericItemProjectile(shooter, world);
     }
 
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack projectile) {
@@ -137,8 +136,10 @@ public class OmniEnchantment extends Enchantment {
 
         if (entity instanceof ThrownItemEntity thrownItemEntity) {
             thrownItemEntity.setItem(projectile);
-            thrownItemEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 3.0F, 0.2F);
-            return;
+            if (!(thrownItemEntity instanceof GenericItemProjectile)) {
+                thrownItemEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 3.0F, 0.2F);
+                return;
+            }
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {
