@@ -4,7 +4,6 @@ import archives.tater.omnicrossbow.OmniEnchantment;
 import archives.tater.omnicrossbow.util.OmniUtil;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -12,32 +11,18 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(CrossbowItem.class)
 public abstract class CrossbowItemMixin {
-    @Inject(
-            method = "loadProjectile",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;")
-    )
-    private static void giveRemainder(LivingEntity shooter, ItemStack crossbow, ItemStack projectile, boolean simulated, boolean creative, CallbackInfoReturnable<Boolean> cir) {
-        var remainder = OmniEnchantment.getRemainder(projectile);
-        if (remainder.isEmpty()) return;
-        if (projectile.getCount() <= 1) {
-            if (shooter.getStackInHand(Hand.MAIN_HAND) == projectile) {
-                shooter.setStackInHand(Hand.MAIN_HAND, remainder);
-                return;
-            } else if (shooter.getStackInHand(Hand.OFF_HAND) == projectile) {
-                shooter.setStackInHand(Hand.OFF_HAND, remainder);
-                return;
-            }
-        }
-        if (shooter instanceof PlayerEntity playerEntity)
-            if (playerEntity.giveItemStack(remainder)) return;
-        shooter.dropStack(remainder);
+    @Shadow
+    private static List<ItemStack> getProjectiles(ItemStack crossbow) {
+        throw new AssertionError();
     }
 
     @Inject(
@@ -66,5 +51,18 @@ public abstract class CrossbowItemMixin {
     )
     private static boolean preventClear(ItemStack crossbow) {
         return OmniEnchantment.shouldUnloadImmediate(OmniUtil.getMainProjectile(crossbow));
+    }
+
+    @Inject(
+            method = "postShoot",
+            at = @At("HEAD")
+    )
+    private static void ejectRemainder(World world, LivingEntity entity, ItemStack stack, CallbackInfo ci) {
+        if (world.isClient) return;
+        for (var projectile : getProjectiles(stack)) {
+            var remainder = OmniEnchantment.getRemainder(projectile);
+            if (remainder.isEmpty()) continue;
+            entity.dropStack(remainder, entity.getEyeHeight(entity.getPose()) - 0.1f);
+        }
     }
 }
