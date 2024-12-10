@@ -91,7 +91,8 @@ public class BeaconLaserEntity extends DelayedShotEntity {
             var source = owner == null ? this : owner;
 
             for (var target : RaycastUtil.pierce(getWorld(), getPos(), getPos().add(getRotationVector().multiply(getDistance())), MARGIN, owner, entity -> entity instanceof LivingEntity || entity instanceof EndCrystalEntity)) {
-                target.damage(getWorld().getDamageSources().create(OmniCrossbow.BEACON_DAMAGE, source, source), 0.5f);
+                var damage = target instanceof LivingEntity livingEntity ? Math.max(0.5f, 0.5f * (float) Math.log(livingEntity.getMaxHealth()) - 1) : 0.5f;
+                target.damage(getWorld().getDamageSources().create(OmniCrossbow.BEACON_DAMAGE, source, source), damage);
             }
         }
 
