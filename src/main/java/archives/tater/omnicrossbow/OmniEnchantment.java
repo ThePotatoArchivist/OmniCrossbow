@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow;
 
-import archives.tater.omnicrossbow.entity.CrossbowSnowballEntity;
+import archives.tater.omnicrossbow.entity.FreezingSnowballEntity;
 import archives.tater.omnicrossbow.entity.DelayedShotEntity;
 import archives.tater.omnicrossbow.entity.DelayedSonicBoomEntity;
 import archives.tater.omnicrossbow.entity.GenericItemProjectile;
@@ -85,7 +85,7 @@ public class OmniEnchantment extends Enchantment {
 
         if (projectile.isOf(Items.EGG)) return new EggEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_PEARL)) return new EnderPearlEntity(world, shooter);
-        if (projectile.isOf(Items.SNOWBALL)) return new CrossbowSnowballEntity(world, shooter);
+        if (projectile.isOf(Items.SNOWBALL)) return new FreezingSnowballEntity(world, shooter);
         if (projectile.isOf(Items.EXPERIENCE_BOTTLE)) return new ExperienceBottleEntity(world, shooter);
         if (projectile.isOf(Items.TRIDENT)) {
             projectile.damage(1, shooter, (livingEntity) -> {});

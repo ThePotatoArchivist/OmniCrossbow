@@ -6,17 +6,17 @@ import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
-public class CrossbowSnowballEntity extends SnowballEntity {
-    public CrossbowSnowballEntity(EntityType<? extends CrossbowSnowballEntity> entityType, World world) {
+public class FreezingSnowballEntity extends SnowballEntity {
+    public FreezingSnowballEntity(EntityType<? extends FreezingSnowballEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    public CrossbowSnowballEntity(World world, double x, double y, double z) {
-        this(OmniCrossbowEntities.CROSSBOW_SNOWBALL, world);
+    public FreezingSnowballEntity(World world, double x, double y, double z) {
+        this(OmniCrossbowEntities.FREEZING_SNOWBALL, world);
         setPosition(x, y, z);
     }
 
-    public CrossbowSnowballEntity(World world, LivingEntity owner) {
+    public FreezingSnowballEntity(World world, LivingEntity owner) {
         this(world, owner.getX(), owner.getEyeY() - 0.1f, owner.getZ());
         setOwner(owner);
     }

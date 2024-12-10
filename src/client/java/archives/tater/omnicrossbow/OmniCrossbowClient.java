@@ -10,7 +10,7 @@ public class OmniCrossbowClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		EntityRendererRegistry.register(OmniCrossbowEntities.CROSSBOW_SNOWBALL, FlyingItemEntityRenderer::new);
+		EntityRendererRegistry.register(OmniCrossbowEntities.FREEZING_SNOWBALL, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.GENERIC_ITEM_PROJECTILE, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.DELAYED_SONIC_BOOM, EmptyEntityRenderer::new);
 		OmniCrossbowRenderer.register();

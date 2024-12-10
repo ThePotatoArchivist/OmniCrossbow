@@ -23,9 +23,9 @@ public class OmniCrossbowEntities {
         return register(new Identifier(OmniCrossbow.MOD_ID, path), entityType.build());
     }
 
-    public static EntityType<CrossbowSnowballEntity> CROSSBOW_SNOWBALL = register(
-            "snowball",
-            FabricEntityTypeBuilder.<CrossbowSnowballEntity>create(SpawnGroup.MISC, CrossbowSnowballEntity::new)
+    public static EntityType<FreezingSnowballEntity> FREEZING_SNOWBALL = register(
+            "freezing_snowball",
+            FabricEntityTypeBuilder.<FreezingSnowballEntity>create(SpawnGroup.MISC, FreezingSnowballEntity::new)
                     .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
                     .trackRangeChunks(4)
                     .trackedUpdateRate(10)
