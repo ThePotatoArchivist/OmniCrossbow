@@ -7,6 +7,8 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -59,5 +61,12 @@ public class DelayedSonicBoomEntity extends DelayedShotEntity {
     @Override
     protected SoundEvent getShootSound() {
         return SoundEvents.ENTITY_WARDEN_SONIC_BOOM;
+    }
+
+    // Same as MarkerEntity
+
+    @Override
+    public Packet<ClientPlayPacketListener> createSpawnPacket() {
+        throw new IllegalStateException("Delayed Sonic Boom should never be sent");
     }
 }

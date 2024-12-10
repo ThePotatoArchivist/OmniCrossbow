@@ -1,9 +1,6 @@
 package archives.tater.omnicrossbow;
 
-import archives.tater.omnicrossbow.entity.FreezingSnowballEntity;
-import archives.tater.omnicrossbow.entity.DelayedShotEntity;
-import archives.tater.omnicrossbow.entity.DelayedSonicBoomEntity;
-import archives.tater.omnicrossbow.entity.GenericItemProjectile;
+import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
@@ -48,7 +45,7 @@ public class OmniEnchantment extends Enchantment {
 
     public static SoundEvent getSound(ItemStack projectile) {
         if (projectile.isOf(Items.ECHO_SHARD)) return SoundEvents.ENTITY_WARDEN_SONIC_CHARGE;
-        if (projectile.isOf(Items.NETHER_STAR)) return SoundEvents.INTENTIONALLY_EMPTY;
+        if (projectile.isOf(Items.NETHER_STAR)) return OmniCrossbow.BEACON_PREPARE;
         if (projectile.isOf(Items.FIRE_CHARGE)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.DRAGON_BREATH)) return SoundEvents.ENTITY_ENDER_DRAGON_SHOOT;
         if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW;
@@ -102,6 +99,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
         if (projectile.isOf(Items.ARMOR_STAND)) return create(world, EntityType.ARMOR_STAND, shooter, projectile, SpawnReason.SPAWN_EGG);
         if (projectile.isOf(Items.ECHO_SHARD)) return new DelayedSonicBoomEntity(world, shooter, crossbow);
+        if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
 
         var projectileItem = projectile.getItem();
         if (projectileItem instanceof ThrowablePotionItem) return new PotionEntity(world, shooter);

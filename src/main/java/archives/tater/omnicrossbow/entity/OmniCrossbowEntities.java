@@ -38,6 +38,13 @@ public class OmniCrossbowEntities {
                     .trackRangeChunks(0)
     );
 
+    public static EntityType<BeaconLaserEntity> BEACON_LASER = register(
+            "beacon_laser",
+            FabricEntityTypeBuilder.<BeaconLaserEntity>create(SpawnGroup.MISC, BeaconLaserEntity::new)
+                    .dimensions(EntityDimensions.fixed(1f, 1f))
+                    .trackRangeChunks(4)
+    );
+
     public static EntityType<GenericItemProjectile> GENERIC_ITEM_PROJECTILE = register(
             "item_projectile",
             FabricEntityTypeBuilder.<GenericItemProjectile>create(SpawnGroup.MISC, GenericItemProjectile::new)

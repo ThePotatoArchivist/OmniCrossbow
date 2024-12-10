@@ -1,0 +1,12 @@
+{
+  "omni.projectile.beacon.prepare": {
+    "sounds": [
+      "omnicrossbow:beacon_prepare"
+    ]
+  },
+  "omni.projectile.beacon.fire": {
+    "sounds": [
+      "omnicrossbow:beacon_fire"
+    ]
+  }
+}

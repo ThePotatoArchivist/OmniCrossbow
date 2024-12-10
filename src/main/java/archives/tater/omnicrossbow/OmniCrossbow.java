@@ -4,11 +4,14 @@ import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,17 @@ public class OmniCrossbow implements ModInitializer {
 	public static final Enchantment OMNI = Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "omni"), new OmniEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
 
 	public static final TagKey<Item> HAS_REMAINDER_TAG = TagKey.of(RegistryKeys.ITEM, new Identifier(MOD_ID, "has_remainder"));
+
+	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MOD_ID, "beacon"));
+
+	public static final TagKey<DamageType> NO_KNOCKBACK = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MOD_ID, "no_knockback"));
+
+	private static SoundEvent of (Identifier id) {
+		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+	}
+
+	public static final SoundEvent BEACON_PREPARE = of(new Identifier(MOD_ID, "omni.projectile.beacon.prepare"));
+	public static final SoundEvent BEACON_FIRE = of(new Identifier(MOD_ID, "omni.projectile.beacon.fire"));
 
 	@Override
 	public void onInitialize() {

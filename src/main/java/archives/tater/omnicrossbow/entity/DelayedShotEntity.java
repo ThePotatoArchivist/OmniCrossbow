@@ -9,8 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -29,6 +27,7 @@ public abstract class DelayedShotEntity extends Entity {
         this.launcher = launcher;
         this.ticksRemaining = tickDelay;
         if (owner instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(launcher.getItem(), tickDelay);
+        setPos(owner.getX(), owner.getEyeY() - 0.4f, owner.getZ());
     }
 
     public DelayedShotEntity(EntityType<? extends DelayedShotEntity> type, World world) {
@@ -40,12 +39,18 @@ public abstract class DelayedShotEntity extends Entity {
 
     @Override
     public void tick() {
+        prevX = getX();
+        prevY = getY();
+        prevZ = getZ();
+
         if (getWorld().isClient) return;
+
         if (owner == null) {
             discard();
             return;
         }
-        setPos(owner.getX(), owner.getY(), owner.getZ());
+
+        setPos(owner.getX(), owner.getEyeY() - 0.4f, owner.getZ());
 
         if (ticksRemaining > 0) {
             ticksRemaining--;
@@ -63,6 +68,10 @@ public abstract class DelayedShotEntity extends Entity {
     protected void unloadCrossbow() {
         CrossbowItemInvoker.invokeClearProjectiles(launcher);
         CrossbowItem.setCharged(launcher, false);
+    }
+
+    public boolean hasShot() {
+        return shot;
     }
 
     // Child classes are responsible for discarding themselves once `onShoot()` is called
@@ -86,11 +95,6 @@ public abstract class DelayedShotEntity extends Entity {
     }
 
     // Same as MarkerEntity
-
-    @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        throw new IllegalStateException("Markers should never be sent");
-    }
 
     @Override
     protected boolean canAddPassenger(Entity passenger) {
