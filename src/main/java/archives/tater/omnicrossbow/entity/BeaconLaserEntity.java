@@ -10,6 +10,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
@@ -18,8 +19,9 @@ public class BeaconLaserEntity extends DelayedShotEntity {
     public static final TrackedData<Float> DISTANCE = DataTracker.registerData(BeaconLaserEntity.class, TrackedDataHandlerRegistry.FLOAT);
     public static final TrackedData<Integer> FIRING_TICKS = DataTracker.registerData(BeaconLaserEntity.class, TrackedDataHandlerRegistry.INTEGER);
     public static final int MAX_FIRING_TICKS = 40;
-    public static final int MAX_DISTANCE = 64;
+    public static final int MAX_DISTANCE = 128;
     public static final double MARGIN = 0.2;
+    public static final double PARTICLE_RADIUS = 1.2;
 
     public BeaconLaserEntity(EntityType<? extends DelayedShotEntity> type, World world) {
         super(type, world);
@@ -69,31 +71,52 @@ public class BeaconLaserEntity extends DelayedShotEntity {
     public void tick() {
         super.tick();
 
-        if (!hasShot()) return;
-
         var firingTicks = getFiringTicks();
+
+        if (getWorld().isClient) {
+            if (firingTicks <= 0) return;
+
+            var pos = getPos();
+            var step = getRotationVector();
+            var world = getWorld();
+
+            var distance = getDistance();
+            for (var i = 0; i < distance; i++) {
+                if (random.nextFloat() > 0.1 - 0.08 * Math.min(1, i / 12.0)) continue;
+                var stepPos = pos.add(step.multiply(i));
+                var velocity = step.multiply(2 * random.nextDouble());
+                world.addParticle(ParticleTypes.END_ROD,
+                        stepPos.x + PARTICLE_RADIUS * (random.nextDouble() - 0.5),
+                        stepPos.y + PARTICLE_RADIUS * (random.nextDouble() - 0.5),
+                        stepPos.z + PARTICLE_RADIUS * (random.nextDouble() - 0.5),
+                        velocity.x,
+                        velocity.y,
+                        velocity.z);
+            }
+
+            return;
+        }
+
+        if (!hasShot()) return;
 
         if (owner != null && firingTicks >= 0) {
             owner.addVelocity(owner.getRotationVector().multiply(-0.05, -0.025, -0.05));
             owner.velocityModified = true;
         }
 
-        if (!getWorld().isClient) {
+        if (firingTicks >= MAX_FIRING_TICKS) {
+            unloadCrossbow();
+            if (owner instanceof PlayerEntity playerEntity)
+                playerEntity.getItemCooldownManager().set(launcher.getItem(), 120);
+            this.discard();
+            return;
+        }
 
-            if (firingTicks >= MAX_FIRING_TICKS) {
-                unloadCrossbow();
-                if (owner instanceof PlayerEntity playerEntity)
-                    playerEntity.getItemCooldownManager().set(launcher.getItem(), 120);
-                this.discard();
-                return;
-            }
+        var source = owner == null ? this : owner;
 
-            var source = owner == null ? this : owner;
-
-            for (var target : RaycastUtil.pierce(getWorld(), getPos(), getPos().add(getRotationVector().multiply(getDistance())), MARGIN, owner, entity -> entity instanceof LivingEntity || entity instanceof EndCrystalEntity)) {
-                var damage = target instanceof LivingEntity livingEntity ? Math.max(0.5f, 0.5f * (float) Math.log(livingEntity.getMaxHealth()) - 1) : 0.5f;
-                target.damage(getWorld().getDamageSources().create(OmniCrossbow.BEACON_DAMAGE, source, source), damage);
-            }
+        for (var target : RaycastUtil.pierce(getWorld(), getPos(), getPos().add(getRotationVector().multiply(getDistance())), MARGIN, owner, entity -> entity instanceof LivingEntity || entity instanceof EndCrystalEntity)) {
+            var damage = target instanceof LivingEntity livingEntity ? Math.max(0.5f, 0.5f * (float) Math.log(livingEntity.getMaxHealth()) - 1) : 0.5f;
+            target.damage(getWorld().getDamageSources().create(OmniCrossbow.BEACON_DAMAGE, source, source), damage);
         }
 
         updateAnglesAndDistance();
