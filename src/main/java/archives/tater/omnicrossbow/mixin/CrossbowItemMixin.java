@@ -33,7 +33,8 @@ public abstract class CrossbowItemMixin {
     private static void customProjectile(World world, LivingEntity shooter, Hand hand, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean creative, float speed, float divergence, float simulated, CallbackInfo ci) {
         if (!OmniEnchantment.shootProjectile((ServerWorld) world, shooter, crossbow, projectile)) return;
         ci.cancel();
-        crossbow.damage(1, shooter, e -> e.sendToolBreakStatus(hand));
+        if (OmniEnchantment.shouldUnloadImmediate(projectile))
+            crossbow.damage(1, shooter, e -> e.sendToolBreakStatus(hand));
         world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), OmniEnchantment.getSound(projectile), SoundCategory.PLAYERS, 1.0F, soundPitch);
     }
 

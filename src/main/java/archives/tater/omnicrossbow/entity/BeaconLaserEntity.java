@@ -99,6 +99,14 @@ public class BeaconLaserEntity extends DelayedShotEntity {
 
         if (!hasShot()) return;
 
+        if (!isOwnerHoldingLauncher()) {
+            unloadCrossbow();
+            if (owner instanceof PlayerEntity playerEntity)
+                playerEntity.getItemCooldownManager().set(launcher.getItem(), 120);
+            discard();
+            return;
+        }
+
         if (owner != null && firingTicks >= 0) {
             owner.addVelocity(owner.getRotationVector().multiply(-0.05, -0.025, -0.05));
             owner.velocityModified = true;

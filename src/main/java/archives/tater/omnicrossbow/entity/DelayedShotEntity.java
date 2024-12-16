@@ -55,7 +55,7 @@ public abstract class DelayedShotEntity extends Entity {
         if (ticksRemaining > 0) {
             ticksRemaining--;
         } else if (!shot) {
-            if (!launcher.isEmpty() && (owner.getStackInHand(Hand.MAIN_HAND) == launcher || owner.getStackInHand(Hand.OFF_HAND) == launcher)) {
+            if (isOwnerHoldingLauncher()) {
                 getWorld().playSound(null, getX(), getY(), getZ(), getShootSound(), owner.getSoundCategory(), 1f, 1f);
                 onShoot();
                 shot = true;
@@ -65,9 +65,24 @@ public abstract class DelayedShotEntity extends Entity {
         }
     }
 
+    protected boolean isOwnerHoldingLauncher() {
+        return owner != null && !launcher.isEmpty() && (owner.getStackInHand(Hand.MAIN_HAND) == launcher || owner.getStackInHand(Hand.OFF_HAND) == launcher);
+    }
+
     protected void unloadCrossbow() {
         CrossbowItemInvoker.invokeClearProjectiles(launcher);
         CrossbowItem.setCharged(launcher, false);
+        if (owner == null) {
+            launcher.damage(1, random, null);
+            return;
+        }
+        launcher.damage(1, owner, entity -> {
+            for (var hand : Hand.values())
+                if (entity.getStackInHand(hand) == launcher) {
+                    entity.sendToolBreakStatus(hand);
+                    return;
+                }
+        });
     }
 
     public boolean hasShot() {
