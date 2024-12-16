@@ -52,9 +52,9 @@ public class BeaconLaserEntityRenderer extends EntityRenderer<BeaconLaserEntity>
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Identifier getTexture(BeaconLaserEntity entity) {
-        //noinspection deprecation
         return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
     }
 }

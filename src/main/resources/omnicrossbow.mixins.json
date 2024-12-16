@@ -10,6 +10,7 @@
     "EntityBucketItemAccessor",
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "MinecartItemAccessor",
     "PlayerEntityMixin"
