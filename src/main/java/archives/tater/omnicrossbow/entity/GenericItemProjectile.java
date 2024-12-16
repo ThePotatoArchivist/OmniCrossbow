@@ -1,28 +1,34 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class GenericItemProjectile extends ThrownItemEntity {
@@ -44,8 +50,9 @@ public class GenericItemProjectile extends ThrownItemEntity {
     }
 
     // Call server side
-    private ItemEntity dropAt(HitResult hitResult) {
-        ItemEntity itemEntity = new ItemEntity(this.getWorld(), hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, getStack());
+    private @Nullable ItemEntity dropAt(HitResult hitResult) {
+        if (getItem().isEmpty()) return null;
+        ItemEntity itemEntity = new ItemEntity(this.getWorld(), hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, getItem());
         itemEntity.setToDefaultPickupDelay();
         itemEntity.setVelocity(0, 0, 0);
         this.getWorld().spawnEntity(itemEntity);
@@ -56,7 +63,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
         @Nullable var owner = getOwner();
         var fakePlayer = FakePlayer.get((ServerWorld) getWorld(), owner == null ? new GameProfile(FakePlayer.DEFAULT_UUID, "a crossbow projectile") : new GameProfile(owner.getUuid(), "a crossbow projectile shot by " + owner.getName()));
         fakePlayer.refreshPositionAndAngles(getX(), getY(), getZ(), -getYaw(), getPitch()); // idk why yaw is negative but it's negative
-        fakePlayer.setStackInHand(Hand.MAIN_HAND, getStack());
+        fakePlayer.setStackInHand(Hand.MAIN_HAND, getItem());
+        ((EntityAccessor) fakePlayer).setStandingEyeHeight(0);
         ((LivingEntityAccessor) fakePlayer).invokeGetEquipmentChanges();
         ((LivingEntityAccessor) fakePlayer).setLastAttackedTicks(MathHelper.ceil(fakePlayer.getAttackCooldownProgressPerTick()));
         return fakePlayer;
@@ -66,15 +74,32 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         if (getWorld().isClient) return;
-        var stack = getStack();
-        customBlockActions(blockHitResult, stack);
-        if (!stack.isEmpty()) dropAt(blockHitResult);
+        customBlockActions(blockHitResult, getItem());
+        if (!getItem().isEmpty()) dropAt(blockHitResult);
     }
 
     private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack) {
         var fakePlayer = createFakePlayer();
         var blockPos = blockHitResult.getBlockPos();
         var state = getWorld().getBlockState(blockPos);
+
+        if (stack.getItem() instanceof BucketItem) {
+            var side = blockHitResult.getSide();
+            var centerPos = blockPos.offset(side).toCenterPos();
+            var pitch = switch (side.getOpposite()) {
+                case UP -> -90;
+                case DOWN -> 90;
+                default -> 0;
+            };
+            var yaw = side.getOpposite().asRotation();
+            fakePlayer.updatePositionAndAngles(centerPos.x, centerPos.y, centerPos.z, yaw, pitch);
+
+            var result = stack.use(getWorld(), fakePlayer, Hand.MAIN_HAND);
+            if (result.getResult().isAccepted()) {
+                this.setItem(result.getValue());
+            }
+            return true;
+        }
 
         if (isSuitableTool(stack, blockPos, state, fakePlayer) && ((ServerWorld) getWorld()).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(blockPos)) return true;
         if (stack.useOnBlock(new ItemUsageContext(getWorld(), fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) return true;
@@ -91,27 +116,86 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         if (getWorld().isClient) return;
-        var stack = getStack();
-        customEntityActions(entityHitResult, stack);
-        if (!stack.isEmpty()) dropAt(entityHitResult);
+        customEntityActions(entityHitResult, getItem());
+        if (!getItem().isEmpty()) dropAt(entityHitResult);
     }
 
     private void customEntityActions(EntityHitResult entityHitResult, ItemStack itemStack) {
+        var world = getWorld();
         var entity = entityHitResult.getEntity();
+
+        // Based on Chorus Fruit with twaeks
+        if (itemStack.isOf(Items.CHORUS_FRUIT) && entity instanceof LivingEntity livingEntity) {
+            var random = livingEntity.getRandom();
+            if (entity.hasVehicle()) entity.stopRiding();
+            var currentPos = entity.getPos();
+
+            for (int i = 0; i < 16; i++) {
+                var newX = entity.getX() + (random.nextDouble() - 0.5) * 32;
+                var newY = MathHelper.clamp(entity.getY() + (random.nextInt(32) - 16), world.getBottomY(), world.getBottomY() + ((ServerWorld) world).getLogicalHeight() - 1);
+                var newZ = entity.getZ() + (random.nextDouble() - 0.5) * 32;
+
+                if (!livingEntity.teleport(newX, newY, newZ, true)) continue;
+
+                world.emitGameEvent(GameEvent.TELEPORT, currentPos, GameEvent.Emitter.of(entity));
+                SoundEvent soundEvent = entity instanceof FoxEntity ? SoundEvents.ENTITY_FOX_TELEPORT : SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT;
+                world.playSound(null, currentPos.x, currentPos.y, currentPos.z, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                entity.playSound(soundEvent, 1.0F, 1.0F);
+                break;
+            }
+
+            itemStack.decrement(1);
+            return;
+        }
+
+        if (itemStack.isOf(Items.LIGHTNING_ROD) && entity instanceof LivingEntity && world.isThundering() && world.isSkyVisible(entity.getBlockPos())) {
+            LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(world);
+            if (lightningEntity != null) {
+                lightningEntity.refreshPositionAfterTeleport(entity.getPos());
+                lightningEntity.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
+                world.spawnEntity(lightningEntity);
+            }
+            world.playSound(null, entity.getBlockPos(), SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
+            return;
+        }
+
+        if (itemStack.isOf(Items.LEAD) && entity instanceof MobEntity mobEntity && getOwner() instanceof PlayerEntity playerEntity && mobEntity.canBeLeashedBy(playerEntity)) {
+            mobEntity.attachLeash(playerEntity, true);
+            return;
+        }
+
         var fakePlayer = createFakePlayer();
 
         if (entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) return;
         if (entity instanceof LivingEntity livingEntity && getOwner() instanceof PlayerEntity ownerPlayer)
             if (itemStack.useOnEntity(ownerPlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) return;
 
-        // Still use the original player for damaging so that mobs don't aggro on a ghost player
+        if (itemStack.getItem() instanceof BlockItem && itemStack.useOnBlock(new ItemUsageContext(fakePlayer, Hand.MAIN_HAND, new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false))).isAccepted()) return;
+
+            // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(itemStack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
-        entity.damage(getWorld().getDamageSources().thrown(this, getOwner()), damage);
+        entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
     }
 
     @Override
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
         if (!getWorld().isClient) discard();
+    }
+
+    static class ProjectileFakePlayer extends FakePlayer {
+        protected ProjectileFakePlayer(ServerWorld world, GameProfile profile) {
+            super(world, profile);
+        }
+
+        @Override
+        public float getAttackCooldownProgress(float baseTime) {
+            return 1f;
+        }
+
+        @Override
+        public double getEyeY() {
+            return getY();
+        }
     }
 }
