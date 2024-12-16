@@ -14,7 +14,8 @@
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MinecartItemAccessor",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "ProjectileEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
