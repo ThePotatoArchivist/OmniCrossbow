@@ -1,7 +1,6 @@
 package archives.tater.omnicrossbow.mixin;
 
 import archives.tater.omnicrossbow.MultichamberedEnchantment;
-import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.OmniEnchantment;
 import archives.tater.omnicrossbow.util.OmniUtil;
 import com.google.common.collect.Lists;
@@ -11,7 +10,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
@@ -125,15 +123,20 @@ public abstract class CrossbowItemMixin {
         return original.call(stack) && !(MultichamberedEnchantment.hasMultichambered(stack) && user.isSneaking());
     }
 
+    @ModifyExpressionValue(
+            method = "use",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z")
+    )
+    private boolean checkNumLoaded(boolean original, @Local ItemStack stack) {
+        return original || MultichamberedEnchantment.cannotLoadMore(stack);
+    }
+
     @WrapOperation(
             method = "use",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;isCharged(Lnet/minecraft/item/ItemStack;)Z", ordinal = 1)
     )
-    private boolean checkNumLoaded(ItemStack stack, Operation<Boolean> original) {
-        if (!original.call(stack)) return false;
-        // I think IntelliJ was bugging here
-        //noinspection ConstantValue
-        return !MultichamberedEnchantment.hasMultichambered(stack) || getProjectiles(stack).size() >= MultichamberedEnchantment.getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, stack));
+    private boolean checkNumLoaded2(ItemStack stack, Operation<Boolean> original) {
+        return original.call(stack) && MultichamberedEnchantment.cannotLoadMore(stack);
     }
 
     @WrapWithCondition(
@@ -141,17 +144,15 @@ public abstract class CrossbowItemMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;setCharged(Lnet/minecraft/item/ItemStack;Z)V")
     )
     private boolean preventUnload(ItemStack stack, boolean charged) {
-        return getProjectiles(stack).size() <= 0;
+        return MultichamberedEnchantment.getLoadedShots(stack) <= 0;
     }
 
     @WrapOperation(
             method = "onStoppedUsing",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;isCharged(Lnet/minecraft/item/ItemStack;)Z")
     )
-    private boolean checkNumLoaded2(ItemStack stack, Operation<Boolean> original) {
-        if (!original.call(stack)) return false;
-        //noinspection ConstantValue
-        return !MultichamberedEnchantment.hasMultichambered(stack) || getProjectiles(stack).size() >= MultichamberedEnchantment.getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, stack));
+    private boolean checkNumLoaded3(ItemStack stack, Operation<Boolean> original) {
+        return original.call(stack) && MultichamberedEnchantment.cannotLoadMore(stack);
     }
 
     // loadProjectile already appends to projectiles

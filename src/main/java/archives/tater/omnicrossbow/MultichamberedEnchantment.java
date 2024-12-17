@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow;
 import net.minecraft.enchantment.*;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtElement;
 
 public class MultichamberedEnchantment extends Enchantment {
     private static final int POWER_PER_LEVEL = 7;
@@ -35,7 +36,22 @@ public class MultichamberedEnchantment extends Enchantment {
         return 2 * level;
     }
 
+    public static int getMaxShots(ItemStack crossbow) {
+        return getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow));
+    }
+
     public static boolean hasMultichambered(ItemStack crossbow) {
         return EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow) > 0;
     }
+
+    public static int getLoadedShots(ItemStack crossbow) {
+        var nbt = crossbow.getNbt();
+        if (nbt == null) return 0;
+        return nbt.getList("ChargedProjectiles", NbtElement.COMPOUND_TYPE).size();
+    }
+
+    public static boolean cannotLoadMore(ItemStack stack) {
+        return !hasMultichambered(stack) || getLoadedShots(stack) >= getMaxShots(stack);
+    }
+
 }

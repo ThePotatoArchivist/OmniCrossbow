@@ -16,7 +16,7 @@ public class ModelPredicateProviderRegistryMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;isCharged(Lnet/minecraft/item/ItemStack;)Z")
     )
     private static boolean checkPulling(ItemStack stack, Operation<Boolean> original, @Local(argsOnly = true) LivingEntity user) {
-        return original.call(stack) && user.getActiveItem() != stack;
+        return original.call(stack) && (user == null || user.getActiveItem() != stack);
     }
 
     @WrapOperation(
@@ -24,7 +24,7 @@ public class ModelPredicateProviderRegistryMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;isCharged(Lnet/minecraft/item/ItemStack;)Z")
     )
     private static boolean ignoreCharged(ItemStack stack, Operation<Boolean> original, @Local(argsOnly = true) LivingEntity user) {
-        return user.getActiveItem() != stack;
+        return user == null || user.getActiveItem() != stack;
     }
 
     @WrapOperation(

@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.MultichamberedEnchantment;
 import archives.tater.omnicrossbow.mixin.CrossbowItemInvoker;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
@@ -71,7 +72,8 @@ public abstract class DelayedShotEntity extends Entity {
 
     protected void unloadCrossbow() {
         CrossbowItemInvoker.invokeClearProjectiles(launcher);
-        CrossbowItem.setCharged(launcher, false);
+        if (MultichamberedEnchantment.getLoadedShots(launcher) <= 0)
+            CrossbowItem.setCharged(launcher, false);
         if (owner == null) {
             launcher.damage(1, random, null);
             return;
