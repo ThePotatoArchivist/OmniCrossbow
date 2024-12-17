@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.client.render.entity.BeaconLaserEntityRenderer;
+import archives.tater.omnicrossbow.client.render.entity.EmberEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.GenericItemProjectileEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.OmniCrossbowRenderer;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
@@ -15,6 +16,7 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.FREEZING_SNOWBALL, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.GENERIC_ITEM_PROJECTILE, GenericItemProjectileEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.BEACON_LASER, BeaconLaserEntityRenderer::new);
+		EntityRendererRegistry.register(OmniCrossbowEntities.EMBER, EmberEntityRenderer::new);
 		OmniCrossbowRenderer.register();
 	}
 }

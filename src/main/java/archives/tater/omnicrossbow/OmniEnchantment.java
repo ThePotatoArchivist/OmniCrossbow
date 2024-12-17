@@ -2,11 +2,14 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
+import archives.tater.omnicrossbow.util.RaycastUtil;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -14,13 +17,19 @@ import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 import static archives.tater.omnicrossbow.mixin.FallingBlockEntityInvoker.newFallingBlockEntity;
 
@@ -155,11 +164,61 @@ public class OmniEnchantment extends Enchantment {
     }
 
     public static boolean shootProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
+        if (projectile.isOf(Items.BLAZE_ROD)) {
+            shootBlazeRod(world, shooter, crossbow);
+            return true;
+        }
+        if (projectile.isOf(Items.BLAZE_POWDER)) {
+            for (int i = 0; i < 12; i++) {
+                var ember = new EmberEntity(shooter, world);
+                ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
+                world.spawnEntity(ember);
+            }
+            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
+            if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
+            return true;
+        }
         var entity = createProjectile(world, shooter, crossbow, projectile);
         if (entity == null) return false;
         setupProjectile(entity, shooter, projectile);
         world.spawnEntity(entity);
         return true;
+    }
+
+    private static void shootBlazeRod(ServerWorld world, LivingEntity shooter, ItemStack crossbow) {
+        var start = new Vec3d(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+        var direction = shooter.getRotationVector();
+        var current = start;
+        var end = start.add(direction.multiply(16));
+        var burntPositions = new ArrayList<BlockPos>();
+        while (true) {
+            var hitResult = world.raycast(new RaycastContext(current, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, shooter));
+            current = hitResult.getPos();
+            if (hitResult.getType() == HitResult.Type.MISS) break;
+            var blockPos = hitResult.getBlockPos();
+            var state = world.getBlockState(blockPos);
+            if (state.isBurnable() && state.getFluidState().isEmpty()) {
+                world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
+                burntPositions.add(blockPos);
+            } else {
+                burntPositions.add(blockPos.offset(hitResult.getSide()));
+                break;
+            }
+        }
+        for (var blockPos : burntPositions) {
+            world.setBlockState(blockPos, ((FireBlockInvoker) Blocks.FIRE).invokeGetStateForPosition(world, blockPos));
+        }
+        for (var entity : RaycastUtil.pierce(world, start, current, 0.2, shooter)) {
+            entity.damage(world.getDamageSources().create(DamageTypes.IN_FIRE, shooter), 8);
+            entity.setOnFireFor(8);
+        }
+        var distance = current.subtract(start).length();
+        for (int i = 0; i < distance * 4; i++) {
+            var particlePos = start.add(direction.multiply(i / 4.0));
+            world.spawnParticles(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0.01);
+        }
+        world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
+        if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
     }
 
     public static ItemStack getRemainder(ItemStack projectile) {
