@@ -4,11 +4,16 @@ import archives.tater.omnicrossbow.mixin.HoneyBlockInvoker;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemUsage;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.function.BooleanBiFunction;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -92,6 +97,15 @@ public class HoneySlickBlock extends HoneyBlock {
         return direction == state.get(FACING) && !state.canPlaceAt(world, pos)
                 ? Blocks.AIR.getDefaultState()
                 : super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        var inputStack = player.getStackInHand(hand);
+        if (!inputStack.isOf(Items.GLASS_BOTTLE)) return super.onUse(state, world, pos, player, hand, hit);
+        player.setStackInHand(hand, ItemUsage.exchangeStack(inputStack, player, Items.HONEY_BOTTLE.getDefaultStack()));
+        world.breakBlock(pos, false, player);
+        return ActionResult.SUCCESS;
     }
 
     @Override
