@@ -6,7 +6,9 @@ import archives.tater.omnicrossbow.client.render.entity.GenericItemProjectileEnt
 import archives.tater.omnicrossbow.client.render.entity.OmniCrossbowRenderer;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 
 public class OmniCrossbowClient implements ClientModInitializer {
@@ -18,5 +20,6 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.BEACON_LASER, BeaconLaserEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.EMBER, EmberEntityRenderer::new);
 		OmniCrossbowRenderer.register();
+		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
 	}
 }

@@ -1,5 +1,7 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.HoneySlickBlock;
+import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import archives.tater.omnicrossbow.mixin.ProjectileEntityAccessor;
@@ -10,7 +12,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.NoteBlock;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityGroup;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -123,6 +128,19 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
+        if (stack.isOf(Items.HONEY_BOTTLE)) {
+            var blockState = OmniCrossbow.HONEY_SLICK_BLOCK.getDefaultState().with(HoneySlickBlock.FACING, blockHitResult.getSide().getOpposite());
+            var placePos = blockPos.offset(blockHitResult.getSide());
+            if (world.getBlockState(placePos).isReplaceable() && blockState.canPlaceAt(world, placePos)) {
+                world.setBlockState(placePos, blockState);
+                playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
+                playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
+                spawnItemParticles();
+                stack.decrement(1);
+                return true;
+            }
+        }
+
         if (stack.getItem() instanceof BucketItem) {
             var side = blockHitResult.getSide();
             var centerPos = blockPos.offset(side).toCenterPos();
@@ -224,6 +242,18 @@ public class GenericItemProjectile extends ThrownItemEntity {
             world.createExplosion(getOwner(), getX(), getY(), getZ(), 1f, true, World.ExplosionSourceType.MOB);
             stack.decrement(1);
             return;
+        }
+
+        if (stack.isOf(Items.HONEY_BOTTLE)) {
+            var blockState = OmniCrossbow.HONEY_SLICK_BLOCK.getDefaultState();
+            if (world.getBlockState(entity.getBlockPos()).isReplaceable() && blockState.canPlaceAt(world, entity.getBlockPos())) {
+                world.setBlockState(entity.getBlockPos(), blockState);
+                playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
+                playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
+                spawnItemParticles();
+                stack.decrement(1);
+                return;
+            }
         }
 
         if (stack.isOf(Items.LIGHTNING_ROD) && entity instanceof LivingEntity && world.isThundering() && world.isSkyVisible(entity.getBlockPos())) {

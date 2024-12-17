@@ -12,6 +12,7 @@
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
     "FireBlockInvoker",
+    "HoneyBlockInvoker",
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MinecartItemAccessor",

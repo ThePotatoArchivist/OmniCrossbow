@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "omnicrossbow:block/honey_slick",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "omnicrossbow:block/honey_slick",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "omnicrossbow:block/honey_slick"
+    },
+    "facing=south": {
+      "model": "omnicrossbow:block/honey_slick",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "omnicrossbow:block/honey_slick",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "omnicrossbow:block/honey_slick",
+      "y": 270
+    }
+  }
+}
