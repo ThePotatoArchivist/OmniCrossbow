@@ -28,6 +28,7 @@ public class OmniCrossbow implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static final Enchantment OMNI = Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "omni"), new OmniEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+	public static final Enchantment MULTICHAMBERED = Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "multichambered"), new MultichamberedEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
 
 	public static final Block HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, new Identifier(MOD_ID, "honey_slick"), new HoneySlickBlock(FabricBlockSettings.create()
 			.nonOpaque()

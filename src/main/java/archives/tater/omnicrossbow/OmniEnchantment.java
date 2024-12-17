@@ -7,7 +7,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.enchantment.MultishotEnchantment;
+import net.minecraft.enchantment.PiercingEnchantment;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,7 +47,7 @@ public class OmniEnchantment extends Enchantment {
 
     @Override
     protected boolean canAccept(Enchantment other) {
-        return super.canAccept(other) && other != Enchantments.MULTISHOT && other != Enchantments.PIERCING;
+        return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof PiercingEnchantment);
     }
 
     public static boolean shouldUnloadImmediate(ItemStack projectile) {

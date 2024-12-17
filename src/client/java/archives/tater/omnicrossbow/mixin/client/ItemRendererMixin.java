@@ -24,7 +24,7 @@ public class ItemRendererMixin {
 			cancellable = true
 	)
 	public void useDynamic(ItemStack stack, World world, LivingEntity entity, int seed, CallbackInfoReturnable<BakedModel> cir) {
-		if (OmniCrossbowRenderer.useDynamic(stack))
+		if (OmniCrossbowRenderer.useDynamic(stack, entity))
             cir.setReturnValue(models.getModelManager().getModel(OmniCrossbowRenderer.DYNAMIC_CROSSBOW));
 	}
 }

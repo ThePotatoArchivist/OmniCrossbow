@@ -12,10 +12,12 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,8 +53,9 @@ public class OmniCrossbowRenderer {
         ModelLoadingPlugin.register(pluginContext -> pluginContext.addModels(DYNAMIC_CROSSBOW, PULLED_CROSSBOW));
     }
 
-    public static boolean useDynamic(ItemStack maybeCrossbow) {
+    public static boolean useDynamic(ItemStack maybeCrossbow, @Nullable LivingEntity user) {
         if (!maybeCrossbow.isOf(Items.CROSSBOW)) return false;
+        if (user != null && user.getActiveItem() == maybeCrossbow) return false;
         var projectile = OmniUtil.getMainProjectile(maybeCrossbow);
         return !projectile.isEmpty() && !(projectile.getItem() instanceof ArrowItem) && !(projectile.getItem() instanceof FireworkRocketItem);
     }
