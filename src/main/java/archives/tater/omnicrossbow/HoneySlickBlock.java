@@ -96,7 +96,7 @@ public class HoneySlickBlock extends HoneyBlock {
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if (!world.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.DOWN, SideShapeType.FULL) && random.nextInt(16) == 0) {
+        if (!world.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.DOWN, SideShapeType.FULL) && random.nextInt(10) == 0) {
             var box = state.getOutlineShape(world, pos).getBoundingBox();
             world.addParticle(ParticleTypes.DRIPPING_HONEY, box.getXLength() * random.nextDouble() + box.minX + pos.getX(), box.minY + pos.getY() - 0.05, box.getZLength() * random.nextDouble() + box.minZ + pos.getZ(), 0, 0, 0);
         }

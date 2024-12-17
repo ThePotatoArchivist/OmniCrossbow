@@ -87,9 +87,25 @@ public class GenericItemProjectile extends ThrownItemEntity {
         return fakePlayer;
     }
 
-    private void spawnItemParticles() {
+    private void spawnItemParticles(Vec3d pos, double deltaX, double deltaY, double deltaZ) {
         if (!(getWorld() instanceof ServerWorld serverWorld)) return;
-        serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, getItem().copy()), getX(), getY(), getZ(), 6, 0, 0, 0, 0.03);
+        serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, getItem().copy()), pos.x, pos.y, pos.z, 6, deltaX, deltaY, deltaZ, 0.03);
+    }
+
+    private void spawnItemParticles(Vec3d pos) {
+        spawnItemParticles(pos, 0, 0, 0);
+    }
+
+    private void spawnItemParticles(HitResult hitResult) {
+        if (hitResult instanceof EntityHitResult entityHitResult) {
+            var entity = entityHitResult.getEntity();
+            spawnItemParticles(entityHitResult.getPos().add(0, entity.getHeight() / 2, 0), entity.getWidth() / 4, entity.getHeight() / 4, entity.getWidth() / 4);
+        } else
+            spawnItemParticles(hitResult.getPos());
+    }
+
+    private void spawnItemParticles() {
+        spawnItemParticles(getPos());
     }
 
     @Override
@@ -135,7 +151,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 world.setBlockState(placePos, blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
-                spawnItemParticles();
+                spawnItemParticles(blockHitResult.getPos().offset(blockHitResult.getSide(), 0.4));
                 stack.decrement(1);
                 return true;
             }
@@ -250,7 +266,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 world.setBlockState(entity.getBlockPos(), blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
-                spawnItemParticles();
+                spawnItemParticles(entityHitResult);
                 stack.decrement(1);
                 return;
             }
@@ -275,7 +291,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if ((stack.isOf(Items.GLOWSTONE_DUST) || stack.isOf(Items.GLOW_BERRIES)) && entity instanceof LivingEntity livingEntity) {
             livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 300, 0));
-            spawnItemParticles();
+            spawnItemParticles(entityHitResult);
             stack.decrement(1);
             return;
         }
@@ -289,7 +305,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 else
                     livingEntity.addStatusEffect(effect);
             playSound(SoundEvents.BLOCK_GLASS_BREAK, 1f, 1f);
-            spawnItemParticles();
+            spawnItemParticles(entityHitResult);
             // TODO effect particles
             stack.decrement(1);
             return;
@@ -309,7 +325,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                             livingEntity.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), newDuration, effect.getAmplifier(), effect.isAmbient(), effect.shouldShowParticles(), effect.shouldShowIcon()));
                         }
                     playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
-                    spawnItemParticles();
+                    spawnItemParticles(entityHitResult);
                     stack.decrement(1);
                     return;
                 }
@@ -326,6 +342,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
         entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
+
         if (stack.isOf(Items.BELL))
             playSound(SoundEvents.BLOCK_BELL_USE, 1f, 1f);
         if (stack.isOf(Items.NOTE_BLOCK))

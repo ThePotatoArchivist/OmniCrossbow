@@ -11,4 +11,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface FireBlockInvoker {
     @Invoker
     BlockState invokeGetStateForPosition(BlockView world, BlockPos pos);
+    @Invoker
+    int invokeGetBurnChance(BlockState state);
 }

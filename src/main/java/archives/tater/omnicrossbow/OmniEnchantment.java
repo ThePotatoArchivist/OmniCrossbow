@@ -19,6 +19,7 @@ import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -186,22 +187,29 @@ public class OmniEnchantment extends Enchantment {
     }
 
     private static void shootBlazeRod(ServerWorld world, LivingEntity shooter, ItemStack crossbow) {
-        var start = new Vec3d(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+        var start = shooter.getEyePos().add(0, -0.1, 0);
         var direction = shooter.getRotationVector();
         var current = start;
         var end = start.add(direction.multiply(16));
         var burntPositions = new ArrayList<BlockPos>();
         while (true) {
-            var hitResult = world.raycast(new RaycastContext(current, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, shooter));
+            var hitResult = world.raycast(new RaycastContext(current, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.WATER, shooter));
             current = hitResult.getPos();
             if (hitResult.getType() == HitResult.Type.MISS) break;
             var blockPos = hitResult.getBlockPos();
             var state = world.getBlockState(blockPos);
-            if (state.isBurnable() && state.getFluidState().isEmpty()) {
+            if (!state.getFluidState().isEmpty()) {
+                if (state.getFluidState().isIn(FluidTags.WATER))
+                    world.spawnParticles(ParticleTypes.CLOUD, current.x, current.y + 0.1, current.z, 8, 0, 0, 0, 0);
+                break;
+            }
+            if (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0) {
                 world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                 burntPositions.add(blockPos);
             } else {
-                burntPositions.add(blockPos.offset(hitResult.getSide()));
+                var endPos = blockPos.offset(hitResult.getSide());
+                if (world.getBlockState(endPos).isReplaceable())
+                    burntPositions.add(endPos);
                 break;
             }
         }

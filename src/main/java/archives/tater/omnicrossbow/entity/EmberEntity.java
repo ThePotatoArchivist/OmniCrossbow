@@ -45,6 +45,13 @@ public class EmberEntity extends ThrownEntity {
 
     @Override
     public void tick() {
+        if (!getWorld().getFluidState(getBlockPos()).isEmpty()) {
+            for (var i = 0; i < 4; i++)
+                // This doesn't seem to be working for some reason
+                getWorld().addParticle(ParticleTypes.CLOUD, getX(), getBlockY() + 1, getZ(), 0, 0, 0);
+            discard();
+            return;
+        }
         if (landedTicks < 0) {
             super.tick();
         } else {
@@ -71,7 +78,7 @@ public class EmberEntity extends ThrownEntity {
         var blockPos = blockHitResult.getBlockPos();
         var state = world.getBlockState(blockPos);
         var placePos = blockPos.offset(blockHitResult.getSide());
-        if (world.getBlockState(placePos).isReplaceable() && state.getFluidState().isEmpty() && random.nextFloat() < (state.isBurnable() ? 0.4f : 0.2f)) {
+        if (world.getBlockState(placePos).isReplaceable() && state.getFluidState().isEmpty() && random.nextFloat() < (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0 ? 0.4f : 0.3f)) {
             world.setBlockState(placePos, ((FireBlockInvoker) Blocks.FIRE).invokeGetStateForPosition(world, placePos));
             discard();
         }
