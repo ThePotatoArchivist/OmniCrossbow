@@ -1,6 +1,8 @@
-package archives.tater.omnicrossbow;
+package archives.tater.omnicrossbow.client.render.entity;
 
 import archives.tater.omnicrossbow.entity.BeaconLaserEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -14,11 +16,12 @@ import net.minecraft.util.math.RotationAxis;
 
 import static archives.tater.omnicrossbow.entity.BeaconLaserEntity.MAX_FIRING_TICKS;
 
+@Environment(EnvType.CLIENT)
 public class BeaconLaserEntityRenderer extends EntityRenderer<BeaconLaserEntity> {
     public static final Identifier BEAM_TEXTURE = BeaconBlockEntityRenderer.BEAM_TEXTURE;
     public static final int TRANSITION = 6;
 
-    protected BeaconLaserEntityRenderer(EntityRendererFactory.Context ctx) {
+    public BeaconLaserEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
 

@@ -7,6 +7,8 @@ import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.NoteBlock;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -36,6 +38,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +58,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
     @Override
     protected Item getDefaultItem() {
-        return Items.COD;
+        return Items.AIR;
     }
 
     // Call server side
@@ -110,10 +113,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
     private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack) {
         var fakePlayer = createFakePlayer();
         var blockPos = blockHitResult.getBlockPos();
-        var state = getWorld().getBlockState(blockPos);
+        var world = getWorld();
+        var state = world.getBlockState(blockPos);
 
         if (stack.isOf(Items.GUNPOWDER)) {
-            getWorld().createExplosion(getOwner(), getX(), getY(), getZ(), 1, true, World.ExplosionSourceType.MOB);
+            world.createExplosion(getOwner(), getX(), getY(), getZ(), 1, true, World.ExplosionSourceType.MOB);
             stack.decrement(1);
             return true;
         }
@@ -129,16 +133,35 @@ public class GenericItemProjectile extends ThrownItemEntity {
             var yaw = side.getOpposite().asRotation();
             fakePlayer.updatePositionAndAngles(centerPos.x, centerPos.y, centerPos.z, yaw, pitch);
 
-            var result = stack.use(getWorld(), fakePlayer, Hand.MAIN_HAND);
+            var result = stack.use(world, fakePlayer, Hand.MAIN_HAND);
             if (result.getResult().isAccepted()) {
                 this.setItem(result.getValue());
             }
             return true;
         }
 
-        if (isSuitableTool(stack, blockPos, state, fakePlayer) && ((ServerWorld) getWorld()).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(blockPos)) return true;
-        if (stack.useOnBlock(new ItemUsageContext(getWorld(), fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) return true;
-        if (stack.useOnBlock(new ItemUsageContext(getWorld(), fakePlayer, Hand.MAIN_HAND, stack, new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), blockPos.offset(blockHitResult.getSide()), true))).isAccepted()) return true;
+        if (isSuitableTool(stack, blockPos, state, fakePlayer) && ((ServerWorld) world).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(blockPos)) return true;
+
+        if (stack.isOf(Items.NOTE_BLOCK))
+            for (int i = 0; i < 12; i++)
+                world.playSound(null, blockPos, SoundEvents.BLOCK_NOTE_BLOCK_HARP.value(), getSoundCategory(), 2f, NoteBlock.getNotePitch(random.nextBetween(-12, 24)));
+
+        if (stack.isOf(Items.LIGHTNING_ROD) && stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
+            var placedPos = blockPos.offset(blockHitResult.getSide());
+            if (world.getBlockState(placedPos).isOf(Blocks.LIGHTNING_ROD) && world.isThundering() && world.isSkyVisible(placedPos)) {
+                var lightningBolt = EntityType.LIGHTNING_BOLT.create(world);
+                if (lightningBolt != null) {
+                    lightningBolt.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(placedPos.up()));
+                    lightningBolt.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
+                    world.spawnEntity(lightningBolt);
+                }
+                world.playSound(null, placedPos, SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
+            }
+            return true;
+        }
+
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) return true;
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), blockPos.offset(blockHitResult.getSide()), true))).isAccepted()) return true;
 
         return false;
     }
@@ -190,11 +213,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
         }
 
         if (stack.isOf(Items.LIGHTNING_ROD) && entity instanceof LivingEntity && world.isThundering() && world.isSkyVisible(entity.getBlockPos())) {
-            LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(world);
-            if (lightningEntity != null) {
-                lightningEntity.refreshPositionAfterTeleport(entity.getPos());
-                lightningEntity.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
-                world.spawnEntity(lightningEntity);
+            var lightningBolt = EntityType.LIGHTNING_BOLT.create(world);
+            if (lightningBolt != null) {
+                lightningBolt.refreshPositionAfterTeleport(entity.getPos());
+                lightningBolt.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
+                world.spawnEntity(lightningBolt);
             }
             world.playSound(null, entity.getBlockPos(), SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
             return;
@@ -269,6 +292,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
         entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
+        if (stack.isOf(Items.BELL))
+            playSound(SoundEvents.BLOCK_BELL_USE, 1f, 1f);
+        if (stack.isOf(Items.NOTE_BLOCK))
+            for (int i = 0; i < 12; i++)
+                playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP.value(), 2f, NoteBlock.getNotePitch(random.nextBetween(-12, 24)));
     }
 
     @Override

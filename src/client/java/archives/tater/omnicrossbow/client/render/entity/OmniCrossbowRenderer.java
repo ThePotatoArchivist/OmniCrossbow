@@ -1,6 +1,9 @@
-package archives.tater.omnicrossbow;
+package archives.tater.omnicrossbow.client.render.entity;
 
+import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.util.OmniUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -18,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Environment(EnvType.CLIENT)
 public class OmniCrossbowRenderer {
 
     public static final ModelIdentifier DYNAMIC_CROSSBOW = new ModelIdentifier(OmniCrossbow.MOD_ID, "dynamic_crossbow", "inventory");
@@ -60,7 +64,8 @@ public class OmniCrossbowRenderer {
             Items.CROSSBOW,
             Items.PRISMARINE_SHARD,
             Items.GLISTERING_MELON_SLICE,
-            Items.BOW
+            Items.BOW,
+            Items.COBWEB
     );
     private static final Set<Item> OFFSET_ROTATE_COUNTERCLOCKWISE = Stream.concat(
             Registries.ITEM.stream().filter(item -> item instanceof SwordItem),
@@ -168,5 +173,9 @@ public class OmniCrossbowRenderer {
             matrices.multiply(RotationAxis.POSITIVE_Z.rotation(MathHelper.HALF_PI));
         else if (!isOffset && !NO_ROTATE.contains(projectile))
             matrices.multiply(RotationAxis.POSITIVE_Z.rotation(MathHelper.HALF_PI / 2));
+    }
+
+    public static boolean projectileNonBillboard(Item projectile) {
+        return (OFFSET_NO_ROTATE.contains(projectile) && projectile != Items.COBWEB) || OFFSET_ROTATE_CLOCKWISE.contains(projectile) || OFFSET_ROTATE_COUNTERCLOCKWISE.contains(projectile) || SHIFT_ROTATE_COUNTERCLOCKWISE.contains(projectile);
     }
 }

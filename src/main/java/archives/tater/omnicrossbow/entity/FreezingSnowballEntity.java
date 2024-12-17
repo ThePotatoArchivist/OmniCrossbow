@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
@@ -19,6 +20,12 @@ public class FreezingSnowballEntity extends SnowballEntity {
     public FreezingSnowballEntity(World world, LivingEntity owner) {
         this(world, owner.getX(), owner.getEyeY() - 0.1f, owner.getZ());
         setOwner(owner);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        getWorld().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY(), getZ(), 0, 0, 0);
     }
 
     @Override
