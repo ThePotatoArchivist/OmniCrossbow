@@ -207,6 +207,7 @@ public class OmniEnchantment extends Enchantment {
         }
         for (var blockPos : burntPositions) {
             world.setBlockState(blockPos, ((FireBlockInvoker) Blocks.FIRE).invokeGetStateForPosition(world, blockPos));
+            world.spawnParticles(ParticleTypes.LARGE_SMOKE, blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 16, 0.25, 0.25, 0.25, 0);
         }
         for (var entity : RaycastUtil.pierce(world, start, current, 0.2, shooter)) {
             entity.damage(world.getDamageSources().create(DamageTypes.IN_FIRE, shooter), 8);

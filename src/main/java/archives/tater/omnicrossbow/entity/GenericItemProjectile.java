@@ -83,7 +83,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
     }
 
     private void spawnItemParticles() {
-        ((ServerWorld) getWorld()).spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, getItem().copy()), getX(), getY(), getZ(), 6, 0, 0, 0, 0.03);
+        if (!(getWorld() instanceof ServerWorld serverWorld)) return;
+        serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, getItem().copy()), getX(), getY(), getZ(), 6, 0, 0, 0, 0.03);
     }
 
     @Override
@@ -173,6 +174,19 @@ public class GenericItemProjectile extends ThrownItemEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
+        var stack = getItem();
+        // Should be handled on the client aswell
+        if (stack.isOf(Items.SLIME_BALL)) {
+            var entity = entityHitResult.getEntity();
+            var velocity = getVelocity();
+            entity.addVelocity(2.5 * velocity.x, ((entity.isOnGround() && velocity.y < 0) ? -0.5 : 1.5) * velocity.y, 2.5 * velocity.z);
+            entity.velocityModified = true;
+            playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
+            spawnItemParticles();
+            stack.decrement(1);
+            return;
+        }
+
         if (getWorld().isClient) return;
         customEntityActions(entityHitResult, getItem());
         if (!getItem().isEmpty()) dropAt(entityHitResult);
@@ -225,16 +239,6 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (stack.isOf(Items.LEAD) && entity instanceof MobEntity mobEntity && getOwner() instanceof PlayerEntity playerEntity && mobEntity.canBeLeashedBy(playerEntity)) {
             mobEntity.attachLeash(playerEntity, true);
-            stack.decrement(1);
-            return;
-        }
-
-        if (stack.isOf(Items.SLIME_BALL)) {
-            var velocity = getVelocity();
-            entity.addVelocity(2.5 * velocity.x, ((entity.isOnGround() && velocity.y < 0) ? -0.5 : 1.5) * velocity.y, 2.5 * velocity.z);
-            entity.velocityModified = true;
-            playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
-            spawnItemParticles();
             stack.decrement(1);
             return;
         }
