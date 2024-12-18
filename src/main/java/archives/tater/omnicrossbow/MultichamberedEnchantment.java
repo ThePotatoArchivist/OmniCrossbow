@@ -54,7 +54,7 @@ public class MultichamberedEnchantment extends Enchantment {
     }
 
     public static boolean cannotLoadMore(ItemStack stack) {
-        return !hasMultichambered(stack) || getLoadedShots(stack) >= getMaxShots(stack);
+        return hasMultichambered(stack) && getLoadedShots(stack) >= getMaxShots(stack);
     }
 
     public static ItemStack getPrimaryCrossbow(LivingEntity livingEntity) {
