@@ -17,7 +17,7 @@ public class MultichamberedEnchantment extends Enchantment {
 
     @Override
     protected boolean canAccept(Enchantment other) {
-        return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof PiercingEnchantment);
+        return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof QuickChargeEnchantment);
     }
 
     @Override
