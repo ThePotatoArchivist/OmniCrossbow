@@ -1,14 +1,32 @@
 {
-  "omni.projectile.beacon.prepare": {
+  "projectile.beacon.prepare": {
     "sounds": [
       "omnicrossbow:beacon_prepare"
     ],
-    "subtitle": "subtitles.omnicrossbow.item.beacon.prepare"
+    "subtitle": "subtitles.omnicrossbow.projectile.beacon.prepare"
   },
-  "omni.projectile.beacon.fire": {
+  "projectile.beacon.fire": {
     "sounds": [
       "omnicrossbow:beacon_fire"
     ],
-    "subtitle": "subtitles.omnicrossbow.item.beacon.fire"
+    "subtitle": "subtitles.omnicrossbow.projectile.beacon.fire"
+  },
+  "projectile.sonic.prepare": {
+    "sounds": [
+      "mob/warden/sonic_charge1",
+      "mob/warden/sonic_charge2",
+      "mob/warden/sonic_charge3",
+      "mob/warden/sonic_charge4"
+    ],
+    "subtitle": "subtitles.omnicrossbow.projectile.sonic.prepare"
+  },
+  "projectile.sonic.fire": {
+    "sounds": [
+      "mob/warden/sonic_boom1",
+      "mob/warden/sonic_boom2",
+      "mob/warden/sonic_boom3",
+      "mob/warden/sonic_boom4"
+    ],
+    "subtitle": "subtitles.omnicrossbow.projectile.sonic.fire"
   }
 }

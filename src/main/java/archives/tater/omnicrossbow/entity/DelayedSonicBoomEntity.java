@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.util.RaycastUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -12,7 +13,6 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
@@ -60,7 +60,7 @@ public class DelayedSonicBoomEntity extends DelayedShotEntity {
 
     @Override
     protected SoundEvent getShootSound() {
-        return SoundEvents.ENTITY_WARDEN_SONIC_BOOM;
+        return OmniCrossbow.SONIC_FIRE;
     }
 
     // Same as MarkerEntity

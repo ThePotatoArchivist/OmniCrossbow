@@ -55,7 +55,7 @@ public class OmniEnchantment extends Enchantment {
     }
 
     public static SoundEvent getSound(ItemStack projectile) {
-        if (projectile.isOf(Items.ECHO_SHARD)) return SoundEvents.ENTITY_WARDEN_SONIC_CHARGE;
+        if (projectile.isOf(Items.ECHO_SHARD)) return OmniCrossbow.SONIC_PREPARE;
         if (projectile.isOf(Items.NETHER_STAR)) return OmniCrossbow.BEACON_PREPARE;
         if (projectile.isOf(Items.FIRE_CHARGE)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.DRAGON_BREATH)) return SoundEvents.ENTITY_ENDER_DRAGON_SHOOT;

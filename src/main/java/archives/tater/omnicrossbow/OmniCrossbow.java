@@ -46,8 +46,10 @@ public class OmniCrossbow implements ModInitializer {
 		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
 	}
 
-	public static final SoundEvent BEACON_PREPARE = of(new Identifier(MOD_ID, "omni.projectile.beacon.prepare"));
-	public static final SoundEvent BEACON_FIRE = of(new Identifier(MOD_ID, "omni.projectile.beacon.fire"));
+	public static final SoundEvent BEACON_PREPARE = of(new Identifier(MOD_ID, "projectile.beacon.prepare"));
+	public static final SoundEvent BEACON_FIRE = of(new Identifier(MOD_ID, "projectile.beacon.fire"));
+	public static final SoundEvent SONIC_PREPARE = of(new Identifier(MOD_ID, "projectile.sonic.prepare"));
+	public static final SoundEvent SONIC_FIRE = of(new Identifier(MOD_ID, "projectile.sonic.fire"));
 
 	@Override
 	public void onInitialize() {
