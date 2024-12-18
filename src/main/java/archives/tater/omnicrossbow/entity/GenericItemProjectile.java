@@ -4,7 +4,6 @@ import archives.tater.omnicrossbow.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
-import archives.tater.omnicrossbow.mixin.ProjectileEntityAccessor;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
@@ -12,10 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.NoteBlock;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityGroup;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -87,46 +83,33 @@ public class GenericItemProjectile extends ThrownItemEntity {
         return fakePlayer;
     }
 
-    private void spawnItemParticles(Vec3d pos, double deltaX, double deltaY, double deltaZ) {
-        if (!(getWorld() instanceof ServerWorld serverWorld)) return;
-        serverWorld.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, getItem().copy()), pos.x, pos.y, pos.z, 6, deltaX, deltaY, deltaZ, 0.03);
-    }
+    @Override
+    public void handleStatus(byte status) {
+        super.handleStatus(status);
 
-    private void spawnItemParticles(Vec3d pos) {
-        spawnItemParticles(pos, 0, 0, 0);
-    }
+        if (status == EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES) {
+            var particleEffect = new ItemStackParticleEffect(ParticleTypes.ITEM, getItem());
 
-    private void spawnItemParticles(HitResult hitResult) {
-        if (hitResult instanceof EntityHitResult entityHitResult) {
-            var entity = entityHitResult.getEntity();
-            spawnItemParticles(entityHitResult.getPos().add(0, entity.getHeight() / 2, 0), entity.getWidth() / 4, entity.getHeight() / 4, entity.getWidth() / 4);
-        } else
-            spawnItemParticles(hitResult.getPos());
+            for (int i = 0; i < 6; i++)
+                getWorld().addParticle(particleEffect,
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        0.3 * random.nextDouble() - 0.15,
+                        0.3 * random.nextDouble() - 0.15,
+                        0.3 * random.nextDouble() - 0.15
+                );
+        }
     }
 
     private void spawnItemParticles() {
-        spawnItemParticles(getPos());
+        if (getWorld().isClient) return;
+        getWorld().sendEntityStatus(this, EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES);
     }
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
-        if (getItem().isOf(Items.SLIME_BALL)) { // bouncing has to happen on the client
-            var velocity = getVelocity();
-            if (velocity.multiply(0.2, 1, 0.2).length() > 0.2) {
-                var axis = blockHitResult.getSide().getAxis();
-                var newVelocity = velocity.withAxis(axis, -0.5 * velocity.getComponentAlongAxis(axis));
-                setVelocity(newVelocity);
-                // velocity is processed after collisions, this makes it so that it starts at the hit result next time collision is checked
-                setPosition(blockHitResult.getPos().subtract(newVelocity));
-                ((ProjectileEntityAccessor) this).setLeftOwner(true);
-                playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
-            } else {
-                dropAt(blockHitResult);
-                discard();
-            }
-            return;
-        }
         if (getWorld().isClient) return;
         customBlockActions(blockHitResult, getItem());
         if (!getItem().isEmpty()) dropAt(blockHitResult);
@@ -151,7 +134,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 world.setBlockState(placePos, blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
-                spawnItemParticles(blockHitResult.getPos().offset(blockHitResult.getSide(), 0.4));
+                spawnItemParticles();
                 stack.decrement(1);
                 return true;
             }
@@ -208,19 +191,6 @@ public class GenericItemProjectile extends ThrownItemEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        var stack = getItem();
-        // Should be handled on the client aswell
-        if (stack.isOf(Items.SLIME_BALL)) {
-            var entity = entityHitResult.getEntity();
-            var velocity = getVelocity();
-            entity.addVelocity(2.5 * velocity.x, ((entity.isOnGround() && velocity.y < 0) ? -0.5 : 1.5) * velocity.y, 2.5 * velocity.z);
-            entity.velocityModified = true;
-            playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
-            spawnItemParticles();
-            stack.decrement(1);
-            return;
-        }
-
         if (getWorld().isClient) return;
         customEntityActions(entityHitResult, getItem());
         if (!getItem().isEmpty()) dropAt(entityHitResult);
@@ -266,7 +236,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 world.setBlockState(entity.getBlockPos(), blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
-                spawnItemParticles(entityHitResult);
+                spawnItemParticles();
                 stack.decrement(1);
                 return;
             }
@@ -291,7 +261,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if ((stack.isOf(Items.GLOWSTONE_DUST) || stack.isOf(Items.GLOW_BERRIES)) && entity instanceof LivingEntity livingEntity) {
             livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 300, 0));
-            spawnItemParticles(entityHitResult);
+            spawnItemParticles();
             stack.decrement(1);
             return;
         }
@@ -305,7 +275,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 else
                     livingEntity.addStatusEffect(effect);
             playSound(SoundEvents.BLOCK_GLASS_BREAK, 1f, 1f);
-            spawnItemParticles(entityHitResult);
+            spawnItemParticles();
             // TODO effect particles
             stack.decrement(1);
             return;
@@ -325,7 +295,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                             livingEntity.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), newDuration, effect.getAmplifier(), effect.isAmbient(), effect.shouldShowParticles(), effect.shouldShowIcon()));
                         }
                     playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
-                    spawnItemParticles(entityHitResult);
+                    spawnItemParticles();
                     stack.decrement(1);
                     return;
                 }
@@ -342,6 +312,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
         entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
+        if (entity instanceof LivingEntity livingEntity)
+            stack.postHit(livingEntity, fakePlayer);
 
         if (stack.isOf(Items.BELL))
             playSound(SoundEvents.BLOCK_BELL_USE, 1f, 1f);
@@ -353,6 +325,6 @@ public class GenericItemProjectile extends ThrownItemEntity {
     @Override
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
-        if (!getWorld().isClient && !getItem().isOf(Items.SLIME_BALL)) discard();
+        if (!getWorld().isClient) discard();
     }
 }

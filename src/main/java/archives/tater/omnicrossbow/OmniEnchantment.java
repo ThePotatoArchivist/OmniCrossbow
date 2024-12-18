@@ -95,6 +95,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.ENDER_PEARL)) return new EnderPearlEntity(world, shooter);
         if (projectile.isOf(Items.SNOWBALL)) return new FreezingSnowballEntity(world, shooter);
         if (projectile.isOf(Items.EXPERIENCE_BOTTLE)) return new ExperienceBottleEntity(world, shooter);
+        if (projectile.isOf(Items.SLIME_BALL)) return new SlimeballEntity(shooter, world);
         if (projectile.isOf(Items.TRIDENT)) {
             projectile.damage(1, shooter, (livingEntity) -> {});
             var entity = new TridentEntity(world, shooter, projectile);

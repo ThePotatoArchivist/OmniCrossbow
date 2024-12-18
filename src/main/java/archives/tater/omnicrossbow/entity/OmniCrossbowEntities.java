@@ -61,5 +61,13 @@ public class OmniCrossbowEntities {
                     .trackedUpdateRate(10)
     );
 
+    public static EntityType<SlimeballEntity> SLIME_BALL = register(
+            "slime_ball",
+            FabricEntityTypeBuilder.<SlimeballEntity>create(SpawnGroup.MISC, SlimeballEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
+                    .trackRangeChunks(4)
+                    .trackedUpdateRate(10)
+    );
+
     public static void register() {};
 }
