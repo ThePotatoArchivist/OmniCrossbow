@@ -2,8 +2,11 @@ package archives.tater.omnicrossbow;
 
 import net.minecraft.enchantment.*;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.Hand;
 
 public class MultichamberedEnchantment extends Enchantment {
     private static final int POWER_PER_LEVEL = 7;
@@ -52,6 +55,15 @@ public class MultichamberedEnchantment extends Enchantment {
 
     public static boolean cannotLoadMore(ItemStack stack) {
         return !hasMultichambered(stack) || getLoadedShots(stack) >= getMaxShots(stack);
+    }
+
+    public static ItemStack getPrimaryCrossbow(LivingEntity livingEntity) {
+        for (var hand : Hand.values()) {
+            var stack = livingEntity.getStackInHand(hand);
+            if (stack.isOf(Items.CROSSBOW) && hasMultichambered(stack))
+                return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
 }

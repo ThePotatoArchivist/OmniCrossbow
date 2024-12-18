@@ -1,0 +1,10 @@
+{
+  "enchantment.omnicrossbow.omni": "Omni",
+  "enchantment.omnicrossbow.omni.desc": "Lets you load any item into the crossbow",
+  "enchantment.omnicrossbow.multichambered": "Multichambered",
+  "enchantment.omnicrossbow.multichambered.desc": "Lets you load multiple shots by crouching",
+  "death.attack.omnicrossbow.beacon": "%s was vaporized by %s",
+  "death.attack.omnicrossbow.beacon.item": "%s was vaporized by %s using %s",
+  "subtitles.omnicrossbow.item.beacon.prepare": "Nether star charges up",
+  "subtitles.omnicrossbow.item.beacon.fire": "Nether star blasts"
+}

@@ -2,11 +2,13 @@
   "omni.projectile.beacon.prepare": {
     "sounds": [
       "omnicrossbow:beacon_prepare"
-    ]
+    ],
+    "subtitle": "subtitles.omnicrossbow.item.beacon.prepare"
   },
   "omni.projectile.beacon.fire": {
     "sounds": [
       "omnicrossbow:beacon_fire"
-    ]
+    ],
+    "subtitle": "subtitles.omnicrossbow.item.beacon.fire"
   }
 }
