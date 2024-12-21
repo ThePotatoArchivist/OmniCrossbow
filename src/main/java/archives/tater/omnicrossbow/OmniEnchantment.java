@@ -19,6 +19,7 @@ import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
@@ -118,6 +119,9 @@ public class OmniEnchantment extends Enchantment {
         if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
             var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
             ((FallingBlockInvoker) fallingBlock).invokeConfigureFallingBlockEntity(entity);
+            var nbt = projectile.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+            if (nbt != null)
+                ((FallingBlockEntityInvoker) entity).setBlockEntityData(nbt);
             return entity;
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
@@ -132,6 +136,20 @@ public class OmniEnchantment extends Enchantment {
         if (projectileItem instanceof MinecartItem minecartItem)
             return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
         if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
+
+        var itemId = Registries.ITEM.getId(projectileItem);
+        if (Registries.ENTITY_TYPE.containsId(itemId)) {
+            var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
+            if (entity instanceof LivingEntity)
+                entity.discard();
+            else if (entity != null) {
+                entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+                if (entity instanceof ProjectileEntity projectileEntity)
+                    projectileEntity.setOwner(shooter);
+                return entity;
+            }
+        }
+
         return new GenericItemProjectile(shooter, world);
     }
 
