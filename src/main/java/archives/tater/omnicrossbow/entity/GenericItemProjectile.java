@@ -76,11 +76,18 @@ public class GenericItemProjectile extends ThrownItemEntity {
         @Nullable var owner = getOwner();
         var fakePlayer = FakePlayer.get((ServerWorld) getWorld(), owner == null ? new GameProfile(FakePlayer.DEFAULT_UUID, "a crossbow projectile") : new GameProfile(owner.getUuid(), "a crossbow projectile shot by " + owner.getName()));
         fakePlayer.refreshPositionAndAngles(getX(), getY(), getZ(), -getYaw(), getPitch()); // idk why yaw is negative but it's negative
+        fakePlayer.setVelocity(getVelocity());
         fakePlayer.setStackInHand(Hand.MAIN_HAND, getItem());
         ((EntityAccessor) fakePlayer).setStandingEyeHeight(0);
         ((LivingEntityAccessor) fakePlayer).invokeGetEquipmentChanges();
         ((LivingEntityAccessor) fakePlayer).setLastAttackedTicks(MathHelper.ceil(fakePlayer.getAttackCooldownProgressPerTick()));
         return fakePlayer;
+    }
+
+    private void handleItemsFrom(PlayerEntity player) {
+        setItem(player.getStackInHand(Hand.MAIN_HAND));
+        player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        player.getInventory().dropAll();
     }
 
     @Override
@@ -178,8 +185,14 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) return true;
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), blockPos.offset(blockHitResult.getSide()), true))).isAccepted()) return true;
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), blockPos.offset(blockHitResult.getSide()), true))).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
 
         return false;
     }
@@ -303,11 +316,20 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         var fakePlayer = createFakePlayer();
 
-        if (entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) return;
+        if (entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return;
+        }
         if (entity instanceof LivingEntity livingEntity && getOwner() instanceof PlayerEntity ownerPlayer)
-            if (stack.useOnEntity(ownerPlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) return;
+            if (stack.useOnEntity(ownerPlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) {
+                handleItemsFrom(fakePlayer);
+                return;
+            }
 
-        if (item instanceof BlockItem && stack.useOnBlock(new ItemUsageContext(fakePlayer, Hand.MAIN_HAND, new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false))).isAccepted()) return;
+        if (item instanceof BlockItem && stack.useOnBlock(new ItemUsageContext(fakePlayer, Hand.MAIN_HAND, new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false))).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return;
+        }
 
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
