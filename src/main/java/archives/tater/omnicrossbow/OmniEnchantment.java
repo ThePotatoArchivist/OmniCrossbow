@@ -11,6 +11,7 @@ import net.minecraft.enchantment.MultishotEnchantment;
 import net.minecraft.enchantment.PiercingEnchantment;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -125,7 +126,7 @@ public class OmniEnchantment extends Enchantment {
             return entity;
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
-        if (projectileItem instanceof SpawnEggItem spawnEggItem) return create(world, spawnEggItem.getEntityType(null), shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(null), shooter, projectile, SpawnReason.SPAWN_EGG);
         if (projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
                     ? new ChestBoatEntity(world, x, y, z)
@@ -137,16 +138,20 @@ public class OmniEnchantment extends Enchantment {
             return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
         if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
 
-        var itemId = Registries.ITEM.getId(projectileItem);
-        if (Registries.ENTITY_TYPE.containsId(itemId)) {
-            var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
-            if (entity instanceof LivingEntity)
-                entity.discard();
-            else if (entity != null) {
-                entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-                if (entity instanceof ProjectileEntity projectileEntity)
-                    projectileEntity.setOwner(shooter);
-                return entity;
+        if (!projectile.isOf(Items.END_CRYSTAL) && !projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
+            var itemId = Registries.ITEM.getId(projectileItem);
+            if (Registries.ENTITY_TYPE.containsId(itemId)) {
+                var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
+                if (entity != null) {
+                    if (!entity.isLiving() && !(entity instanceof AbstractDecorationEntity)) {
+                        entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+                        if (entity instanceof ProjectileEntity projectileEntity)
+                            projectileEntity.setOwner(shooter);
+                        return entity;
+                    }
+
+                    entity.discard();
+                }
             }
         }
 
