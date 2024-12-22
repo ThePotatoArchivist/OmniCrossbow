@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.client.render.entity;
 
+import archives.tater.omnicrossbow.client.render.OmniCrossbowRenderer;
 import archives.tater.omnicrossbow.entity.GenericItemProjectile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

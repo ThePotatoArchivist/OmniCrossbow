@@ -3,7 +3,7 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.client.render.entity.BeaconLaserEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.EmberEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.GenericItemProjectileEntityRenderer;
-import archives.tater.omnicrossbow.client.render.entity.OmniCrossbowRenderer;
+import archives.tater.omnicrossbow.client.render.OmniCrossbowRenderer;
 import archives.tater.omnicrossbow.client.render.gui.hud.MultichamberedIndicator;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ClientModInitializer;

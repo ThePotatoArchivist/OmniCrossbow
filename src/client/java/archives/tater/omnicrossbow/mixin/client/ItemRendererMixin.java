@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client;
 
-import archives.tater.omnicrossbow.client.render.entity.OmniCrossbowRenderer;
+import archives.tater.omnicrossbow.client.render.OmniCrossbowRenderer;
 import net.minecraft.client.render.item.ItemModels;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
