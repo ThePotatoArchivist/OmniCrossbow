@@ -29,11 +29,13 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static archives.tater.omnicrossbow.mixin.FallingBlockEntityInvoker.newFallingBlockEntity;
 
@@ -51,6 +53,9 @@ public class OmniEnchantment extends Enchantment {
     protected boolean canAccept(Enchantment other) {
         return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof PiercingEnchantment);
     }
+
+    @SuppressWarnings("deprecation")
+    private static List<Item> RANDOM_AMMO = null;
 
     public static boolean shouldUnloadImmediate(ItemStack projectile) {
         return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
@@ -271,5 +276,12 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.getItem() instanceof EntityBucketItem entityBucketItem) return ((BucketItemAccessor) entityBucketItem).getFluid().getBucketItem().getDefaultStack();
         if (!projectile.isIn(OmniCrossbow.HAS_REMAINDER_TAG)) return ItemStack.EMPTY;
         return projectile.getRecipeRemainder();
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Item getRandomAmmo(Random random) {
+        if (RANDOM_AMMO == null)
+            RANDOM_AMMO = Registries.ITEM.stream().filter(item -> !item.getRegistryEntry().isIn(OmniCrossbow.NOT_RANDOM_AMMO_TAG) && !(item instanceof SpawnEggItem)).toList();
+        return RANDOM_AMMO.get(random.nextInt(RANDOM_AMMO.size()));
     }
 }

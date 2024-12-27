@@ -37,6 +37,7 @@ public class OmniCrossbow implements ModInitializer {
 	));
 
 	public static final TagKey<Item> HAS_REMAINDER_TAG = TagKey.of(RegistryKeys.ITEM, new Identifier(MOD_ID, "has_remainder"));
+	public static final TagKey<Item> NOT_RANDOM_AMMO_TAG = TagKey.of(RegistryKeys.ITEM, new Identifier(MOD_ID, "not_random_ammo"));
 
 	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MOD_ID, "beacon"));
 
