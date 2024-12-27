@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.util.RaycastUtil;
+import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -31,7 +32,7 @@ public class DelayedSonicBoomEntity extends DelayedShotEntity {
         var world = (ServerWorld) getWorld();
 
         var start = owner.getEyePos().add(0, -0.1f, 0);
-        var end = start.add(owner.getRotationVector().multiply(15)); // range = 15
+        var end = start.add((owner instanceof CrossbowUser crossbowUser && crossbowUser.getTarget() != null ? crossbowUser.getTarget().getEyePos().subtract(owner.getPos()).normalize() : owner.getRotationVector()).multiply(15)); // range = 15
         var stop = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, owner)).getPos();
         var difference = stop.subtract(start);
         var direction = difference.normalize();

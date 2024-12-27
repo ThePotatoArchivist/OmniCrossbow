@@ -69,7 +69,7 @@ public class OmniEnchantment extends Enchantment {
 
     private static Vec3d getProjectileVel(LivingEntity shooter, double length) {
         return shooter instanceof CrossbowUser crossbowUser
-                ? new Vec3d(crossbowUser.getProjectileLaunchVelocity((LivingEntity) crossbowUser, crossbowUser.getTarget().getPos().subtract(shooter.getPos()), 0))
+                ? new Vec3d(crossbowUser.getProjectileLaunchVelocity((LivingEntity) crossbowUser, crossbowUser.getTarget().getEyePos().subtract(shooter.getEyePos().subtract(0, 0.1, 0)), 0))
                 : shooter.getRotationVector().multiply(length);
     }
 
@@ -225,7 +225,7 @@ public class OmniEnchantment extends Enchantment {
 
     private static void shootBlazeRod(ServerWorld world, LivingEntity shooter, ItemStack crossbow) {
         var start = shooter.getEyePos().add(0, -0.1, 0);
-        var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getPos().subtract(shooter.getPos()).normalize() : shooter.getRotationVector();
+        var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getEyePos().subtract(start).normalize() : shooter.getRotationVector();
         var current = start;
         var end = start.add(direction.multiply(16));
         var burntPositions = new ArrayList<BlockPos>();

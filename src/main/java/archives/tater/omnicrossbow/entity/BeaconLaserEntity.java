@@ -2,6 +2,8 @@ package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.util.RaycastUtil;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
+import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
@@ -57,10 +59,15 @@ public class BeaconLaserEntity extends DelayedShotEntity {
     private void updateAnglesAndDistance() {
         if (owner == null) return;
 
-        prevYaw = getHeadYaw();
-        prevPitch = getPitch();
-        setYaw(owner.getYaw());
-        setPitch(owner.getPitch());
+        if (owner instanceof CrossbowUser crossbowUser) {
+            if (crossbowUser.getTarget() != null)
+                lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, crossbowUser.getTarget().getEyePos());
+        } else {
+            prevYaw = getHeadYaw();
+            prevPitch = getPitch();
+            setYaw(owner.getYaw());
+            setPitch(owner.getPitch());
+        }
 
         var start = getPos();
         var hitResult = getWorld().raycast(new RaycastContext(start, start.add(getRotationVector().multiply(MAX_DISTANCE)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
