@@ -68,7 +68,9 @@ public class OmniEnchantment extends Enchantment {
     }
 
     private static Vec3d getProjectileVel(LivingEntity shooter, double length) {
-        return shooter.getRotationVector().multiply(length);
+        return shooter instanceof CrossbowUser crossbowUser
+                ? new Vec3d(crossbowUser.getProjectileLaunchVelocity((LivingEntity) crossbowUser, crossbowUser.getTarget().getPos().subtract(shooter.getPos()), 0))
+                : shooter.getRotationVector().multiply(length);
     }
 
     @FunctionalInterface
@@ -170,13 +172,19 @@ public class OmniEnchantment extends Enchantment {
         if (entity instanceof ThrownItemEntity thrownItemEntity) {
             thrownItemEntity.setItem(projectile);
             if (!(thrownItemEntity instanceof GenericItemProjectile)) {
-                thrownItemEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 3.0F, 0.2F);
+                if (shooter instanceof CrossbowUser crossbowUser)
+                    crossbowUser.shoot(shooter, crossbowUser.getTarget(), thrownItemEntity, 0, 3f);
+                else
+                    thrownItemEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 3.0F, 0.2F);
                 return;
             }
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {
-            projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 2.5F, 0.2F);
+            if (shooter instanceof CrossbowUser crossbowUser)
+                crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, 2.5f);
+            else
+                projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 2.5F, 0.2F);
             return;
         }
 
@@ -197,7 +205,11 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.BLAZE_POWDER)) {
             for (int i = 0; i < 12; i++) {
                 var ember = new EmberEntity(shooter, world);
-                ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
+                if (shooter instanceof CrossbowUser crossbowUser)
+                    crossbowUser.shoot(shooter, crossbowUser.getTarget(), ember, 0, 1.0f);
+
+                else
+                    ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
                 world.spawnEntity(ember);
             }
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
@@ -213,7 +225,7 @@ public class OmniEnchantment extends Enchantment {
 
     private static void shootBlazeRod(ServerWorld world, LivingEntity shooter, ItemStack crossbow) {
         var start = shooter.getEyePos().add(0, -0.1, 0);
-        var direction = shooter.getRotationVector();
+        var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getPos().subtract(shooter.getPos()).normalize() : shooter.getRotationVector();
         var current = start;
         var end = start.add(direction.multiply(16));
         var burntPositions = new ArrayList<BlockPos>();

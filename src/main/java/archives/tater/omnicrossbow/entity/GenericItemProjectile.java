@@ -238,7 +238,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         }
 
         if (stack.isOf(Items.GUNPOWDER)) {
-            world.createExplosion(getOwner(), getX(), getY(), getZ(), 1f, true, World.ExplosionSourceType.MOB);
+            world.createExplosion(getOwner(), entity.getX(), getY(), entity.getZ(), 1f, true, World.ExplosionSourceType.MOB);
             stack.decrement(1);
             return;
         }
