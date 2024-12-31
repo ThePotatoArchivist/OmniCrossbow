@@ -1,0 +1,10 @@
+- [x] Fix when delayed shot durability damage gets applied
+- [x] Fix switching away from the laser crossbow
+- [ ] Translations
+  - Death
+- [x] Fake player to maximize interactions
+- [x] Chorus Fruit
+- [ ] Eye of Ender???
+- [ ] Sound events
+- [ ] Rendering
+- [ ] Multichambered

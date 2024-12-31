@@ -17,6 +17,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.FoxEntity;
+import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.*;
@@ -279,6 +280,12 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return;
         }
 
+        if (entity instanceof LivingEntity livingEntity && LivingEntity.getPreferredEquipmentSlot(stack) != EquipmentSlot.MAINHAND && livingEntity.canEquip(stack)) {
+            livingEntity.equipStack(LivingEntity.getPreferredEquipmentSlot(stack), stack.copy());
+            stack.decrement(1);
+            return;
+        }
+
         var item = stack.getItem();
 
         if (item instanceof PotionItem && !(item instanceof ThrowablePotionItem) && entity instanceof LivingEntity livingEntity) {
@@ -316,17 +323,16 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         var fakePlayer = createFakePlayer();
 
-        if (entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) {
+        if (!(entity instanceof MerchantEntity) && entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return;
         }
-        if (entity instanceof LivingEntity livingEntity && getOwner() instanceof PlayerEntity ownerPlayer)
-            if (stack.useOnEntity(ownerPlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) {
-                handleItemsFrom(fakePlayer);
-                return;
-            }
+        if (entity instanceof LivingEntity livingEntity && stack.useOnEntity(fakePlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return;
+        }
 
-        if (item instanceof BlockItem && stack.useOnBlock(new ItemUsageContext(fakePlayer, Hand.MAIN_HAND, new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false))).isAccepted()) {
+        if (stack.useOnBlock(new ItemUsageContext(fakePlayer, Hand.MAIN_HAND, new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false))).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return;
         }
