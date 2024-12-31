@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
@@ -42,6 +43,8 @@ public class OmniCrossbow implements ModInitializer {
 	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MOD_ID, "beacon"));
 
 	public static final TagKey<DamageType> NO_KNOCKBACK = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(MOD_ID, "no_knockback"));
+
+	public static final TagKey<EntityType<?>> CAN_EQUIP_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(MOD_ID, "can_equip"));
 
 	private static SoundEvent of (Identifier id) {
 		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));

@@ -280,10 +280,15 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return;
         }
 
-        if (entity instanceof LivingEntity livingEntity && LivingEntity.getPreferredEquipmentSlot(stack) != EquipmentSlot.MAINHAND && livingEntity.canEquip(stack)) {
-            livingEntity.equipStack(LivingEntity.getPreferredEquipmentSlot(stack), stack.copy());
-            stack.decrement(1);
-            return;
+        var slot = LivingEntity.getPreferredEquipmentSlot(stack);
+        if (slot != EquipmentSlot.MAINHAND && entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {
+            var equippedStack = livingEntity.getEquippedStack(slot);
+            if (!EnchantmentHelper.hasBindingCurse(equippedStack)) {
+                livingEntity.dropStack(equippedStack);
+                livingEntity.equipStack(slot, stack.copy());
+                stack.decrement(1);
+                return;
+            }
         }
 
         var item = stack.getItem();

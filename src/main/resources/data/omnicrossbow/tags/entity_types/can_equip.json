@@ -1,0 +1,21 @@
+{
+  "values": [
+    "minecraft:zombie",
+    "minecraft:husk",
+    "minecraft:drowned",
+    "minecraft:zombie_villager",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:wither_skeleton",
+    "minecraft:armor_stand",
+    "minecraft:vindicator",
+    "minecraft:evoker",
+    "minecraft:pillager",
+    "minecraft:player",
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:zombified_piglin",
+    "minecraft:armor_stand",
+    {"required": false, "id": "armorrack:armor_rack"}
+  ]
+}
