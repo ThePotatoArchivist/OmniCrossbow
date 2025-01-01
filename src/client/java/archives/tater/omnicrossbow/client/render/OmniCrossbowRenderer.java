@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.client.render;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
-import archives.tater.omnicrossbow.util.OmniUtil;
+import archives.tater.omnicrossbow.OmniEnchantment;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static archives.tater.omnicrossbow.util.OmniUtil.getMainProjectile;
+
 @Environment(EnvType.CLIENT)
 public class OmniCrossbowRenderer {
 
@@ -35,7 +37,7 @@ public class OmniCrossbowRenderer {
     public static void renderCrossbow(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         var world = MinecraftClient.getInstance().world;
-        var projectile = OmniUtil.getMainProjectile(stack);
+        var projectile = getMainProjectile(stack);
         var loadedModel = itemRenderer.getModels().getModelManager().getModel(PULLED_CROSSBOW);
         var leftHanded = mode == ModelTransformationMode.FIRST_PERSON_LEFT_HAND || mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
 
@@ -61,8 +63,7 @@ public class OmniCrossbowRenderer {
     public static boolean useDynamic(ItemStack maybeCrossbow, @Nullable LivingEntity user) {
         if (!maybeCrossbow.isOf(Items.CROSSBOW)) return false;
         if (user != null && user.getActiveItem() == maybeCrossbow) return false;
-        var projectile = OmniUtil.getMainProjectile(maybeCrossbow);
-        return !projectile.isEmpty() && !(projectile.getItem() instanceof ArrowItem) && !(projectile.getItem() instanceof FireworkRocketItem);
+        return !OmniEnchantment.isNotDynamic(getMainProjectile(maybeCrossbow));
     }
 
     public static void itemSpecificTransform(Item projectile, MatrixStack matrices) {

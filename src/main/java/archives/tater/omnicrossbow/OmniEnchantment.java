@@ -54,8 +54,11 @@ public class OmniEnchantment extends Enchantment {
         return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof PiercingEnchantment);
     }
 
-    @SuppressWarnings("deprecation")
     private static List<Item> RANDOM_AMMO = null;
+
+    public static boolean isNotDynamic(ItemStack projectile) {
+        return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG);
+    }
 
     public static boolean shouldUnloadImmediate(ItemStack projectile) {
         return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
@@ -96,6 +99,8 @@ public class OmniEnchantment extends Enchantment {
     }
 
     public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
+        if (isNotDynamic(projectile)) return null;
+
         var x = shooter.getX();
         var y = shooter.getEyeY() - 0.1f;
         var z = shooter.getZ();
@@ -143,7 +148,6 @@ public class OmniEnchantment extends Enchantment {
         }
         if (projectileItem instanceof MinecartItem minecartItem)
             return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
-        if (projectileItem instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET)) return null;
 
         if (!projectile.isOf(Items.END_CRYSTAL) && !projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
             var itemId = Registries.ITEM.getId(projectileItem);
