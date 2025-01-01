@@ -15,7 +15,6 @@ import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.item.*;
@@ -57,8 +56,7 @@ public class OmniEnchantment extends Enchantment {
     private static List<Item> RANDOM_AMMO = null;
 
     public static boolean isNotDynamic(ItemStack projectile) {
-        return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG);
-    }
+        return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG);}
 
     public static boolean shouldUnloadImmediate(ItemStack projectile) {
         return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
@@ -146,8 +144,6 @@ public class OmniEnchantment extends Enchantment {
             entity.setVariant(((BoatItemAccessor) boatItem).getType());
             return entity;
         }
-        if (projectileItem instanceof MinecartItem minecartItem)
-            return AbstractMinecartEntity.create(world, x, y, z, ((MinecartItemAccessor) minecartItem).getType());
 
         if (!projectile.isOf(Items.END_CRYSTAL) && !projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
             var itemId = Registries.ITEM.getId(projectileItem);

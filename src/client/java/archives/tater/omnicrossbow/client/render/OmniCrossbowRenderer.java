@@ -63,7 +63,8 @@ public class OmniCrossbowRenderer {
     public static boolean useDynamic(ItemStack maybeCrossbow, @Nullable LivingEntity user) {
         if (!maybeCrossbow.isOf(Items.CROSSBOW)) return false;
         if (user != null && user.getActiveItem() == maybeCrossbow) return false;
-        return !OmniEnchantment.isNotDynamic(getMainProjectile(maybeCrossbow));
+        var projectile = getMainProjectile(maybeCrossbow);
+        return !projectile.isEmpty() && !OmniEnchantment.isNotDynamic(projectile);
     }
 
     public static void itemSpecificTransform(Item projectile, MatrixStack matrices) {
