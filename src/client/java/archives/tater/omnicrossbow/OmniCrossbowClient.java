@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.client.render.entity.BeaconLaserEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.EmberEntityRenderer;
+import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileEntityRenderer;
 import archives.tater.omnicrossbow.client.render.entity.GenericItemProjectileEntityRenderer;
 import archives.tater.omnicrossbow.client.render.OmniCrossbowRenderer;
 import archives.tater.omnicrossbow.client.render.gui.hud.MultichamberedIndicator;
@@ -22,6 +23,7 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.BEACON_LASER, BeaconLaserEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.EMBER, EmberEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.SLIME_BALL, FlyingItemEntityRenderer::new);
+		EntityRendererRegistry.register(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, EndCrystalProjectileEntityRenderer::new);
 		OmniCrossbowRenderer.register();
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
 		HudRenderCallback.EVENT.register(MultichamberedIndicator::drawIndicator);

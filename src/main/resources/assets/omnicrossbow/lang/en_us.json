@@ -8,5 +8,6 @@
   "subtitles.omnicrossbow.projectile.beacon.prepare": "Nether star charges",
   "subtitles.omnicrossbow.projectile.beacon.fire": "Nether star blasts",
   "subtitles.omnicrossbow.projectile.sonic.prepare": "Echo shard charges",
-  "subtitles.omnicrossbow.projectile.sonic.fire": "Echo shard booms"
+  "subtitles.omnicrossbow.projectile.sonic.fire": "Echo shard booms",
+  "subtitles.omnicrossbow.projectile.endcrystal.hit": "End crystal clangs"
 }

@@ -28,5 +28,15 @@
       "mob/warden/sonic_boom4"
     ],
     "subtitle": "subtitles.omnicrossbow.projectile.sonic.fire"
+  },
+  "projectile.endcrystal.hit": {
+    "sounds": [
+      {
+        "name": "random/anvil_land",
+        "volume": 0.4,
+        "pitch": 1.2
+      }
+    ],
+    "subtitle": "subtitles.omnicrossbow.projectile.endcrystal.hit"
   }
 }

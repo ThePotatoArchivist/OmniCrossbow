@@ -122,6 +122,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
         if (projectile.isOf(Items.ARMOR_STAND)) return create(world, EntityType.ARMOR_STAND, shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectile.isOf(Items.END_CRYSTAL)) return new EndCrystalProjectileEntity(shooter, world);
         if (projectile.isOf(Items.ECHO_SHARD)) return new DelayedSonicBoomEntity(world, shooter, crossbow);
         if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
 
@@ -165,6 +166,13 @@ public class OmniEnchantment extends Enchantment {
         return new GenericItemProjectile(shooter, world);
     }
 
+    private static void shoot(ProjectileEntity projectileEntity, LivingEntity shooter, float speed) {
+        if (shooter instanceof CrossbowUser crossbowUser)
+            crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, speed);
+        else
+            projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, speed, 0.2F);
+    }
+
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack projectile) {
         if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) return;
 
@@ -177,19 +185,18 @@ public class OmniEnchantment extends Enchantment {
         if (entity instanceof ThrownItemEntity thrownItemEntity) {
             thrownItemEntity.setItem(projectile);
             if (!(thrownItemEntity instanceof GenericItemProjectile)) {
-                if (shooter instanceof CrossbowUser crossbowUser)
-                    crossbowUser.shoot(shooter, crossbowUser.getTarget(), thrownItemEntity, 0, 3f);
-                else
-                    thrownItemEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 3.0F, 0.2F);
+                shoot(thrownItemEntity, shooter, 3f);
                 return;
             }
         }
 
+        if (entity instanceof EndCrystalProjectileEntity endCrystalProjectile) {
+            shoot(endCrystalProjectile, shooter, 0.3f);
+            return;
+        }
+
         if (entity instanceof ProjectileEntity projectileEntity) {
-            if (shooter instanceof CrossbowUser crossbowUser)
-                crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, 2.5f);
-            else
-                projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 2.5F, 0.2F);
+            shoot(projectileEntity, shooter, 2.5f);
             return;
         }
 
