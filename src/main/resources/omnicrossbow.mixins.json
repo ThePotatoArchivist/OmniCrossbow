@@ -20,6 +20,7 @@
     "MinecartItemAccessor",
     "PlayerEntityMixin",
     "ProjectileEntityAccessor",
+    "ServerPlayerEntityMixin",
     "ThrownEntityMixin"
   ],
   "injectors": {

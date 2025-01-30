@@ -3,7 +3,13 @@
   "package": "archives.tater.omnicrossbow.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ItemRendererMixin"
+    "ClientPlayerEntityMixin",
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
+    "InGameHudMixin",
+    "ItemRendererMixin",
+    "MouseMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

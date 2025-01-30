@@ -78,5 +78,13 @@ public class OmniCrossbowEntities {
                     .fireImmune()
     );
 
+    public static EntityType<SpyEnderEyeEntity> SPY_ENDER_EYE = register(
+            "spy_ender_eye",
+            FabricEntityTypeBuilder.<SpyEnderEyeEntity>create(SpawnGroup.MISC, SpyEnderEyeEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
+                    .trackRangeChunks(16)
+                    .trackedUpdateRate(10)
+    );
+
     public static void register() {};
 }

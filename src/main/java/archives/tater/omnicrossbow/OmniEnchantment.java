@@ -116,7 +116,7 @@ public class OmniEnchantment extends Enchantment {
             }
             return entity;
         }
-        if (projectile.isOf(Items.ENDER_EYE)) return new EyeOfEnderEntity(world, x, shooter.getBodyY(0.5), z);
+        if (projectile.isOf(Items.ENDER_EYE)) return new SpyEnderEyeEntity(shooter, world);
         if (projectile.isOf(Items.TNT)) return new TntEntity(world, x, y, z, shooter);
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return shootExplosive(world, shooter, 1f, WitherSkullEntity::new);
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
@@ -193,6 +193,10 @@ public class OmniEnchantment extends Enchantment {
         if (entity instanceof EndCrystalProjectileEntity endCrystalProjectile) {
             shoot(endCrystalProjectile, shooter, 0.3f);
             return;
+        }
+
+        if (entity instanceof SpyEnderEyeEntity spyEnderEyeEntity) {
+            shoot(spyEnderEyeEntity, shooter, 0.5f);
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {
