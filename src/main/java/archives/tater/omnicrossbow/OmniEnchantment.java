@@ -79,6 +79,13 @@ public class OmniEnchantment extends Enchantment {
                 : shooter.getRotationVector().multiply(length);
     }
 
+    private static void shoot(ProjectileEntity projectileEntity, LivingEntity shooter, float speed) {
+        if (shooter instanceof CrossbowUser crossbowUser)
+            crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, speed);
+        else
+            projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, speed, 0.2F);
+    }
+
     @FunctionalInterface
     interface ExplosiveConstructor {
         ExplosiveProjectileEntity create(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ);
@@ -164,13 +171,6 @@ public class OmniEnchantment extends Enchantment {
         }
 
         return new GenericItemProjectile(shooter, world);
-    }
-
-    private static void shoot(ProjectileEntity projectileEntity, LivingEntity shooter, float speed) {
-        if (shooter instanceof CrossbowUser crossbowUser)
-            crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, speed);
-        else
-            projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, speed, 0.2F);
     }
 
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack projectile) {
