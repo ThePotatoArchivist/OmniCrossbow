@@ -3,10 +3,12 @@
   "package": "archives.tater.omnicrossbow.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "BackgroundRendererMixin",
     "ClientPlayerEntityMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "ItemRendererMixin",
+    "LightmapTextureManagerMixin",
     "MouseMixin",
     "WorldRendererMixin"
   ],
