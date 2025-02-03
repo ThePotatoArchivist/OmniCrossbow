@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.OmniCrossbow;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
@@ -51,10 +52,10 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
         if (isInvulnerableTo(source)) return false;
         if (isRemoved()) return true;
         var entity = source.getSource();
-        if (entity != null && !source.isIn(DamageTypeTags.IS_EXPLOSION) && squaredDistanceTo(entity) < 4) {
+        if (entity != null && !source.isIn(DamageTypeTags.IS_EXPLOSION) && (!entity.isLiving() || squaredDistanceTo(entity) < 4)) {
             scheduleVelocityUpdate();
             if (getWorld().isClient) return true;
-            addVelocity(entity.getRotationVector());
+            addVelocity(entity instanceof ProjectileEntity ? entity.getVelocity().normalize() : entity.getRotationVector());
             setOwner(entity);
             playSound(OmniCrossbow.END_CRYSTAL_HIT, 1f, 1f);
         } else explode();
@@ -71,7 +72,7 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
         if (getWorld().isClient) return;
         discard();
         DamageSource damageSource = getOwner() != null ? getDamageSources().explosion(this, getOwner()) : null;
-        this.getWorld().createExplosion(this, damageSource, null, getX(), getY(), getZ(), 6.0F, true, World.ExplosionSourceType.MOB);
+        this.getWorld().createExplosion(this, damageSource, null, getX(), getY(), getZ(), getVelocity().length() > 0.5 ? 4f : 6F, true, World.ExplosionSourceType.MOB);
     }
 
     @Override

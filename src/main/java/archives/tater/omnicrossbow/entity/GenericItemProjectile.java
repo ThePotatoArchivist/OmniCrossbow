@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.DummyRecipeInputInventory;
 import archives.tater.omnicrossbow.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
@@ -7,9 +8,7 @@ import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.NoteBlock;
+import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -20,6 +19,7 @@ import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.*;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -27,6 +27,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.BrewingRecipeRegistry;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -152,6 +153,27 @@ public class GenericItemProjectile extends ThrownItemEntity {
             spawnItemParticles();
             stack.decrement(1);
             return true;
+        }
+
+        if (stack.isIn(ConventionalItemTags.DYES) && !state.hasBlockEntity() && state.getBlock().asItem() != Items.AIR) {
+            var blockStack = state.getBlock().asItem().getDefaultStack();
+            for (var inventory : new RecipeInputInventory[] {
+                new DummyRecipeInputInventory(stack, blockStack),
+                new DummyRecipeInputInventory(blockStack, blockStack, blockStack, blockStack, stack, blockStack, blockStack, blockStack, blockStack)
+            }) {
+                var recipe = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, inventory, world);
+                if (recipe.isEmpty()) continue;
+                var resultStack = recipe.get().getOutput(world.getRegistryManager());
+                if (!(resultStack.getItem() instanceof BlockItem resultBlockItem)) continue;
+                stack.decrement(1);
+                if (state.getBlock() instanceof BedBlock) {
+                    var direction = BedBlock.getOppositePartDirection(state);
+                    world.setBlockState(blockPos.offset(direction), resultBlockItem.getBlock().getStateWithProperties(world.getBlockState(blockPos.offset(direction))), Block.NOTIFY_LISTENERS | Block.REDRAW_ON_MAIN_THREAD | Block.FORCE_STATE);
+                }
+                world.setBlockState(blockPos, resultBlockItem.getBlock().getStateWithProperties(state));
+                playSound(SoundEvents.ITEM_DYE_USE, 1f, 1f);
+                return true;
+            }
         }
 
         var fakePlayer = reusePlayer == null ? createFakePlayer() : reusePlayer;
@@ -305,6 +327,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
             stack.decrement(1);
             return;
         }
+
+        if (stack.isOf(Items.FEATHER)) return;
 
         var slot = LivingEntity.getPreferredEquipmentSlot(stack);
         if (slot != EquipmentSlot.MAINHAND && entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {

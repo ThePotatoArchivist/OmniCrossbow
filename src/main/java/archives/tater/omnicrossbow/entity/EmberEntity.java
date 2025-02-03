@@ -87,6 +87,7 @@ public class EmberEntity extends ThrownEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         var entity = entityHitResult.getEntity();
+        if (entity instanceof LivingEntity livingEntity && livingEntity.hurtTime > 0) return;
         entity.damage(getWorld().getDamageSources().create(DamageTypes.IN_FIRE, this, getOwner()), 2);
         entity.setOnFireFor(4);
         discard();
