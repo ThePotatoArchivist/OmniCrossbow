@@ -73,7 +73,7 @@ public class OmniCrossbowEntities {
             "end_crystal_projecctile",
             FabricEntityTypeBuilder.<EndCrystalProjectileEntity>create(SpawnGroup.MISC, EndCrystalProjectileEntity::new)
                     .dimensions(EntityDimensions.fixed(1.2f, 1.2f))
-                    .trackRangeChunks(4)
+                    .trackRangeChunks(6)
                     .trackedUpdateRate(10)
                     .fireImmune()
     );

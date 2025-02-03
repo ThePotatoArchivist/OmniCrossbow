@@ -12,6 +12,8 @@ import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
@@ -21,6 +23,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.potion.Potion;
@@ -42,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -109,6 +114,15 @@ public class GenericItemProjectile extends ThrownItemEntity {
                         0.3 * random.nextDouble() - 0.15
                 );
         }
+
+        if (status == EntityStatuses.EXPLODE_FIREWORK_CLIENT) {
+            var vec3d = this.getVelocity();
+            var fireworkNbt = new NbtCompound();
+            var explosions = new NbtList();
+            explosions.add(getStack().getSubNbt("Explosion"));
+            fireworkNbt.put("Explosions", explosions);
+            this.getWorld().addFireworkParticle(this.getX(), this.getY(), this.getZ(), vec3d.x, vec3d.y, vec3d.z, fireworkNbt);
+        }
     }
 
     private void spawnItemParticles() {
@@ -131,6 +145,34 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (stack.isOf(Items.GUNPOWDER)) {
             world.createExplosion(getOwner(), getX(), getY(), getZ(), 1, true, World.ExplosionSourceType.MOB);
+            stack.decrement(1);
+            return true;
+        }
+
+        if (stack.isOf(Items.FIREWORK_STAR) && stack.getSubNbt("Explosion") != null) {
+            world.sendEntityStatus(this, EntityStatuses.EXPLODE_FIREWORK_CLIENT);
+            var pos = getPos();
+
+            for (LivingEntity livingEntity : this.getWorld().getNonSpectatingEntities(LivingEntity.class, this.getBoundingBox().expand(5.0))) {
+                if (livingEntity.squaredDistanceTo(pos) <= 25.0) {
+                    boolean hit = false;
+
+                    for (int i = 0; i < 2; i++) {
+                        Vec3d entityPos = new Vec3d(livingEntity.getX(), livingEntity.getBodyY(0.5 * i), livingEntity.getZ());
+                        HitResult hitResult = this.getWorld().raycast(new RaycastContext(pos, entityPos, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
+                        if (hitResult.getType() == HitResult.Type.MISS) {
+                            hit = true;
+                            break;
+                        }
+                    }
+
+                    if (hit) {
+                        float g = 7 * (float)Math.sqrt((5.0 - (double)this.distanceTo(livingEntity)) / 5.0);
+                        livingEntity.damage(new DamageSource(getDamageSources().registry.entryOf(DamageTypes.FIREWORKS), this, this.getOwner()), g);
+                    }
+                }
+            }
+
             stack.decrement(1);
             return true;
         }
