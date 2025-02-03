@@ -12,8 +12,8 @@ import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 
 public class MultichamberedIndicator {
-    public static final Identifier FILLED_ARROW = new Identifier(OmniCrossbow.MOD_ID, "textures/gui/arrow_loaded.png");
-    public static final Identifier EMPTY_ARROW = new Identifier(OmniCrossbow.MOD_ID, "textures/gui/arrow_unloaded.png");
+    public static final Identifier FILLED_ARROW = OmniCrossbow.id("textures/gui/arrow_loaded.png");
+    public static final Identifier EMPTY_ARROW = OmniCrossbow.id("textures/gui/arrow_unloaded.png");
 
     private static @Nullable ItemStack lastCrossbow = null;
     private static int lastCount = -1;

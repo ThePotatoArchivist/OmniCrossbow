@@ -16,11 +16,11 @@ public class OmniCrossbowEntities {
     }
 
     private static <T extends Entity> EntityType<T> register(String path, EntityType<T> entityType) {
-        return register(new Identifier(OmniCrossbow.MOD_ID, path), entityType);
+        return register(OmniCrossbow.id(path), entityType);
     }
 
     private static <T extends Entity> EntityType<T> register(String path, FabricEntityTypeBuilder<T> entityType) {
-        return register(new Identifier(OmniCrossbow.MOD_ID, path), entityType.build());
+        return register(OmniCrossbow.id(path), entityType.build());
     }
 
     public static EntityType<FreezingSnowballEntity> FREEZING_SNOWBALL = register(
