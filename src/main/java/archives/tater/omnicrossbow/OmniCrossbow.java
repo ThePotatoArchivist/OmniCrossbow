@@ -2,13 +2,14 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.component.ComponentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -17,6 +18,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +34,12 @@ public class OmniCrossbow implements ModInitializer {
 		return Identifier.of(MOD_ID, path);
 	}
 
-	public static final Enchantment OMNI = Registry.register(Registries.ENCHANTMENT, id("omni"), new OmniEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
-	public static final Enchantment MULTICHAMBERED = Registry.register(Registries.ENCHANTMENT, id("multichambered"), new MultichamberedEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+	public static final RegistryKey<Enchantment> OMNI = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
+	public static final RegistryKey<Enchantment> MULTICHAMBERED = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 
-	public static final Block HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("honey_slick"), new HoneySlickBlock(FabricBlockSettings.create()
+	public static final ComponentType<Unit> CROSSBOW_FULL = ComponentType.<Unit>builder().codec(Unit.CODEC).packetCodec(PacketCodec.unit(Unit.INSTANCE)).build();
+
+	public static final Block HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("honey_slick"), new HoneySlickBlock(AbstractBlock.Settings.create()
 			.nonOpaque()
 			.strength(0.7f, 0)
 			.sounds(BlockSoundGroup.HONEY)
@@ -46,8 +50,6 @@ public class OmniCrossbow implements ModInitializer {
 	public static final TagKey<Item> NON_OMNI_PROJECTILE_TAG = TagKey.of(RegistryKeys.ITEM, id("non_omni_projectile"));
 
 	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("beacon"));
-
-	public static final TagKey<DamageType> NO_KNOCKBACK = TagKey.of(RegistryKeys.DAMAGE_TYPE, id("no_knockback"));
 
 	public static final TagKey<EntityType<?>> CAN_EQUIP_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, id("can_equip"));
 
@@ -66,6 +68,7 @@ public class OmniCrossbow implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+		OmniCrossbowEnchantmentEffects.register();
 		OmniCrossbowEntities.register();
 	}
 }

@@ -8,3 +8,4 @@
 - [ ] Sound events
 - [ ] Rendering
 - [ ] Multichambered
+- [ ] Supplementaries brick compat

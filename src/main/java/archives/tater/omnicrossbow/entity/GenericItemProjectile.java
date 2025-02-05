@@ -1,14 +1,17 @@
 package archives.tater.omnicrossbow.entity;
 
-import archives.tater.omnicrossbow.DummyRecipeInputInventory;
 import archives.tater.omnicrossbow.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
+import archives.tater.omnicrossbow.mixin.PlayerEntityInvoker;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.*;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -21,17 +24,13 @@ import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
-import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -51,6 +50,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class GenericItemProjectile extends ThrownItemEntity {
     public GenericItemProjectile(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
@@ -67,6 +68,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
     @Override
     protected Item getDefaultItem() {
         return Items.AIR;
+    }
+
+    @Deprecated
+    private ItemStack getItem() {
+        return getStack();
     }
 
     // Call server side
@@ -116,12 +122,10 @@ public class GenericItemProjectile extends ThrownItemEntity {
         }
 
         if (status == EntityStatuses.EXPLODE_FIREWORK_CLIENT) {
+            var explosion = getStack().get(DataComponentTypes.FIREWORK_EXPLOSION);
+            if (explosion == null) return;
             var vec3d = this.getVelocity();
-            var fireworkNbt = new NbtCompound();
-            var explosions = new NbtList();
-            explosions.add(getStack().getSubNbt("Explosion"));
-            fireworkNbt.put("Explosions", explosions);
-            this.getWorld().addFireworkParticle(this.getX(), this.getY(), this.getZ(), vec3d.x, vec3d.y, vec3d.z, fireworkNbt);
+            this.getWorld().addFireworkParticle(this.getX(), this.getY(), this.getZ(), vec3d.x, vec3d.y, vec3d.z, List.of(explosion));
         }
     }
 
@@ -149,7 +153,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (stack.isOf(Items.FIREWORK_STAR) && stack.getSubNbt("Explosion") != null) {
+        if (stack.isOf(Items.FIREWORK_STAR) && stack.contains(DataComponentTypes.FIREWORK_EXPLOSION)) {
             world.sendEntityStatus(this, EntityStatuses.EXPLODE_FIREWORK_CLIENT);
             var pos = getPos();
 
@@ -199,13 +203,13 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (stack.isIn(ConventionalItemTags.DYES) && !state.hasBlockEntity() && state.getBlock().asItem() != Items.AIR) {
             var blockStack = state.getBlock().asItem().getDefaultStack();
-            for (var inventory : new RecipeInputInventory[] {
-                new DummyRecipeInputInventory(stack, blockStack),
-                new DummyRecipeInputInventory(blockStack, blockStack, blockStack, blockStack, stack, blockStack, blockStack, blockStack, blockStack)
+            for (var inventory : new CraftingRecipeInput[] {
+                CraftingRecipeInput.create(3, 3, List.of(stack, blockStack)),
+                CraftingRecipeInput.create(3, 3, List.of(blockStack, blockStack, blockStack, blockStack, stack, blockStack, blockStack, blockStack, blockStack))
             }) {
                 var recipe = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, inventory, world);
                 if (recipe.isEmpty()) continue;
-                var resultStack = recipe.get().getOutput(world.getRegistryManager());
+                var resultStack = recipe.get().value().getResult(world.getRegistryManager());
                 if (!(resultStack.getItem() instanceof BlockItem resultBlockItem)) continue;
                 stack.decrement(1);
                 if (state.getBlock() instanceof BedBlock) {
@@ -254,7 +258,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                     lightningBolt.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
                     world.spawnEntity(lightningBolt);
                 }
-                world.playSound(null, offsetPos, SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
+                world.playSound(null, offsetPos, SoundEvents.ITEM_TRIDENT_THUNDER.value(), SoundCategory.WEATHER, 5.0F, 1.0F);
             }
             return true;
         }
@@ -263,7 +267,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             handleItemsFrom(fakePlayer);
             return true;
         }
-        if (state.onUse(world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
+        if (state.onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return true;
         }
@@ -272,7 +276,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             handleItemsFrom(fakePlayer);
             return true;
         }
-        if (world.getBlockState(offsetPos).onUse(world, fakePlayer, Hand.MAIN_HAND, offsetHit).isAccepted()) {
+        if (world.getBlockState(offsetPos).onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, offsetHit).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return true;
         }
@@ -281,7 +285,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
     }
 
     private boolean isSuitableTool(ItemStack tool, BlockPos blockPos, BlockState state, PlayerEntity fakePlayer) {
-        return tool.isSuitableFor(state) || tool.isIn(ConventionalItemTags.SHEARS) && state.isIn(BlockTags.LEAVES) || (tool.getItem() instanceof MiningToolItem && !state.isIn(BlockTags.AXE_MINEABLE) && !state.isIn(BlockTags.HOE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) & state.calcBlockBreakingDelta(fakePlayer, getWorld(), blockPos) >= 0.005);
+        return tool.isSuitableFor(state) || tool.isIn(ConventionalItemTags.SHEAR_TOOLS) && state.isIn(BlockTags.LEAVES) || (tool.getItem() instanceof MiningToolItem && !state.isIn(BlockTags.AXE_MINEABLE) && !state.isIn(BlockTags.HOE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) & state.calcBlockBreakingDelta(fakePlayer, getWorld(), blockPos) >= 0.005);
     }
 
     @Override
@@ -345,11 +349,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 lightningBolt.setChanneler(getOwner() instanceof ServerPlayerEntity serverPlayerEntity ? serverPlayerEntity : null);
                 world.spawnEntity(lightningBolt);
             }
-            world.playSound(null, entity.getBlockPos(), SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
+            world.playSound(null, entity.getBlockPos(), SoundEvents.ITEM_TRIDENT_THUNDER.value(), SoundCategory.WEATHER, 5.0F, 1.0F);
             return;
         }
 
-        if (stack.isOf(Items.LEAD) && entity instanceof MobEntity mobEntity && getOwner() instanceof PlayerEntity playerEntity && mobEntity.canBeLeashedBy(playerEntity)) {
+        if (stack.isOf(Items.LEAD) && entity instanceof MobEntity mobEntity && getOwner() instanceof PlayerEntity playerEntity && mobEntity.canLeashAttachTo()) {
             mobEntity.attachLeash(playerEntity, true);
             stack.decrement(1);
             return;
@@ -372,23 +376,25 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (stack.isOf(Items.FEATHER)) return;
 
-        var slot = LivingEntity.getPreferredEquipmentSlot(stack);
-        if (slot != EquipmentSlot.MAINHAND && entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {
-            var equippedStack = livingEntity.getEquippedStack(slot);
-            if (!EnchantmentHelper.hasBindingCurse(equippedStack)) {
-                livingEntity.dropStack(equippedStack);
-                livingEntity.equipStack(slot, stack.copy());
-                stack.decrement(1);
-                return;
+        if (entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {
+            var slot = livingEntity.getPreferredEquipmentSlot(stack);
+            if (slot != EquipmentSlot.MAINHAND) {
+                var equippedStack = livingEntity.getEquippedStack(slot);
+                if (!EnchantmentHelper.hasAnyEnchantmentsWith(equippedStack, EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE)) {
+                    livingEntity.dropStack(equippedStack);
+                    livingEntity.equipStack(slot, stack.copy());
+                    stack.decrement(1);
+                    return;
+                }
             }
         }
 
         var item = stack.getItem();
 
         if (item instanceof PotionItem && !(item instanceof ThrowablePotionItem) && entity instanceof LivingEntity livingEntity) {
-            for (var effect : PotionUtil.getPotionEffects(stack))
-                if (effect.getEffectType().isInstant())
-                    effect.getEffectType().applyInstantEffect(this, getOwner(), livingEntity, effect.getAmplifier(), 1);
+            for (var effect : stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).getEffects())
+                if (effect.getEffectType().value().isInstant())
+                    effect.getEffectType().value().applyInstantEffect(this, getOwner(), livingEntity, effect.getAmplifier(), 1);
                 else
                     livingEntity.addStatusEffect(effect);
             playSound(SoundEvents.BLOCK_GLASS_BREAK, 1f, 1f);
@@ -400,13 +406,15 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         // Potion ingredients
         if (entity instanceof LivingEntity livingEntity)
-            for (var potion : new Potion[] {Potions.AWKWARD, Potions.WATER}) {
-                var inputStack = PotionUtil.setPotion(new ItemStack(Items.POTION), potion);
-                if (BrewingRecipeRegistry.hasRecipe(inputStack, stack)) {
-                    var resultEffects = PotionUtil.getPotionEffects(BrewingRecipeRegistry.craft(stack, inputStack));
+            for (var potion : new RegistryEntry[] {Potions.AWKWARD, Potions.WATER}) {
+                @SuppressWarnings("unchecked")
+                var inputStack = PotionContentsComponent.createStack(Items.POTION, potion);
+
+                if (world.getBrewingRecipeRegistry().hasRecipe(inputStack, stack)) {
+                    var resultEffects = world.getBrewingRecipeRegistry().craft(stack, inputStack).getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).getEffects();
                     for (var effect : resultEffects)
-                        if (effect.getEffectType().isInstant())
-                            effect.getEffectType().applyInstantEffect(this, getOwner(), livingEntity, effect.getAmplifier(), 1);
+                        if (effect.getEffectType().value().isInstant())
+                            effect.getEffectType().value().applyInstantEffect(this, getOwner(), livingEntity, effect.getAmplifier(), 1);
                         else {
                             var newDuration = effect.mapDuration(duration -> duration / 4);
                             livingEntity.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), newDuration, effect.getAmplifier(), effect.isAmbient(), effect.shouldShowParticles(), effect.shouldShowIcon()));
@@ -432,8 +440,9 @@ public class GenericItemProjectile extends ThrownItemEntity {
         if (customBlockActions(new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false), stack, fakePlayer)) return;
 
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
-        var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
-        entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
+        var source = world.getDamageSources().thrown(this, getOwner());
+        var damage = ((PlayerEntityInvoker) fakePlayer).invokeGetDamageAgainst(entity, (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE), source);
+        entity.damage(source, damage);
         if (entity instanceof LivingEntity livingEntity)
             stack.postHit(livingEntity, fakePlayer);
 

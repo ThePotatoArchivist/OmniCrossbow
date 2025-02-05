@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.util;
 
-import archives.tater.omnicrossbow.mixin.CrossbowItemInvoker;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.item.ItemStack;
 
 import java.util.Map;
@@ -13,8 +14,8 @@ import java.util.stream.Stream;
  */
 public class OmniUtil {
     public static ItemStack getMainProjectile(ItemStack crossbow) {
-        var projectiles = CrossbowItemInvoker.invokeGetProjectiles(crossbow);
-        return projectiles.isEmpty() ? ItemStack.EMPTY : projectiles.get(0);
+        var projectiles = crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles();
+        return projectiles.isEmpty() ? ItemStack.EMPTY : projectiles.getFirst();
     }
 
     public static <K1, V1, K2, V2> Map<K2, V2> map(Map<K1, V1> map, BiFunction<K1, V1, K2> keySelector, BiFunction<K1, V1, V2> valueSelector) {

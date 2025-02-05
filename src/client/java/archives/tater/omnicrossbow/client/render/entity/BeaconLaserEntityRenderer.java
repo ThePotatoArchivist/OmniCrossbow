@@ -9,6 +9,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -41,7 +42,7 @@ public class BeaconLaserEntityRenderer extends EntityRenderer<BeaconLaserEntity>
         var beamWidthScale = trapezoidalTransition(firingTime) * (1 + 0.1f * MathHelper.sin(0.5f * firingTime));
 //        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.floorMod(5 * firingTime, 90)));
         matrices.translate(-0.5f, 0, -0.5f); // Beacon expects to start at corner
-        BeaconBlockEntityRenderer.renderBeam(matrices, vertexConsumers, BEAM_TEXTURE, tickDelta, 1.0f, entity.getWorld().getTime(), 0, (int) entity.getDistance(), new float[]{1f, 1f, 1f}, 0.2f * beamWidthScale, 0.25f * beamWidthScale);
+        BeaconBlockEntityRenderer.renderBeam(matrices, vertexConsumers, BEAM_TEXTURE, tickDelta, 1.0f, entity.getWorld().getTime(), 0, (int) entity.getDistance(), DyeColor.WHITE.getEntityColor(), 0.2f * beamWidthScale, 0.25f * beamWidthScale);
         matrices.pop();
     }
 

@@ -5,10 +5,7 @@ import archives.tater.omnicrossbow.mixin.*;
 import archives.tater.omnicrossbow.util.RaycastUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentTarget;
-import net.minecraft.enchantment.MultishotEnchantment;
-import net.minecraft.enchantment.PiercingEnchantment;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
@@ -38,21 +35,7 @@ import java.util.List;
 
 import static archives.tater.omnicrossbow.mixin.FallingBlockEntityInvoker.newFallingBlockEntity;
 
-public class OmniEnchantment extends Enchantment {
-    protected OmniEnchantment(Rarity weight, EquipmentSlot... slotTypes) {
-        super(weight, EnchantmentTarget.CROSSBOW, slotTypes);
-    }
-
-    @Override
-    public boolean isTreasure() {
-        return true;
-    }
-
-    @Override
-    protected boolean canAccept(Enchantment other) {
-        return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof PiercingEnchantment);
-    }
-
+public class OmniEnchantment {
     private static List<Item> RANDOM_AMMO = null;
 
     public static boolean isNotDynamic(ItemStack projectile) {
@@ -67,37 +50,41 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.NETHER_STAR)) return OmniCrossbow.BEACON_PREPARE;
         if (projectile.isOf(Items.FIRE_CHARGE)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.DRAGON_BREATH)) return SoundEvents.ENTITY_ENDER_DRAGON_SHOOT;
-        if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW;
+        if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW.value();
         if (projectile.isOf(Items.ENDER_EYE)) return SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
         return SoundEvents.ITEM_CROSSBOW_SHOOT;
     }
 
     private static Vec3d getProjectileVel(LivingEntity shooter, double length) {
-        return shooter instanceof CrossbowUser crossbowUser
-                ? new Vec3d(crossbowUser.getProjectileLaunchVelocity((LivingEntity) crossbowUser, crossbowUser.getTarget().getEyePos().subtract(shooter.getEyePos().subtract(0, 0.1, 0)), 0))
-                : shooter.getRotationVector().multiply(length);
+        var target = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget() : null;
+        if (target != null) {
+            double dx = target.getX() - shooter.getX();
+            double dz = target.getZ() - shooter.getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
+            double dy = target.getBodyY(0.3333333333333333) - (shooter.getEyeY() - 0.1) + distance * 0.2F;
+            return new Vec3d(CrossbowItemInvoker.invokeCalcVelocity(shooter, new Vec3d(dx, dy, dz), 0)).multiply(length);
+        } else {
+            return new Vec3d(shooter.getRotationVec(1.0F).toVector3f()).multiply(length);
+        }
     }
 
-    private static void shoot(ProjectileEntity projectileEntity, LivingEntity shooter, float speed) {
-        if (shooter instanceof CrossbowUser crossbowUser)
-            crossbowUser.shoot(shooter, crossbowUser.getTarget(), projectileEntity, 0, speed);
-        else
-            projectileEntity.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, speed, 0.2F);
+    private static void shoot(ProjectileEntity projectileEntity, LivingEntity shooter, ItemStack crossbow, float speed) {
+        var crossbowItem = crossbow.getItem() instanceof CrossbowItem crossbowItem1 ? crossbowItem1 : (CrossbowItem) Items.CROSSBOW;
+        ((CrossbowItemInvoker) crossbowItem).invokeShoot(shooter, projectileEntity, 0, speed, shooter instanceof CrossbowUser ? (14 - shooter.getWorld().getDifficulty().getId() * 4) : 0.2f, 0, shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget() : null);
     }
 
     @FunctionalInterface
     interface ExplosiveConstructor {
-        ExplosiveProjectileEntity create(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ);
+        ExplosiveProjectileEntity create(World world, LivingEntity owner, Vec3d velocity);
     }
 
     private static ExplosiveProjectileEntity shootExplosive(World world, LivingEntity shooter, double length, ExplosiveConstructor constructor) {
-        var velocity = getProjectileVel(shooter, length);
-        return constructor.create(world, shooter, velocity.x, velocity.y, velocity.z);
+        return constructor.create(world, shooter, getProjectileVel(shooter, length));
     }
 
     private static @Nullable Entity create(ServerWorld world, EntityType<?> type, LivingEntity shooter, ItemStack projectile, SpawnReason spawnReason) {
-        var entity = type.create(world, projectile.getNbt(), null, shooter.getBlockPos(), spawnReason, false, false);
+        var entity = type.create(world, _entity -> {}, shooter.getBlockPos(), spawnReason, false, false);
         if (entity == null) return null;
         entity.refreshPositionAndAngles(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ(), shooter.getYaw(), entity.getPitch());
         return entity;
@@ -116,7 +103,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.EXPERIENCE_BOTTLE)) return new ExperienceBottleEntity(world, shooter);
         if (projectile.isOf(Items.SLIME_BALL)) return new SlimeballEntity(shooter, world);
         if (projectile.isOf(Items.TRIDENT)) {
-            projectile.damage(1, shooter, (livingEntity) -> {});
+            projectile.damage(1, world, null, (livingEntity) -> {});
             var entity = new TridentEntity(world, shooter, projectile);
             if (shooter instanceof PlayerEntity playerEntity && playerEntity.getAbilities().creativeMode) {
                 entity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
@@ -138,9 +125,9 @@ public class OmniEnchantment extends Enchantment {
         if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
             var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
             ((FallingBlockInvoker) fallingBlock).invokeConfigureFallingBlockEntity(entity);
-            var nbt = projectile.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
-            if (nbt != null)
-                ((FallingBlockEntityInvoker) entity).setBlockEntityData(nbt);
+            var nbtComponent = projectile.get(DataComponentTypes.BLOCK_ENTITY_DATA);
+            if (nbtComponent != null)
+                ((FallingBlockEntityInvoker) entity).setBlockEntityData(nbtComponent.copyNbt());
             return entity;
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
@@ -173,7 +160,7 @@ public class OmniEnchantment extends Enchantment {
         return new GenericItemProjectile(shooter, world);
     }
 
-    public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack projectile) {
+    public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
         if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) return;
 
         if (entity instanceof ExplosiveProjectileEntity) {
@@ -185,22 +172,22 @@ public class OmniEnchantment extends Enchantment {
         if (entity instanceof ThrownItemEntity thrownItemEntity) {
             thrownItemEntity.setItem(projectile);
             if (!(thrownItemEntity instanceof GenericItemProjectile)) {
-                shoot(thrownItemEntity, shooter, 3f);
+                shoot(thrownItemEntity, shooter, crossbow, 3f);
                 return;
             }
         }
 
         if (entity instanceof EndCrystalProjectileEntity endCrystalProjectile) {
-            shoot(endCrystalProjectile, shooter, 0.3f);
+            shoot(endCrystalProjectile, shooter, crossbow, 0.3f);
             return;
         }
 
         if (entity instanceof SpyEnderEyeEntity spyEnderEyeEntity) {
-            shoot(spyEnderEyeEntity, shooter, 0.5f);
+            shoot(spyEnderEyeEntity, shooter, crossbow, 0.5f);
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {
-            shoot(projectileEntity, shooter, 2.5f);
+            shoot(projectileEntity, shooter, crossbow, 2.5f);
             return;
         }
 
@@ -219,13 +206,14 @@ public class OmniEnchantment extends Enchantment {
             return true;
         }
         if (projectile.isOf(Items.BLAZE_POWDER)) {
+
+            var crossbowItem = crossbow.getItem() instanceof CrossbowItem crossbowItem1 ? crossbowItem1 : (CrossbowItem) Items.CROSSBOW;
+
             for (int i = 0; i < 12; i++) {
                 var ember = new EmberEntity(shooter, world);
-                if (shooter instanceof CrossbowUser crossbowUser)
-                    crossbowUser.shoot(shooter, crossbowUser.getTarget(), ember, 0, 1.0f);
 
-                else
-                    ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
+                ((CrossbowItemInvoker) crossbowItem).invokeShoot(shooter, ember, 0, 1.0f, 32f, 0, shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget() : null);
+
                 world.spawnEntity(ember);
             }
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
@@ -234,7 +222,7 @@ public class OmniEnchantment extends Enchantment {
         }
         var entity = createProjectile(world, shooter, crossbow, projectile);
         if (entity == null) return false;
-        setupProjectile(entity, shooter, projectile);
+        setupProjectile(entity, shooter, crossbow, projectile);
         world.spawnEntity(entity);
         return true;
     }

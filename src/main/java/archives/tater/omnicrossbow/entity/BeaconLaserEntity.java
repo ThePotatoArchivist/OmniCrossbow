@@ -35,9 +35,10 @@ public class BeaconLaserEntity extends DelayedShotEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(DISTANCE, 0f);
-        dataTracker.startTracking(FIRING_TICKS, 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(DISTANCE, 0f);
+        builder.add(FIRING_TICKS, 0);
     }
 
     public float getDistance() {

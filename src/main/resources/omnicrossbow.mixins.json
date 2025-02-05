@@ -7,7 +7,6 @@
     "BucketItemAccessor",
     "CrossbowItemInvoker",
     "CrossbowItemMixin",
-    "CrossbowUserMixin",
     "EntityAccessor",
     "EntityBucketItemAccessor",
     "FallingBlockEntityInvoker",
@@ -18,8 +17,10 @@
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MinecartItemAccessor",
+    "PlayerEntityInvoker",
     "PlayerEntityMixin",
     "ProjectileEntityAccessor",
+    "RangedWeaponItemMixin",
     "ServerPlayerEntityMixin",
     "ThrownEntityMixin"
   ],

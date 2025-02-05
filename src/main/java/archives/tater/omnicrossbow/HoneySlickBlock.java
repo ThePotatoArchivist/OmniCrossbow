@@ -4,14 +4,15 @@ import archives.tater.omnicrossbow.mixin.HoneyBlockInvoker;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +30,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("deprecation")
 public class HoneySlickBlock extends HoneyBlock {
     public static final EnumProperty<Direction> FACING = Properties.FACING;
 
@@ -100,19 +100,18 @@ public class HoneySlickBlock extends HoneyBlock {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        var inputStack = player.getStackInHand(hand);
-        if (!inputStack.isOf(Items.GLASS_BOTTLE)) return super.onUse(state, world, pos, player, hand, hit);
-        player.setStackInHand(hand, ItemUsage.exchangeStack(inputStack, player, Items.HONEY_BOTTLE.getDefaultStack()));
+    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (!stack.isOf(Items.GLASS_BOTTLE)) return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+        player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, Items.HONEY_BOTTLE.getDefaultStack()));
         world.breakBlock(pos, false, player);
-        return ActionResult.SUCCESS;
+        return ItemActionResult.SUCCESS;
     }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (!world.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.DOWN, SideShapeType.FULL) && random.nextInt(10) == 0) {
             var box = state.getOutlineShape(world, pos).getBoundingBox();
-            world.addParticle(ParticleTypes.DRIPPING_HONEY, box.getXLength() * random.nextDouble() + box.minX + pos.getX(), box.minY + pos.getY() - 0.05, box.getZLength() * random.nextDouble() + box.minZ + pos.getZ(), 0, 0, 0);
+            world.addParticle(ParticleTypes.DRIPPING_HONEY, box.getLengthX() * random.nextDouble() + box.minX + pos.getX(), box.minY + pos.getY() - 0.05, box.getLengthZ() * random.nextDouble() + box.minZ + pos.getZ(), 0, 0, 0);
         }
     }
 

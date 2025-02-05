@@ -1,15 +1,16 @@
 package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.MultichamberedEnchantment;
-import archives.tater.omnicrossbow.mixin.CrossbowItemInvoker;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -71,20 +72,16 @@ public abstract class DelayedShotEntity extends Entity {
     }
 
     protected void unloadCrossbow() {
-        CrossbowItemInvoker.invokeClearProjectiles(launcher);
-        if (MultichamberedEnchantment.getLoadedShots(launcher) <= 0)
-            CrossbowItem.setCharged(launcher, false);
-        if (owner == null) {
-            launcher.damage(1, random, null);
-            return;
-        }
-        launcher.damage(1, owner, entity -> {
-            for (var hand : Hand.values())
-                if (entity.getStackInHand(hand) == launcher) {
-                    entity.sendToolBreakStatus(hand);
+        MultichamberedEnchantment.unloadOneProjectile(launcher);
+        if (owner != null) {
+            for (var slot : EquipmentSlot.values())
+                if (owner.getEquippedStack(slot) == launcher) {
+                    launcher.damage(1, owner, slot);
                     return;
                 }
-        });
+        }
+
+        launcher.damage(1, (ServerWorld) getWorld(), null, item -> {});
     }
 
     public boolean hasShot() {
@@ -97,7 +94,7 @@ public abstract class DelayedShotEntity extends Entity {
     protected abstract SoundEvent getShootSound();
 
     @Override
-    protected void initDataTracker() {
+    protected void initDataTracker(DataTracker.Builder builder) {
 
     }
 

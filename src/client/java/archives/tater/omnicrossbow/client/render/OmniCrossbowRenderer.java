@@ -11,11 +11,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,8 @@ public class OmniCrossbowRenderer {
 
     private static Transforms transforms;
 
-    public static final ModelIdentifier DYNAMIC_CROSSBOW = new ModelIdentifier(OmniCrossbow.MOD_ID, "dynamic_crossbow", "inventory");
-    public static final ModelIdentifier PULLED_CROSSBOW = new ModelIdentifier(OmniCrossbow.MOD_ID, "pulled_crossbow", "inventory");
+    public static final Identifier DYNAMIC_CROSSBOW = OmniCrossbow.id("dynamic_crossbow");
+    public static final Identifier PULLED_CROSSBOW = OmniCrossbow.id("pulled_crossbow");
 
     public static void renderCrossbow(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();

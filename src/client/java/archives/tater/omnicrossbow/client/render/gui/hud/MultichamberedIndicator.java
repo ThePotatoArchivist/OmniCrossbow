@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.OmniCrossbow;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -21,7 +22,7 @@ public class MultichamberedIndicator {
 
     public static final float INDICATOR_DISPLAY_TICKS = 200;
 
-    public static void drawIndicator(DrawContext drawContext, float tickDelta) {
+    public static void drawIndicator(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (MinecraftClient.getInstance().interactionManager == null || MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.SPECTATOR) return;
         if (!(MinecraftClient.getInstance().getCameraEntity() instanceof LivingEntity livingEntity)) return;
         var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(livingEntity);
@@ -37,15 +38,16 @@ public class MultichamberedIndicator {
 
         var loadedShots = MultichamberedEnchantment.getLoadedShots(crossbow);
 
-        if (lastCount != loadedShots) {
-            lastCount = loadedShots;
-            displayTicks = INDICATOR_DISPLAY_TICKS;
-        }
+//        if (lastCount != loadedShots) {
+//            lastCount = loadedShots;
+//            displayTicks = INDICATOR_DISPLAY_TICKS;
+//        }
 
         if (displayTicks <= 0) return;
-        displayTicks -= tickDelta;
+        displayTicks -= tickCounter.getTickDelta(false);
 
-        var maxShots = MultichamberedEnchantment.getMaxShots(crossbow);
+//        var maxShots = EnchantmentHelper.getProjectileCount(MinecraftClient.getInstance().world, crossbow, livingEntity, 1);
+        var maxShots = 6;
 
         RenderSystem.enableBlend();
 

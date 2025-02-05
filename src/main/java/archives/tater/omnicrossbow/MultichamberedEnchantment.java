@@ -1,60 +1,27 @@
 package archives.tater.omnicrossbow;
 
-import net.minecraft.enchantment.*;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ChargedProjectilesComponent;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Hand;
 
-public class MultichamberedEnchantment extends Enchantment {
-    private static final int POWER_PER_LEVEL = 7;
-
-    protected MultichamberedEnchantment(Rarity weight, EquipmentSlot... slotTypes) {
-        super(weight, EnchantmentTarget.CROSSBOW, slotTypes);
-    }
-
-    @Override
-    protected boolean canAccept(Enchantment other) {
-        return super.canAccept(other) && !(other instanceof MultishotEnchantment) && !(other instanceof QuickChargeEnchantment);
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 3;
-    }
-
-    @Override
-    public int getMinPower(int level) {
-        return 10 + (level - 1) * POWER_PER_LEVEL;
-    }
-
-    @Override
-    public int getMaxPower(int level) {
-        return getMinPower(level) + POWER_PER_LEVEL;
-    }
-
-    public static int getMaxShots(int level) {
-        return 2 * level;
-    }
-
-    public static int getMaxShots(ItemStack crossbow) {
-        return getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow));
-    }
+public class MultichamberedEnchantment {
+    // Static utility class
+    private MultichamberedEnchantment() {}
 
     public static boolean hasMultichambered(ItemStack crossbow) {
-        return EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow) > 0;
+        return EnchantmentHelper.hasAnyEnchantmentsWith(crossbow, OmniCrossbowEnchantmentEffects.ONE_PROJECTILE_AT_TIME);
     }
 
     public static int getLoadedShots(ItemStack crossbow) {
-        var nbt = crossbow.getNbt();
-        if (nbt == null) return 0;
-        return nbt.getList("ChargedProjectiles", NbtElement.COMPOUND_TYPE).size();
+        return crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles().size();
     }
 
     public static boolean cannotLoadMore(ItemStack stack) {
-        return hasMultichambered(stack) && getLoadedShots(stack) >= getMaxShots(stack);
+        return hasMultichambered(stack) && stack.contains(OmniCrossbow.CROSSBOW_FULL);
     }
 
     public static ItemStack getPrimaryCrossbow(LivingEntity livingEntity) {
@@ -64,6 +31,15 @@ public class MultichamberedEnchantment extends Enchantment {
                 return stack;
         }
         return ItemStack.EMPTY;
+    }
+
+    public static void unloadOneProjectile(ItemStack crossbow) {
+        var projectiles = crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles();
+        if (projectiles.size() <= 1) {
+            crossbow.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT);
+            return;
+        }
+        crossbow.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.of(projectiles.subList(1, projectiles.size())));
     }
 
 }
