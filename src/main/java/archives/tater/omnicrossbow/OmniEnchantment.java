@@ -129,7 +129,7 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
         if (projectile.isOf(Items.ARMOR_STAND)) return create(world, EntityType.ARMOR_STAND, shooter, projectile, SpawnReason.SPAWN_EGG);
-        if (projectile.isOf(Items.END_CRYSTAL)) return new EndCrystalProjectileEntity(shooter, world);
+        if (projectile.isOf(Items.END_CRYSTAL)) return shootExplosive(world, shooter, 0.3f, EndCrystalProjectileEntity::new);
         if (projectile.isOf(Items.ECHO_SHARD)) return new DelayedSonicBoomEntity(world, shooter, crossbow);
         if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
 
@@ -190,11 +190,6 @@ public class OmniEnchantment extends Enchantment {
             }
         }
 
-        if (entity instanceof EndCrystalProjectileEntity endCrystalProjectile) {
-            shoot(endCrystalProjectile, shooter, 0.3f);
-            return;
-        }
-
         if (entity instanceof SpyEnderEyeEntity spyEnderEyeEntity) {
             shoot(spyEnderEyeEntity, shooter, 0.5f);
         }
@@ -223,12 +218,18 @@ public class OmniEnchantment extends Enchantment {
                 var ember = new EmberEntity(shooter, world);
                 if (shooter instanceof CrossbowUser crossbowUser)
                     crossbowUser.shoot(shooter, crossbowUser.getTarget(), ember, 0, 1.0f);
-
                 else
                     ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
                 world.spawnEntity(ember);
             }
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
+            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, shooter.getSoundCategory(), 0.5f, 1.2f);
+            var baseVelocity = getProjectileVel(shooter, 1);
+            if (shooter.isOnGround())
+                shooter.addVelocity(baseVelocity.multiply(-0.5, baseVelocity.y > 0 ? 1 : -0.5, -0.5));
+            else
+                shooter.addVelocity(baseVelocity.multiply(-1.2).add(0, shooter.getVelocity().y < 0 ? -shooter.getVelocity().y : 0, 0));
+            shooter.velocityModified = true;
             if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
             return true;
         }
