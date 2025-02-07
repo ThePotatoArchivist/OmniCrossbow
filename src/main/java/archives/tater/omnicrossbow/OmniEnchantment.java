@@ -214,6 +214,8 @@ public class OmniEnchantment extends Enchantment {
             return true;
         }
         if (projectile.isOf(Items.BLAZE_POWDER)) {
+            if (!shooter.isOnGround() && shooter.getVelocity().y < 0)
+                shooter.setVelocity(shooter.getVelocity().multiply(1, 0, 1));
             for (int i = 0; i < 12; i++) {
                 var ember = new EmberEntity(shooter, world);
                 if (shooter instanceof CrossbowUser crossbowUser)
@@ -226,9 +228,9 @@ public class OmniEnchantment extends Enchantment {
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, shooter.getSoundCategory(), 0.5f, 1.2f);
             var baseVelocity = getProjectileVel(shooter, 1);
             if (shooter.isOnGround())
-                shooter.addVelocity(baseVelocity.multiply(-0.5, baseVelocity.y > 0 ? 1 : -0.5, -0.5));
+                shooter.addVelocity(baseVelocity.multiply(-0.5, baseVelocity.y > 0 ? 1 : 0, -0.5));
             else
-                shooter.addVelocity(baseVelocity.multiply(-1.2).add(0, shooter.getVelocity().y < 0 ? -shooter.getVelocity().y : 0, 0));
+                shooter.addVelocity(baseVelocity.multiply(-1.2));
             shooter.velocityModified = true;
             if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
             return true;
