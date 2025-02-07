@@ -31,8 +31,8 @@ public class OmniCrossbowRenderer {
 
     private static Transforms transforms;
 
-    public static final Identifier DYNAMIC_CROSSBOW = OmniCrossbow.id("dynamic_crossbow");
-    public static final Identifier PULLED_CROSSBOW = OmniCrossbow.id("pulled_crossbow");
+    public static final Identifier DYNAMIC_CROSSBOW = OmniCrossbow.id("item/dynamic_crossbow");
+    public static final Identifier PULLED_CROSSBOW = OmniCrossbow.id("item/pulled_crossbow");
 
     public static void renderCrossbow(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();

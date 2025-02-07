@@ -1,7 +1,12 @@
 package archives.tater.omnicrossbow.mixin;
 
+import archives.tater.omnicrossbow.MultichamberedEnchantment;
 import archives.tater.omnicrossbow.OmniEnchantment;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -11,14 +16,19 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(RangedWeaponItem.class)
-public class RangedWeaponItemMixin {
+public abstract class RangedWeaponItemMixin {
+    @Shadow protected abstract int getWeaponStackDamage(ItemStack projectile);
+
     @Inject(
             method = "shootAll",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/RangedWeaponItem;createArrowEntity(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/projectile/ProjectileEntity;"),
@@ -28,8 +38,29 @@ public class RangedWeaponItemMixin {
         if (!OmniEnchantment.shootProjectile(world, shooter, stack, projectile)) return;
         ci.cancel();
         if (OmniEnchantment.shouldUnloadImmediate(projectile))
-            stack.damage(1, shooter, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+            stack.damage(getWeaponStackDamage(projectile), shooter, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), OmniEnchantment.getSound(projectile), SoundCategory.PLAYERS, 1.0F, CrossbowItemInvoker.invokeGetSoundPitch(world.random, index));
     }
 
+    @WrapOperation(
+            method = "load",
+            at = @At(value = "NEW", target = "(I)Ljava/util/ArrayList;")
+    )
+    private static ArrayList<ItemStack> useExistingList(int initialCapacity, Operation<ArrayList<ItemStack>> original, @Local(argsOnly = true, ordinal = 0) ItemStack crossbow) {
+        if (MultichamberedEnchantment.hasMultichambered(crossbow)) {
+            return new ArrayList<>(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
+        }
+        return original.call(initialCapacity);
+    }
+
+    @ModifyVariable(
+            method = "load",
+            at = @At(value = "INVOKE", target = "Ljava/util/ArrayList;<init>(I)V")
+    )
+    private static int modifyNumLoaded(int value, @Local(argsOnly = true, ordinal = 0) ItemStack crossbow) {
+        if (MultichamberedEnchantment.hasMultichambered(crossbow)) {
+            return 1;
+        }
+        return value;
+    }
 }

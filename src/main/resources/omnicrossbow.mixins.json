@@ -15,7 +15,6 @@
     "HoneyBlockInvoker",
     "HostileEntityMixin",
     "LivingEntityAccessor",
-    "LivingEntityMixin",
     "MinecartItemAccessor",
     "PlayerEntityInvoker",
     "PlayerEntityMixin",

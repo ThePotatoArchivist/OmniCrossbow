@@ -38,6 +38,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -203,11 +204,14 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (stack.isIn(ConventionalItemTags.DYES) && !state.hasBlockEntity() && state.getBlock().asItem() != Items.AIR) {
             var blockStack = state.getBlock().asItem().getDefaultStack();
-            for (var inventory : new CraftingRecipeInput[] {
-                CraftingRecipeInput.create(3, 3, List.of(stack, blockStack)),
-                CraftingRecipeInput.create(3, 3, List.of(blockStack, blockStack, blockStack, blockStack, stack, blockStack, blockStack, blockStack, blockStack))
+            for (var items : new List[] {
+                List.of(stack, blockStack),
+                List.of(blockStack, blockStack, blockStack, blockStack, stack, blockStack, blockStack, blockStack, blockStack)
             }) {
-                var recipe = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, inventory, world);
+                var inputStacks = DefaultedList.ofSize(9, ItemStack.EMPTY);
+                for (int i = 0; i < items.size(); i++)
+                    inputStacks.set(i, (ItemStack) items.get(i));
+                var recipe = world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, CraftingRecipeInput.create(3, 3, inputStacks), world);
                 if (recipe.isEmpty()) continue;
                 var resultStack = recipe.get().value().getResult(world.getRegistryManager());
                 if (!(resultStack.getItem() instanceof BlockItem resultBlockItem)) continue;

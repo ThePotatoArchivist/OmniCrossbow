@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.mixin;
 
 import archives.tater.omnicrossbow.MultichamberedEnchantment;
+import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.OmniCrossbowEnchantmentEffects;
 import archives.tater.omnicrossbow.OmniEnchantment;
 import com.google.common.collect.Lists;
@@ -19,9 +20,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Unit;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,18 +32,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Mixin(CrossbowItem.class)
 public abstract class CrossbowItemMixin {
 
-    @Shadow public abstract void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, float speed, float divergence, @Nullable LivingEntity target);
-
     // --- OMNI ---
-
-    @Shadow public abstract Predicate<ItemStack> getProjectiles();
 
     @Shadow protected abstract ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical);
 
@@ -80,7 +79,8 @@ public abstract class CrossbowItemMixin {
             method = "shootAll",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/component/type/ChargedProjectilesComponent;getProjectiles()Ljava/util/List;")
     )
-    private List<ItemStack> chooseOne(List<ItemStack> original, @Local(argsOnly = true) ItemStack crossbow) {
+    private List<ItemStack> chooseOne(List<ItemStack> original, @Local(argsOnly = true) ItemStack crossbow, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local ServerWorld serverWorld) {
+        if (crossbow.contains(OmniCrossbow.CROSSBOW_FULL)) crossbow.remove(OmniCrossbow.CROSSBOW_FULL);
         if (original.isEmpty() || !MultichamberedEnchantment.hasMultichambered(crossbow)) return original;
         return List.of(original.getFirst());
     }
@@ -101,7 +101,31 @@ public abstract class CrossbowItemMixin {
         return original || MultichamberedEnchantment.cannotLoadMore(stack);
     }
 
-    // loadProjectile already appends to projectiles
+    @WrapOperation(
+            method = "onStoppedUsing",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;isCharged(Lnet/minecraft/item/ItemStack;)Z")
+    )
+    private boolean allowIfMultichambered(ItemStack stack, Operation<Boolean> original) {
+        return original.call(stack) && (stack.contains(OmniCrossbow.CROSSBOW_FULL) || !EnchantmentHelper.hasAnyEnchantmentsWith(stack, OmniCrossbowEnchantmentEffects.ONE_PROJECTILE_AT_TIME));
+    }
+
+    @ModifyExpressionValue(
+            method = "loadProjectiles",
+            at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z")
+    )
+    private static boolean allowIfMultichambered(boolean original, @Local(argsOnly = true) ItemStack crossbow) {
+        return original && (crossbow.contains(OmniCrossbow.CROSSBOW_FULL) || !EnchantmentHelper.hasAnyEnchantmentsWith(crossbow, OmniCrossbowEnchantmentEffects.ONE_PROJECTILE_AT_TIME));
+    }
+
+    @Inject(
+            method = "loadProjectiles",
+            at = @At(value = "RETURN", ordinal = 0)
+    )
+    private static void setFull(LivingEntity shooter, ItemStack crossbow, CallbackInfoReturnable<Boolean> cir, @Local List<ItemStack> list) {
+        if (shooter.getWorld() instanceof ServerWorld serverWorld && list.size() >= EnchantmentHelper.getProjectileCount(serverWorld, crossbow, shooter, 1)) {
+            crossbow.set(OmniCrossbow.CROSSBOW_FULL, Unit.INSTANCE);
+        }
+    }
 
     @Inject(
             method = "appendTooltip",

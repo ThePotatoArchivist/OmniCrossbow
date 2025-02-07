@@ -2,20 +2,20 @@
   "description": {
     "translate": "enchantment.omnicrossbow.multichambered"
   },
-  "exclusive_set": "#minecraft:exclusive_set/crossbow",
+  "exclusive_set": "#omnicrossbow:exclusive_set/crossbow_loading",
   "supported_items": "#minecraft:enchantable/crossbow",
   "primary_items": "#minecraft:enchantable/crossbow",
   "weight": 1,
-  "max_level": 1,
+  "max_level": 3,
   "min_cost": {
-    "base": 25,
-    "per_level_above_first": 25
+    "base": 10,
+    "per_level_above_first": 7
   },
   "max_cost": {
-    "base": 75,
-    "per_level_above_first": 25
+    "base": 17,
+    "per_level_above_first": 7
   },
-  "anvil_cost": 4,
+  "anvil_cost": 2,
   "slots": [
     "mainhand"
   ],

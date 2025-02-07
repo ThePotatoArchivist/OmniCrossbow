@@ -37,7 +37,11 @@ public class OmniCrossbow implements ModInitializer {
 	public static final RegistryKey<Enchantment> OMNI = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 	public static final RegistryKey<Enchantment> MULTICHAMBERED = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 
-	public static final ComponentType<Unit> CROSSBOW_FULL = ComponentType.<Unit>builder().codec(Unit.CODEC).packetCodec(PacketCodec.unit(Unit.INSTANCE)).build();
+	public static final ComponentType<Unit> CROSSBOW_FULL = Registry.register(
+			Registries.DATA_COMPONENT_TYPE,
+			id("crossbow_full"),
+			ComponentType.<Unit>builder().codec(Unit.CODEC).packetCodec(PacketCodec.unit(Unit.INSTANCE)).build()
+	);
 
 	public static final Block HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("honey_slick"), new HoneySlickBlock(AbstractBlock.Settings.create()
 			.nonOpaque()
