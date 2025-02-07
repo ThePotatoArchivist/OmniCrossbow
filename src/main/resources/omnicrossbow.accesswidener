@@ -1,3 +1,4 @@
 accessWidener v2 named
 accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogModifier
 accessible class net/minecraft/client/render/BackgroundRenderer$FogData
+accessible method net/minecraft/entity/projectile/AbstractWindChargeEntity <init> (Lnet/minecraft/entity/EntityType;DDDLnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;)V

@@ -53,6 +53,7 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW.value();
         if (projectile.isOf(Items.ENDER_EYE)) return SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
+        if (projectile.isOf(Items.WIND_CHARGE)) return SoundEvents.ENTITY_WIND_CHARGE_THROW;
         return SoundEvents.ITEM_CROSSBOW_SHOOT;
     }
 
@@ -110,7 +111,7 @@ public class OmniEnchantment {
             }
             return entity;
         }
-        if (projectile.isOf(Items.WIND_CHARGE)) return create(world, EntityType.BREEZE_WIND_CHARGE, shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectile.isOf(Items.WIND_CHARGE)) return new LargeWindChargeEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_EYE)) return new SpyEnderEyeEntity(shooter, world);
         if (projectile.isOf(Items.TNT)) return new TntEntity(world, x, y, z, shooter);
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return shootExplosive(world, shooter, 1f, WitherSkullEntity::new);
@@ -164,7 +165,7 @@ public class OmniEnchantment {
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
         if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) return;
 
-        if (entity instanceof ExplosiveProjectileEntity && !(entity instanceof BreezeWindChargeEntity)) {
+        if (entity instanceof ExplosiveProjectileEntity && !(entity instanceof AbstractWindChargeEntity)) {
             // velocity already handled by constructor
             entity.setPosition(entity.getX(), shooter.getEyeY() - 0.1f, entity.getZ());
             return;
@@ -185,6 +186,12 @@ public class OmniEnchantment {
 
         if (entity instanceof SpyEnderEyeEntity spyEnderEyeEntity) {
             shoot(spyEnderEyeEntity, shooter, crossbow, 0.5f);
+            return;
+        }
+
+        if (entity instanceof AbstractWindChargeEntity windCharge) {
+            shoot(windCharge, shooter, crossbow, 2.0f);
+            return;
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {

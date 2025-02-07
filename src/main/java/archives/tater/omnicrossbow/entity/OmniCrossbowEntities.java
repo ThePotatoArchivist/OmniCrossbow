@@ -73,5 +73,11 @@ public class OmniCrossbowEntities {
             misc(SpyEnderEyeEntity::new, 0.25f, 0.25f, 16, 10)
     );
 
+    public static EntityType<LargeWindChargeEntity> LARGE_WIND_CHARGE = register(
+            "large_wind_charge",
+            OmniCrossbowEntities.<LargeWindChargeEntity>misc(LargeWindChargeEntity::new, 0.3125f, 0.3125f, 4, 10)
+                    .eyeHeight(0.0F)
+    );
+
     public static void register() {};
 }

@@ -1,17 +1,19 @@
 package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ProjectileDeflection;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class EndCrystalProjectileEntity extends ThrownEntity {
     public EndCrystalProjectileEntity(EntityType<? extends EndCrystalProjectileEntity> entityType, World world) {
@@ -48,20 +50,21 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
         explode();
     }
 
-    @Override
-    public boolean damage(DamageSource source, float amount) {
-        if (isInvulnerableTo(source)) return false;
-        if (isRemoved()) return true;
-        var entity = source.getSource();
-        if (entity != null && !source.isIn(DamageTypeTags.IS_EXPLOSION) && (!entity.isLiving() || squaredDistanceTo(entity) < 4)) {
-            scheduleVelocityUpdate();
-            if (getWorld().isClient) return true;
-            addVelocity(entity instanceof ProjectileEntity ? entity.getVelocity().normalize() : entity.getRotationVector());
-            setOwner(entity);
-            playSound(OmniCrossbow.END_CRYSTAL_HIT, 1f, 1f);
-        } else explode();
+    private static final ProjectileDeflection DEFLECTION = (projectile, hitEntity, random1) -> {
+        projectile.addVelocity(hitEntity instanceof ProjectileEntity ? hitEntity.getVelocity().normalize() : hitEntity != null ? hitEntity.getRotationVector() : projectile.getVelocity().multiply(-1));
+    };
 
-        return true;
+    @Override
+    public boolean deflect(ProjectileDeflection deflection, @Nullable Entity deflector, @Nullable Entity owner, boolean fromAttack) {
+        if (deflector == null || !deflector.isLiving() || squaredDistanceTo(deflector) < 4)
+            return super.deflect(deflection == ProjectileDeflection.SIMPLE ? DEFLECTION : deflection, deflector, owner, fromAttack);
+        explode();
+        return false;
+    }
+
+    @Override
+    protected void onDeflected(@Nullable Entity deflector, boolean fromAttack) {
+        playSound(OmniCrossbow.END_CRYSTAL_HIT, 1f, 1f);
     }
 
     @Override
