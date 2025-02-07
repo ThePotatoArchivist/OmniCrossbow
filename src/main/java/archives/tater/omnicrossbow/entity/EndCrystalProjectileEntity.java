@@ -56,8 +56,8 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
 
     @Override
     public boolean deflect(ProjectileDeflection deflection, @Nullable Entity deflector, @Nullable Entity owner, boolean fromAttack) {
-        if (deflector == null || !deflector.isLiving() || squaredDistanceTo(deflector) < 4)
-            return super.deflect(deflection == ProjectileDeflection.SIMPLE ? DEFLECTION : deflection, deflector, owner, fromAttack);
+        if (fromAttack && (deflector == null || !deflector.isLiving() || squaredDistanceTo(deflector) < 4))
+            return super.deflect(deflection == ProjectileDeflection.REDIRECTED ? DEFLECTION : deflection, deflector, owner, fromAttack);
         explode();
         return false;
     }

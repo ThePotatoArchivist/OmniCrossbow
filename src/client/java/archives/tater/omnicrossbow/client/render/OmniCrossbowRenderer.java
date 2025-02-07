@@ -92,9 +92,11 @@ public class OmniCrossbowRenderer {
                         Items.STICK,
                         Items.BONE,
                         Items.BLAZE_ROD,
+                        Items.BREEZE_ROD,
                         Items.BAMBOO,
                         Items.SHEARS,
                         Items.TRIDENT,
+                        Items.MACE,
                         Items.MELON_SLICE,
                         Items.BREAD,
                         Items.ROTTEN_FLESH,
@@ -154,7 +156,8 @@ public class OmniCrossbowRenderer {
                 Items.FIREWORK_STAR,
                 Items.PUFFERFISH,
                 Items.FIRE_CHARGE,
-                Items.CHORUS_FRUIT
+                Items.CHORUS_FRUIT,
+                Items.WIND_CHARGE
         );
         private final Set<Item> FLIPPED_OFFSET = Stream.concat(
                 Registries.ITEM.stream().filter(item -> item instanceof BoatItem || item instanceof MinecartItem),
