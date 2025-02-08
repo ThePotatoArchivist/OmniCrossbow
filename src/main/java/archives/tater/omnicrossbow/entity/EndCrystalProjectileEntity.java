@@ -9,8 +9,6 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
@@ -38,17 +36,6 @@ public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
     @Override
     protected float getDrag() {
         return 1;
-    }
-
-    @Override
-    protected void onBlockHit(BlockHitResult blockHitResult) {
-        super.onBlockHit(blockHitResult);
-        explode();
-    }
-
-    @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
-        explode();
     }
 
     @Override

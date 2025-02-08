@@ -192,6 +192,7 @@ public class OmniEnchantment extends Enchantment {
 
         if (entity instanceof SpyEnderEyeEntity spyEnderEyeEntity) {
             shoot(spyEnderEyeEntity, shooter, 0.5f);
+            return;
         }
 
         if (entity instanceof ProjectileEntity projectileEntity) {

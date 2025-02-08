@@ -23,68 +23,57 @@ public class OmniCrossbowEntities {
         return register(OmniCrossbow.id(path), entityType.build());
     }
 
+    private static <T extends Entity> FabricEntityTypeBuilder<T> misc(EntityType.EntityFactory<T> factory, float width, float height, int trackRangeChunks, int trackedUpdateRate) {
+        return FabricEntityTypeBuilder.create(SpawnGroup.MISC, factory)
+                .dimensions(EntityDimensions.fixed(width, height))
+                .trackRangeChunks(trackRangeChunks)
+                .trackedUpdateRate(trackedUpdateRate);
+    }
+
+    private static <T extends Entity> FabricEntityTypeBuilder<T> defaultProjectile(EntityType.EntityFactory<T> factory) {
+        return misc(factory, 0.25f, 0.25f, 4, 10);
+    }
+
     public static EntityType<FreezingSnowballEntity> FREEZING_SNOWBALL = register(
             "freezing_snowball",
-            FabricEntityTypeBuilder.<FreezingSnowballEntity>create(SpawnGroup.MISC, FreezingSnowballEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
-                    .trackRangeChunks(4)
-                    .trackedUpdateRate(10)
+            defaultProjectile(FreezingSnowballEntity::new)
     );
 
     public static EntityType<DelayedSonicBoomEntity> DELAYED_SONIC_BOOM = register(
             "sonic_boom",
-            FabricEntityTypeBuilder.<DelayedSonicBoomEntity>create(SpawnGroup.MISC, DelayedSonicBoomEntity::new)
-                    .dimensions(EntityDimensions.fixed(0, 0))
-                    .trackRangeChunks(0)
+            misc(DelayedSonicBoomEntity::new, 0, 0, 0, 10)
     );
 
     public static EntityType<BeaconLaserEntity> BEACON_LASER = register(
             "beacon_laser",
-            FabricEntityTypeBuilder.<BeaconLaserEntity>create(SpawnGroup.MISC, BeaconLaserEntity::new)
-                    .dimensions(EntityDimensions.fixed(1f, 1f))
-                    .trackRangeChunks(8)
+            misc(BeaconLaserEntity::new, 1f, 1f, 8, 3)
     );
 
     public static EntityType<GenericItemProjectile> GENERIC_ITEM_PROJECTILE = register(
             "item_projectile",
-            FabricEntityTypeBuilder.<GenericItemProjectile>create(SpawnGroup.MISC, GenericItemProjectile::new)
-                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
-                    .trackRangeChunks(4)
-                    .trackedUpdateRate(10)
+            defaultProjectile(GenericItemProjectile::new)
     );
 
     public static EntityType<EmberEntity> EMBER = register(
             "ember",
-            FabricEntityTypeBuilder.<EmberEntity>create(SpawnGroup.MISC, EmberEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
-                    .trackRangeChunks(4)
-                    .trackedUpdateRate(10)
+            defaultProjectile(EmberEntity::new)
     );
 
     public static EntityType<SlimeballEntity> SLIME_BALL = register(
             "slime_ball",
-            FabricEntityTypeBuilder.<SlimeballEntity>create(SpawnGroup.MISC, SlimeballEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
-                    .trackRangeChunks(4)
-                    .trackedUpdateRate(10)
+            defaultProjectile(SlimeballEntity::new)
     );
 
     public static EntityType<EndCrystalProjectileEntity> END_CRYSTAL_PROJECTILE = register(
             "end_crystal_projecctile",
-            FabricEntityTypeBuilder.<EndCrystalProjectileEntity>create(SpawnGroup.MISC, EndCrystalProjectileEntity::new)
-                    .dimensions(EntityDimensions.fixed(1.2f, 1.2f))
-                    .trackRangeChunks(6)
-                    .trackedUpdateRate(10)
+            OmniCrossbowEntities.<EndCrystalProjectileEntity>misc(EndCrystalProjectileEntity::new, 1.2f, 1.2f, 6, 10)
                     .fireImmune()
     );
 
     public static EntityType<SpyEnderEyeEntity> SPY_ENDER_EYE = register(
             "spy_ender_eye",
-            FabricEntityTypeBuilder.<SpyEnderEyeEntity>create(SpawnGroup.MISC, SpyEnderEyeEntity::new)
-                    .dimensions(EntityDimensions.fixed(0.25f, 0.25f))
-                    .trackRangeChunks(16)
-                    .trackedUpdateRate(10)
+            misc(SpyEnderEyeEntity::new, 0.25f, 0.25f, 16, 10)
     );
 
-    public static void register() {};
+    public static void register() {}
 }
