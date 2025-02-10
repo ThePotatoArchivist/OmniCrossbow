@@ -9,11 +9,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import static java.lang.Math.max;
 
@@ -27,14 +29,13 @@ public class MultichamberedIndicator {
 
     public static final float INDICATOR_DISPLAY_TICKS = 200;
 
-    private static int maxShots = 0;
+    private static final Map<ItemStack, Integer> stackMaxShots = new WeakHashMap<>();
 
     public static void drawIndicator(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (MinecraftClient.getInstance().interactionManager == null || MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.SPECTATOR) return;
-        if (!(MinecraftClient.getInstance().getCameraEntity() instanceof LivingEntity livingEntity)) return;
 
-        var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(livingEntity);
-        if (crossbow.isEmpty()) {
+        var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(MinecraftClient.getInstance().player);
+        if (crossbow.isEmpty() || !stackMaxShots.containsKey(crossbow)) {
             lastCrossbow = null;
             return;
         }
@@ -54,6 +55,8 @@ public class MultichamberedIndicator {
         if (displayTicks <= 0) return;
         displayTicks -= tickCounter.getTickDelta(false);
 
+        var maxShots = stackMaxShots.get(crossbow);
+
         RenderSystem.enableBlend();
 
         for (int i = 0; i < max(maxShots, loadedShots); i++)
@@ -72,7 +75,7 @@ public class MultichamberedIndicator {
 
     public static void register() {
         ClientPlayNetworking.registerGlobalReceiver(MaxShotsChangedPayload.ID, (payload, context) ->
-                maxShots = payload.shots());
+                stackMaxShots.put(context.player().getStackInHand(payload.hand()), payload.shots()));
 
         HudRenderCallback.EVENT.register(MultichamberedIndicator::drawIndicator);
     }

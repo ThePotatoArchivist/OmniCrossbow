@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.Nullable;
 
 public class MultichamberedEnchantment {
     // Static utility class
@@ -22,6 +23,15 @@ public class MultichamberedEnchantment {
 
     public static boolean cannotLoadMore(ItemStack stack) {
         return hasMultichambered(stack) && stack.contains(OmniCrossbow.CROSSBOW_FULL);
+    }
+
+    public static @Nullable Hand getPrimaryCrossbowHand(LivingEntity livingEntity) {
+        for (var hand : Hand.values()) {
+            var stack = livingEntity.getStackInHand(hand);
+            if (stack.isOf(Items.CROSSBOW) && hasMultichambered(stack))
+                return hand;
+        }
+        return null;
     }
 
     public static ItemStack getPrimaryCrossbow(LivingEntity livingEntity) {

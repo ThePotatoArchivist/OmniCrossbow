@@ -11,6 +11,9 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Hand;
+
+import java.util.List;
 
 public class MultichamberedIndicatorTracker {
     public static void register() {
@@ -21,15 +24,18 @@ public class MultichamberedIndicatorTracker {
                     || !(livingEntity instanceof ServerPlayerEntity serverPlayer)
                     || !previousStack.isOf(Items.CROSSBOW) && !currentStack.isOf(Items.CROSSBOW)) return;
 
-            var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(livingEntity);
+            var hand = MultichamberedEnchantment.getPrimaryCrossbowHand(livingEntity);
+            if (hand == null) return;
+            var crossbow = livingEntity.getStackInHand(hand);
             var maxShots = EnchantmentHelper.getProjectileCount((ServerWorld) livingEntity.getWorld(), crossbow, livingEntity, 1);
-            ServerPlayNetworking.send(serverPlayer, new MaxShotsChangedPayload(maxShots));
+            ServerPlayNetworking.send(serverPlayer, new MaxShotsChangedPayload(hand, maxShots));
         });
     }
 
-    public record MaxShotsChangedPayload(int shots) implements CustomPayload {
+    public record MaxShotsChangedPayload(Hand hand, int shots) implements CustomPayload {
+        private static final List<Hand> HANDS = List.of(Hand.values());
         public static final CustomPayload.Id<MaxShotsChangedPayload> ID = new CustomPayload.Id<>(OmniCrossbow.id("max_shots_changed"));
-        public static final PacketCodec<RegistryByteBuf, MaxShotsChangedPayload> CODEC = PacketCodec.tuple(PacketCodecs.INTEGER, MaxShotsChangedPayload::shots, MaxShotsChangedPayload::new);
+        public static final PacketCodec<RegistryByteBuf, MaxShotsChangedPayload> CODEC = PacketCodec.tuple(PacketCodecs.indexed(HANDS::get, HANDS::indexOf), MaxShotsChangedPayload::hand, PacketCodecs.INTEGER, MaxShotsChangedPayload::shots, MaxShotsChangedPayload::new);
 
         @Override
         public Id<MaxShotsChangedPayload> getId() {
