@@ -156,7 +156,7 @@ public class OmniEnchantment {
             return entity;
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
-        if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(null), shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(projectile), shooter, projectile, SpawnReason.SPAWN_EGG);
         if (projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
                     ? new ChestBoatEntity(world, x, y, z)
