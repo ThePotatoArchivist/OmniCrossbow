@@ -70,7 +70,17 @@ public class OmniEnchantment extends Enchantment {
         if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW;
         if (projectile.isOf(Items.ENDER_EYE)) return SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
+        if (projectile.isOf(Items.BLAZE_POWDER) || projectile.isOf(Items.BLAZE_ROD)) return SoundEvents.ITEM_FIRECHARGE_USE;
         return SoundEvents.ITEM_CROSSBOW_SHOOT;
+    }
+
+    public static int getCooldown(ItemStack projectile) {
+        if (projectile.isOf(Items.ECHO_SHARD)) return 80;
+        if (projectile.isOf(Items.NETHER_STAR)) return 120;
+        if (projectile.isOf(Items.END_CRYSTAL)) return 60;
+        if (projectile.isOf(Items.BLAZE_POWDER) || projectile.isOf(Items.BLAZE_ROD) || projectile.isOf(Items.DRAGON_BREATH) || projectile.isOf(Items.WITHER_SKELETON_SKULL)) return 40;
+        if (projectile.isOf(Items.FIRE_CHARGE)) return 20;
+        return 0;
     }
 
     private static Vec3d getProjectileVel(LivingEntity shooter, double length) {
@@ -153,7 +163,7 @@ public class OmniEnchantment extends Enchantment {
             return entity;
         }
 
-        if (!projectile.isOf(Items.END_CRYSTAL) && !projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
+        if (!projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
             var itemId = Registries.ITEM.getId(projectileItem);
             if (Registries.ENTITY_TYPE.containsId(itemId)) {
                 var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
@@ -225,15 +235,13 @@ public class OmniEnchantment extends Enchantment {
                     ember.setVelocity(shooter, shooter.getPitch(), shooter.getYaw(), 0.0F, 1.0F, 32F);
                 world.spawnEntity(ember);
             }
-            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, shooter.getSoundCategory(), 0.5f, 1.2f);
             var baseVelocity = getProjectileVel(shooter, 1);
             if (shooter.isOnGround())
-                shooter.addVelocity(baseVelocity.multiply(-0.5, baseVelocity.y > 0 ? 1 : 0, -0.5));
+                shooter.addVelocity(baseVelocity.multiply(-0.5, -0.5, -0.5));
             else
                 shooter.addVelocity(baseVelocity.multiply(-1.2));
             shooter.velocityModified = true;
-            if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
             return true;
         }
         var entity = createProjectile(world, shooter, crossbow, projectile);
@@ -283,8 +291,6 @@ public class OmniEnchantment extends Enchantment {
             var particlePos = start.add(direction.multiply(i / 4.0));
             world.spawnParticles(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0.01);
         }
-        world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ITEM_FIRECHARGE_USE, shooter.getSoundCategory(), 1f, 1f);
-        if (shooter instanceof PlayerEntity playerEntity) playerEntity.getItemCooldownManager().set(crossbow.getItem(), 40);
     }
 
     public static ItemStack getRemainder(ItemStack projectile) {

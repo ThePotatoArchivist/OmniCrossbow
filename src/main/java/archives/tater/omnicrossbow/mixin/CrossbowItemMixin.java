@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
@@ -51,8 +52,11 @@ public abstract class CrossbowItemMixin {
     private static void customProjectile(World world, LivingEntity shooter, Hand hand, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean creative, float speed, float divergence, float simulated, CallbackInfo ci) {
         if (!OmniEnchantment.shootProjectile((ServerWorld) world, shooter, crossbow, projectile)) return;
         ci.cancel();
-        if (OmniEnchantment.shouldUnloadImmediate(projectile))
+        if (OmniEnchantment.shouldUnloadImmediate(projectile)) {
             crossbow.damage(1, shooter, e -> e.sendToolBreakStatus(hand));
+            if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer)
+                serverPlayer.getItemCooldownManager().set(crossbow.getItem(), OmniEnchantment.getCooldown(projectile));
+        }
         world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), OmniEnchantment.getSound(projectile), SoundCategory.PLAYERS, 1.0F, soundPitch);
     }
 
