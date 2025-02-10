@@ -3,9 +3,8 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
 import archives.tater.omnicrossbow.util.RaycastUtil;
+import moriyashiine.enchancement.common.enchantment.effect.AllowLoadingProjectileEffect;
 import moriyashiine.enchancement.common.entity.projectile.BrimstoneEntity;
-import moriyashiine.enchancement.common.init.ModEnchantments;
-import moriyashiine.enchancement.common.util.EnchancementUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.component.DataComponentTypes;
@@ -43,9 +42,7 @@ public class OmniEnchantment {
 
     public static boolean isNotDynamic(ItemStack crossbow, ItemStack projectile) {
         return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG)
-                || OmniCrossbow.ENCHANCEMENT_INSTALLED && (
-                        (EnchancementUtil.hasEnchantment(ModEnchantments.SCATTER, crossbow) && projectile.isOf(Items.AMETHYST_SHARD))
-                        || (EnchancementUtil.hasEnchantment(ModEnchantments.TORCH, crossbow) && projectile.isOf(Items.TORCH))
+                || OmniCrossbow.ENCHANCEMENT_INSTALLED && (AllowLoadingProjectileEffect.getItems(crossbow).contains(projectile.getItem())
                         || ItemStack.areEqual(projectile, BrimstoneEntity.BRIMSTONE_STACK));
     }
 
