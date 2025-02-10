@@ -38,10 +38,10 @@ public class BeaconLaserEntityRenderer extends EntityRenderer<BeaconLaserEntity>
         matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevYaw, entity.getYaw())));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MathHelper.lerp(tickDelta, entity.prevPitch, entity.getPitch()) + 90));
         var firingTime = entity.getFiringTicks() - 1 + tickDelta;
-        var beamWidthScale = trapezoidalTransition(firingTime) * (1 + 0.1f * MathHelper.sin(0.5f * firingTime));
+        var beamWidthScale = trapezoidalTransition(firingTime);
 //        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.floorMod(5 * firingTime, 90)));
         matrices.translate(-0.5f, 0, -0.5f); // Beacon expects to start at corner
-        BeaconBlockEntityRenderer.renderBeam(matrices, vertexConsumers, BEAM_TEXTURE, tickDelta, 1.0f, entity.getWorld().getTime(), 0, (int) entity.getDistance(), new float[]{1f, 1f, 1f}, 0.2f * beamWidthScale, 0.25f * beamWidthScale);
+        BeaconBlockEntityRenderer.renderBeam(matrices, vertexConsumers, BEAM_TEXTURE, tickDelta, 1.0f, entity.getWorld().getTime(), 0, (int) entity.getDistance(), new float[]{1f, 1f, 1f}, 0.2f * beamWidthScale, 0.25f * beamWidthScale * (1 + 0.2f * MathHelper.sin(0.7f * firingTime)));
         matrices.pop();
     }
 
