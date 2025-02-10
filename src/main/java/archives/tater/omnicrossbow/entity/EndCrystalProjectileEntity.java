@@ -5,27 +5,25 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ProjectileDeflection;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class EndCrystalProjectileEntity extends ThrownEntity {
+public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
     public EndCrystalProjectileEntity(EntityType<? extends EndCrystalProjectileEntity> entityType, World world) {
         super(entityType, world);
+        accelerationPower = 0;
     }
 
-    public EndCrystalProjectileEntity(double x, double y, double z, World world) {
-        super(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, x, y, z, world);
-    }
-
-    public EndCrystalProjectileEntity(LivingEntity owner, World world) {
-        super(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, owner, world);
+    public EndCrystalProjectileEntity(World world, LivingEntity shooter, Vec3d direction) {
+        super(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, shooter, Vec3d.ZERO, world);
+        accelerationPower = 0;
+        setVelocity(direction);
     }
 
     @Override
@@ -40,13 +38,18 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
     }
 
     @Override
-    protected void onBlockHit(BlockHitResult blockHitResult) {
-        super.onBlockHit(blockHitResult);
-        explode();
+    protected @Nullable ParticleEffect getParticleType() {
+        return null;
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
+    protected float getDrag() {
+        return 1;
+    }
+
+    @Override
+    protected void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
         explode();
     }
 
@@ -67,25 +70,9 @@ public class EndCrystalProjectileEntity extends ThrownEntity {
         playSound(OmniCrossbow.END_CRYSTAL_HIT, 1f, 1f);
     }
 
-    @Override
-    public boolean canHit() {
-        return true;
-    }
-
     private void explode() {
         if (getWorld().isClient) return;
+        this.getWorld().createExplosion(this, getX(), getY(), getZ(), getVelocity().length() > 0.5 ? 4f : 6F, true, World.ExplosionSourceType.MOB);
         discard();
-        DamageSource damageSource = getOwner() != null ? getDamageSources().explosion(this, getOwner()) : null;
-        this.getWorld().createExplosion(this, damageSource, null, getX(), getY(), getZ(), getVelocity().length() > 0.5 ? 4f : 6F, true, World.ExplosionSourceType.MOB);
-    }
-
-    @Override
-    public boolean hasNoGravity() {
-        return true;
-    }
-
-    @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-
     }
 }

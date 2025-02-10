@@ -11,6 +11,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
@@ -37,8 +38,11 @@ public abstract class RangedWeaponItemMixin {
     private void customProjectile(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target, CallbackInfo ci, @Local(ordinal = 1) ItemStack projectile, @Local int index) {
         if (!OmniEnchantment.shootProjectile(world, shooter, stack, projectile)) return;
         ci.cancel();
-        if (OmniEnchantment.shouldUnloadImmediate(projectile))
+        if (OmniEnchantment.shouldUnloadImmediate(projectile)) {
             stack.damage(getWeaponStackDamage(projectile), shooter, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+            if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer)
+                serverPlayer.getItemCooldownManager().set(stack.getItem(), OmniEnchantment.getCooldown(projectile));
+        }
         world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), OmniEnchantment.getSound(projectile), SoundCategory.PLAYERS, 1.0F, CrossbowItemInvoker.invokeGetSoundPitch(world.random, index));
     }
 
@@ -58,9 +62,6 @@ public abstract class RangedWeaponItemMixin {
             at = @At(value = "INVOKE", target = "Ljava/util/ArrayList;<init>(I)V")
     )
     private static int modifyNumLoaded(int value, @Local(argsOnly = true, ordinal = 0) ItemStack crossbow) {
-        if (MultichamberedEnchantment.hasMultichambered(crossbow)) {
-            return 1;
-        }
-        return value;
+        return MultichamberedEnchantment.hasMultichambered(crossbow) ? 1 : value;
     }
 }

@@ -79,5 +79,5 @@ public class OmniCrossbowEntities {
                     .eyeHeight(0.0F)
     );
 
-    public static void register() {};
+    public static void register() {}
 }
