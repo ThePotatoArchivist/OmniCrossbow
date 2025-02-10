@@ -288,11 +288,12 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         if (getWorld().isClient) return;
-        customEntityActions(entityHitResult, getItem());
-        if (!getItem().isEmpty()) dropAt(entityHitResult);
+        if (customEntityActions(entityHitResult, getItem())) {
+            if (!getItem().isEmpty()) dropAt(entityHitResult);
+        }
     }
 
-    private void customEntityActions(EntityHitResult entityHitResult, ItemStack stack) {
+    private boolean customEntityActions(EntityHitResult entityHitResult, ItemStack stack) {
         var world = (ServerWorld) getWorld();
         var entity = entityHitResult.getEntity();
 
@@ -317,13 +318,13 @@ public class GenericItemProjectile extends ThrownItemEntity {
             }
 
             stack.decrement(1);
-            return;
+            return true;
         }
 
         if (stack.isOf(Items.GUNPOWDER)) {
             world.createExplosion(getOwner(), entity.getX(), getY(), entity.getZ(), 1f, true, World.ExplosionSourceType.MOB);
             stack.decrement(1);
-            return;
+            return true;
         }
 
         if (stack.isOf(Items.HONEY_BOTTLE)) {
@@ -334,7 +335,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
                 spawnItemParticles();
                 stack.decrement(1);
-                return;
+                return true;
             }
         }
 
@@ -346,31 +347,30 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 world.spawnEntity(lightningBolt);
             }
             world.playSound(null, entity.getBlockPos(), SoundEvents.ITEM_TRIDENT_THUNDER, SoundCategory.WEATHER, 5.0F, 1.0F);
-            return;
+            return true;
         }
 
         if (stack.isOf(Items.LEAD) && entity instanceof MobEntity mobEntity && getOwner() instanceof PlayerEntity playerEntity && mobEntity.canBeLeashedBy(playerEntity)) {
             mobEntity.attachLeash(playerEntity, true);
             stack.decrement(1);
-            return;
+            return true;
         }
 
         if ((stack.isOf(Items.GLOWSTONE_DUST) || stack.isOf(Items.GLOW_BERRIES) || stack.isOf(Items.GLOW_INK_SAC)) && entity instanceof LivingEntity livingEntity) {
             livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 300, 0));
             spawnItemParticles();
             stack.decrement(1);
-            return;
+            return true;
         }
 
-        if (stack.isOf(Items.AMETHYST_SHARD)) {
-            entity.damage(world.getDamageSources().mobProjectile(this, getOwner() instanceof LivingEntity livingEntity ? livingEntity : null), 8);
+        if (stack.isOf(Items.AMETHYST_SHARD) && entity.damage(world.getDamageSources().mobProjectile(this, getOwner() instanceof LivingEntity livingEntity ? livingEntity : null), 8)) {
             playSound(SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK, 1f, 1f);
             spawnItemParticles();
             stack.decrement(1);
-            return;
+            return true;
         }
 
-        if (stack.isOf(Items.FEATHER)) return;
+        if (stack.isOf(Items.FEATHER)) return true;
 
         var slot = LivingEntity.getPreferredEquipmentSlot(stack);
         if (slot != EquipmentSlot.MAINHAND && entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {
@@ -379,7 +379,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                 livingEntity.dropStack(equippedStack);
                 livingEntity.equipStack(slot, stack.copy());
                 stack.decrement(1);
-                return;
+                return true;
             }
         }
 
@@ -395,7 +395,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             spawnItemParticles();
             // TODO effect particles
             stack.decrement(1);
-            return;
+            return true;
         }
 
         // Potion ingredients
@@ -414,7 +414,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
                     playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
                     spawnItemParticles();
                     stack.decrement(1);
-                    return;
+                    return true;
                 }
             }
 
@@ -422,18 +422,18 @@ public class GenericItemProjectile extends ThrownItemEntity {
 
         if (!(entity instanceof MerchantEntity) && entity.interact(fakePlayer, Hand.MAIN_HAND).isAccepted()) {
             handleItemsFrom(fakePlayer);
-            return;
+            return true;
         }
         if (entity instanceof LivingEntity livingEntity && stack.useOnEntity(fakePlayer, livingEntity, Hand.MAIN_HAND).isAccepted()) {
             handleItemsFrom(fakePlayer);
-            return;
+            return true;
         }
 
-        if (customBlockActions(new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false), stack, fakePlayer)) return;
+        if (customBlockActions(new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false), stack, fakePlayer)) return true;
 
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var damage = (float) fakePlayer.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) + EnchantmentHelper.getAttackDamage(stack, entity instanceof LivingEntity livingEntity ? livingEntity.getGroup() : EntityGroup.DEFAULT);
-        entity.damage(world.getDamageSources().thrown(this, getOwner()), damage);
+        if (!entity.damage(world.getDamageSources().thrown(this, getOwner()), damage)) return false;
         if (entity instanceof LivingEntity livingEntity)
             stack.postHit(livingEntity, fakePlayer);
 
@@ -442,6 +442,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         if (stack.isOf(Items.NOTE_BLOCK))
             for (int i = 0; i < 12; i++)
                 playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP.value(), 2f, NoteBlock.getNotePitch(random.nextBetween(-12, 24)));
+        return true;
     }
 
     @Override
