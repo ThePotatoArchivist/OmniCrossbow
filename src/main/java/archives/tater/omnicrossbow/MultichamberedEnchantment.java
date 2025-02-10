@@ -40,11 +40,11 @@ public class MultichamberedEnchantment extends Enchantment {
     }
 
     public static int getMaxShots(ItemStack crossbow) {
-        return getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow));
+        return OmniCrossbow.ENCHANCEMENT_INSTALLED ? (EnchantmentHelper.getLevel(OmniCrossbow.OMNI, crossbow) > 0 ? getMaxShots(3) : 1) : getMaxShots(EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow));
     }
 
     public static boolean hasMultichambered(ItemStack crossbow) {
-        return EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow) > 0;
+        return OmniCrossbow.ENCHANCEMENT_INSTALLED ? EnchantmentHelper.getLevel(OmniCrossbow.OMNI, crossbow) > 0 : EnchantmentHelper.getLevel(OmniCrossbow.MULTICHAMBERED, crossbow) > 0;
     }
 
     public static int getLoadedShots(ItemStack crossbow) {

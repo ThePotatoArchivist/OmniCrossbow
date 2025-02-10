@@ -64,7 +64,7 @@ public class OmniCrossbowRenderer {
         if (!maybeCrossbow.isOf(Items.CROSSBOW)) return false;
         if (user != null && user.getActiveItem() == maybeCrossbow) return false;
         var projectile = getMainProjectile(maybeCrossbow);
-        return !projectile.isEmpty() && !OmniEnchantment.isNotDynamic(projectile);
+        return !projectile.isEmpty() && !OmniEnchantment.isNotDynamic(maybeCrossbow, projectile);
     }
 
     public static void itemSpecificTransform(Item projectile, MatrixStack matrices) {

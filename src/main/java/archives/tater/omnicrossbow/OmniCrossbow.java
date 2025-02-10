@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
@@ -32,8 +33,10 @@ public class OmniCrossbow implements ModInitializer {
 		return Identifier.of(MOD_ID, path);
 	}
 
+	public static final boolean ENCHANCEMENT_INSTALLED = FabricLoader.getInstance().isModLoaded("enchancement");
+
 	public static final Enchantment OMNI = Registry.register(Registries.ENCHANTMENT, id("omni"), new OmniEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
-	public static final Enchantment MULTICHAMBERED = Registry.register(Registries.ENCHANTMENT, id("multichambered"), new MultichamberedEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND));
+	public static final Enchantment MULTICHAMBERED = new MultichamberedEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.MAINHAND);
 
 	public static final Block HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("honey_slick"), new HoneySlickBlock(FabricBlockSettings.create()
 			.nonOpaque()
@@ -51,7 +54,7 @@ public class OmniCrossbow implements ModInitializer {
 
 	public static final TagKey<EntityType<?>> CAN_EQUIP_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, id("can_equip"));
 
-	private static SoundEvent of (Identifier id) {
+	private static SoundEvent of(Identifier id) {
 		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
 	}
 
@@ -66,6 +69,8 @@ public class OmniCrossbow implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+		if (!ENCHANCEMENT_INSTALLED)
+			Registry.register(Registries.ENCHANTMENT, id("multichambered"), MULTICHAMBERED);
 		OmniCrossbowEntities.register();
 	}
 }
