@@ -74,5 +74,6 @@ public class OmniCrossbow implements ModInitializer {
 		// Proceed with mild caution.
 		OmniCrossbowEnchantmentEffects.register();
 		OmniCrossbowEntities.register();
+		MultichamberedIndicatorTracker.register();
 	}
 }

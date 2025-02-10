@@ -1,8 +1,11 @@
 package archives.tater.omnicrossbow.client.render.gui.hud;
 
 import archives.tater.omnicrossbow.MultichamberedEnchantment;
+import archives.tater.omnicrossbow.MultichamberedIndicatorTracker.MaxShotsChangedPayload;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
@@ -11,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
+
+import static java.lang.Math.max;
 
 public class MultichamberedIndicator {
     public static final Identifier FILLED_ARROW = OmniCrossbow.id("textures/gui/arrow_loaded.png");
@@ -22,9 +27,12 @@ public class MultichamberedIndicator {
 
     public static final float INDICATOR_DISPLAY_TICKS = 200;
 
+    private static int maxShots = 0;
+
     public static void drawIndicator(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (MinecraftClient.getInstance().interactionManager == null || MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.SPECTATOR) return;
         if (!(MinecraftClient.getInstance().getCameraEntity() instanceof LivingEntity livingEntity)) return;
+
         var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(livingEntity);
         if (crossbow.isEmpty()) {
             lastCrossbow = null;
@@ -38,20 +46,17 @@ public class MultichamberedIndicator {
 
         var loadedShots = MultichamberedEnchantment.getLoadedShots(crossbow);
 
-//        if (lastCount != loadedShots) {
-//            lastCount = loadedShots;
-//            displayTicks = INDICATOR_DISPLAY_TICKS;
-//        }
+        if (lastCount != loadedShots) {
+            lastCount = loadedShots;
+            displayTicks = INDICATOR_DISPLAY_TICKS;
+        }
 
         if (displayTicks <= 0) return;
         displayTicks -= tickCounter.getTickDelta(false);
 
-//        var maxShots = EnchantmentHelper.getProjectileCount(MinecraftClient.getInstance().world, crossbow, livingEntity, 1);
-        var maxShots = 6;
-
         RenderSystem.enableBlend();
 
-        for (int i = 0; i < maxShots; i++)
+        for (int i = 0; i < max(maxShots, loadedShots); i++)
             drawContext.drawTexture(i < loadedShots ? FILLED_ARROW : EMPTY_ARROW,
                     drawContext.getScaledWindowWidth() / 2 + 9 * i - maxShots * 9 / 2,
                     drawContext.getScaledWindowHeight() / 2 + 16,
@@ -63,5 +68,12 @@ public class MultichamberedIndicator {
                     8);
 
         RenderSystem.disableBlend();
+    }
+
+    public static void register() {
+        ClientPlayNetworking.registerGlobalReceiver(MaxShotsChangedPayload.ID, (payload, context) ->
+                maxShots = payload.shots());
+
+        HudRenderCallback.EVENT.register(MultichamberedIndicator::drawIndicator);
     }
 }
