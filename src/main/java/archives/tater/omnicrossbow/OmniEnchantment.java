@@ -50,12 +50,25 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.NETHER_STAR)) return OmniCrossbow.BEACON_PREPARE;
         if (projectile.isOf(Items.FIRE_CHARGE)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.DRAGON_BREATH)) return SoundEvents.ENTITY_ENDER_DRAGON_SHOOT;
-        if (projectile.isOf(Items.TRIDENT)) return SoundEvents.ITEM_TRIDENT_THROW.value();
-        if (projectile.isOf(Items.ENDER_EYE)) return SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
         if (projectile.isOf(Items.BLAZE_POWDER) || projectile.isOf(Items.BLAZE_ROD)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.WIND_CHARGE)) return SoundEvents.ENTITY_WIND_CHARGE_THROW;
         return SoundEvents.ITEM_CROSSBOW_SHOOT;
+    }
+
+    // For non-explosive `ProjectileEntity`s launched with `shoot()`
+    public static @Nullable SoundEvent getSound(ProjectileEntity projectile) {
+        return switch(projectile) {
+            case TridentEntity ignored -> SoundEvents.ITEM_TRIDENT_THROW.value();
+            case SpyEnderEyeEntity ignored -> SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
+            case AbstractWindChargeEntity ignored -> SoundEvents.ENTITY_BREEZE_SHOOT;
+            case EmberEntity ignored -> SoundEvents.INTENTIONALLY_EMPTY; // Played separately so as not to play 32 sounds
+            default -> null;
+        };
+    }
+
+    private static void playSoundAt(Entity entity, SoundEvent soundEvent, float volume, float pitch) {
+        entity.getWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), soundEvent, entity.getSoundCategory(), volume, pitch);
     }
 
     public static int getCooldown(ItemStack projectile) {
@@ -173,11 +186,15 @@ public class OmniEnchantment {
     }
 
     public static void setupProjectile(Entity entity, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
-        if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) return;
+        if (entity instanceof EyeOfEnderEntity || entity instanceof DelayedShotEntity) {
+            playSoundAt(shooter, getSound(projectile), 1f, 1f);
+            return;
+        }
 
         if (entity instanceof ExplosiveProjectileEntity && !(entity instanceof AbstractWindChargeEntity)) {
             // velocity already handled by constructor
             entity.setPosition(entity.getX(), shooter.getEyeY() - 0.1f, entity.getZ());
+            playSoundAt(shooter, getSound(projectile), 1f, 1f);
             return;
         }
 
@@ -209,6 +226,8 @@ public class OmniEnchantment {
             return;
         }
 
+        playSoundAt(shooter, getSound(projectile), 1f, 1f);
+
         if (entity instanceof FallingBlockEntity fallingBlockEntity && fallingBlockEntity.getBlockState().isIn(BlockTags.ANVIL)) { // TODO: Make this a tag
             entity.setVelocity(getProjectileVel(shooter, 1f));
             return;
@@ -236,7 +255,8 @@ public class OmniEnchantment {
 
                 world.spawnEntity(ember);
             }
-            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, shooter.getSoundCategory(), 0.5f, 1.2f);
+            playSoundAt(shooter, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 0.5f, 1.2f);
+            playSoundAt(shooter, SoundEvents.ITEM_FIRECHARGE_USE, 1f, 1f);
             var baseVelocity = getProjectileVel(shooter, 1);
             if (shooter.isOnGround())
                 shooter.addVelocity(baseVelocity.multiply(-0.5, -0.5, -0.5));
@@ -292,6 +312,7 @@ public class OmniEnchantment {
             var particlePos = start.add(direction.multiply(i / 4.0));
             world.spawnParticles(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0.01);
         }
+        playSoundAt(shooter, SoundEvents.ITEM_FIRECHARGE_USE, 1f, 1f);
     }
 
     public static ItemStack getRemainder(ItemStack projectile) {

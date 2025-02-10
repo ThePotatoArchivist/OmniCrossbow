@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,7 +42,6 @@ public abstract class RangedWeaponItemMixin {
             if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer)
                 serverPlayer.getItemCooldownManager().set(stack.getItem(), OmniEnchantment.getCooldown(projectile));
         }
-        world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), OmniEnchantment.getSound(projectile), SoundCategory.PLAYERS, 1.0F, CrossbowItemInvoker.invokeGetSoundPitch(world.random, index));
     }
 
     @WrapOperation(

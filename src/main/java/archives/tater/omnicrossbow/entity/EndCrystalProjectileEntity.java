@@ -15,6 +15,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
+    private int boostTicks = MAX_BOOST_TICKS;
+    private static final int MAX_BOOST_TICKS = 7;
+
     public EndCrystalProjectileEntity(EntityType<? extends EndCrystalProjectileEntity> entityType, World world) {
         super(entityType, world);
         accelerationPower = 0;
@@ -35,6 +38,7 @@ public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
                 world.addParticle(ParticleTypes.PORTAL, getX(), getY(), getZ(), 1.2 * random.nextDouble() - 0.6, 1.2 * random.nextDouble() - 0.6, 1.2 * random.nextDouble() - 0.6);
             }
         }
+        if (boostTicks > 0) boostTicks--;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
 
     @Override
     public boolean deflect(ProjectileDeflection deflection, @Nullable Entity deflector, @Nullable Entity owner, boolean fromAttack) {
-        if (fromAttack && (deflector == null || !deflector.isLiving() || squaredDistanceTo(deflector) < 4))
+        if (fromAttack && (deflector == null || deflector != getOwner() || !deflector.isLiving() || boostTicks > 0))
             return super.deflect(deflection == ProjectileDeflection.REDIRECTED ? DEFLECTION : deflection, deflector, owner, fromAttack);
         explode();
         return false;

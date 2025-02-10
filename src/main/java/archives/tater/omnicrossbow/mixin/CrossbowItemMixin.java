@@ -14,12 +14,14 @@ import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -33,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(CrossbowItem.class)
 public abstract class CrossbowItemMixin {
@@ -49,6 +52,14 @@ public abstract class CrossbowItemMixin {
             if (remainder.isEmpty()) continue;
             shooter.dropStack(remainder, shooter.getEyeHeight(shooter.getPose()) - 0.1f);
         }
+    }
+
+    @ModifyExpressionValue(
+            method = "shoot",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/sound/SoundEvents;ITEM_CROSSBOW_SHOOT:Lnet/minecraft/sound/SoundEvent;")
+    )
+    private SoundEvent cancelSound(SoundEvent original, @Local(argsOnly = true) ProjectileEntity projectileEntity) {
+        return Objects.requireNonNullElse(OmniEnchantment.getSound(projectileEntity), original);
     }
 
     // --- BOTH ---

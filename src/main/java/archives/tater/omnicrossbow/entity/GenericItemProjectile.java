@@ -267,20 +267,20 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
-            handleItemsFrom(fakePlayer);
-            return true;
-        }
         if (state.onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return true;
         }
-        var offsetHit = new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), offsetPos, true);
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, offsetHit)).isAccepted()) {
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return true;
         }
+        var offsetHit = new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), offsetPos, true);
         if (world.getBlockState(offsetPos).onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, offsetHit).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, offsetHit)).isAccepted()) {
             handleItemsFrom(fakePlayer);
             return true;
         }
