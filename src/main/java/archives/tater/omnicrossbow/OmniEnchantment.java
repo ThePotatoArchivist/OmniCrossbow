@@ -3,6 +3,9 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
 import archives.tater.omnicrossbow.util.RaycastUtil;
+import moriyashiine.enchancement.common.entity.projectile.BrimstoneEntity;
+import moriyashiine.enchancement.common.init.ModEnchantments;
+import moriyashiine.enchancement.common.util.EnchancementUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.component.DataComponentTypes;
@@ -38,8 +41,13 @@ import static archives.tater.omnicrossbow.mixin.FallingBlockEntityInvoker.newFal
 public class OmniEnchantment {
     private static List<Item> RANDOM_AMMO = null;
 
-    public static boolean isNotDynamic(ItemStack projectile) {
-        return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG);}
+    public static boolean isNotDynamic(ItemStack crossbow, ItemStack projectile) {
+        return projectile.getItem() instanceof ArrowItem || projectile.isOf(Items.FIREWORK_ROCKET) || projectile.isIn(OmniCrossbow.NON_OMNI_PROJECTILE_TAG)
+                || OmniCrossbow.ENCHANCEMENT_INSTALLED && (
+                        (EnchancementUtil.hasEnchantment(ModEnchantments.SCATTER, crossbow) && projectile.isOf(Items.AMETHYST_SHARD))
+                        || (EnchancementUtil.hasEnchantment(ModEnchantments.TORCH, crossbow) && projectile.isOf(Items.TORCH))
+                        || ItemStack.areEqual(projectile, BrimstoneEntity.BRIMSTONE_STACK));
+    }
 
     public static boolean shouldUnloadImmediate(ItemStack projectile) {
         return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
@@ -115,7 +123,7 @@ public class OmniEnchantment {
     }
 
     public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
-        if (isNotDynamic(projectile)) return null;
+        if (isNotDynamic(crossbow, projectile)) return null;
 
         var x = shooter.getX();
         var y = shooter.getEyeY() - 0.1f;

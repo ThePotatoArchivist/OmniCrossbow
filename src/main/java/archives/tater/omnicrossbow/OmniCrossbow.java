@@ -3,6 +3,8 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.AbstractBlock;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.component.ComponentType;
 import net.minecraft.enchantment.Enchantment;
@@ -34,6 +36,8 @@ public class OmniCrossbow implements ModInitializer {
 		return Identifier.of(MOD_ID, path);
 	}
 
+    public static final boolean ENCHANCEMENT_INSTALLED = FabricLoader.getInstance().isModLoaded("enchancement");
+
 	public static final RegistryKey<Enchantment> OMNI = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 	public static final RegistryKey<Enchantment> MULTICHAMBERED = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 
@@ -57,7 +61,7 @@ public class OmniCrossbow implements ModInitializer {
 
 	public static final TagKey<EntityType<?>> CAN_EQUIP_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, id("can_equip"));
 
-	private static SoundEvent of (Identifier id) {
+	private static SoundEvent of(Identifier id) {
 		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
 	}
 
