@@ -60,7 +60,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Enchancement Compat
-	modCompileOnly "moriyashiine:enchancement:${project.enchancement_version}"
+	modImplementation "moriyashiine:enchancement:${project.enchancement_version}"
 }
 
 processResources {

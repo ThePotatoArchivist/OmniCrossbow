@@ -1,14 +1,19 @@
 package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
+import moriyashiine.enchancement.common.Enchancement;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentLevelBasedValue;
+import net.minecraft.enchantment.effect.value.SetEnchantmentEffect;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
@@ -81,10 +86,20 @@ public class OmniCrossbow implements ModInitializer {
 		OmniCrossbowEnchantmentEffects.register();
 		OmniCrossbowEntities.register();
 		MultichamberedIndicatorTracker.register();
-		if (ENCHANCEMENT_INSTALLED) //noinspection OptionalGetWithoutIsPresent
-            ResourceManagerHelper.registerBuiltinResourcePack(id("enchancement_compat"),
+		if (ENCHANCEMENT_INSTALLED) {
+			//noinspection OptionalGetWithoutIsPresent
+			ResourceManagerHelper.registerBuiltinResourcePack(id("enchancement_compat"),
 					FabricLoader.getInstance().getModContainer(MOD_ID).get(),
 					Text.translatable("resourcepack.omnicrossbow.enchancement_compat"),
 					ResourcePackActivationType.ALWAYS_ENABLED);
+			var SCATTER = Identifier.of(Enchancement.MOD_ID, "scatter");
+			EnchantmentEvents.MODIFY.register((registryKey, builder, enchantmentSource) -> {
+				if (!enchantmentSource.isBuiltin()) return;
+                if (registryKey.getValue().equals(SCATTER)) {
+					builder.addEffect(EnchantmentEffectComponentTypes.PROJECTILE_COUNT, new SetEnchantmentEffect(EnchantmentLevelBasedValue.constant(6)));
+					builder.addEffect(OmniCrossbowEnchantmentEffects.ONE_PROJECTILE_AT_TIME);
+				}
+			});
+		}
 	}
 }

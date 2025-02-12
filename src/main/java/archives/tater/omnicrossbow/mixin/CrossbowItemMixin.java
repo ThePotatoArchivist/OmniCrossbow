@@ -29,6 +29,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -41,6 +42,8 @@ import java.util.Objects;
 public abstract class CrossbowItemMixin {
 
     // --- OMNI ---
+
+    @Shadow protected abstract ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical);
 
     @Inject(
             method = "shootAll",
@@ -129,7 +132,7 @@ public abstract class CrossbowItemMixin {
             at = @At(value = "RETURN", ordinal = 0)
     )
     private static void setFull(LivingEntity shooter, ItemStack crossbow, CallbackInfoReturnable<Boolean> cir, @Local List<ItemStack> list) {
-        if (shooter.getWorld() instanceof ServerWorld serverWorld && list.size() >= EnchantmentHelper.getProjectileCount(serverWorld, crossbow, shooter, 1)) {
+        if (shooter.getWorld() instanceof ServerWorld serverWorld && (!MultichamberedEnchantment.hasMultichambered(crossbow) || list.size() >= EnchantmentHelper.getProjectileCount(serverWorld, crossbow, shooter, 1))) {
             crossbow.set(OmniCrossbow.CROSSBOW_FULL, Unit.INSTANCE);
         }
     }

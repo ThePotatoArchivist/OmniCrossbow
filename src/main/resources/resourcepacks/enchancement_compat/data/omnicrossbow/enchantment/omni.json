@@ -23,12 +23,8 @@
     "minecraft:projectile_count": [
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
-            "type": "minecraft:linear",
-            "base": 5,
-            "per_level_above_first": 0
-          }
+          "type": "minecraft:set",
+          "value": 6
         }
       }
     ],
