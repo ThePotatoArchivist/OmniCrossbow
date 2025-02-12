@@ -4,6 +4,8 @@ import archives.tater.omnicrossbow.MultichamberedEnchantment;
 import archives.tater.omnicrossbow.MultichamberedIndicatorTracker.MaxShotsChangedPayload;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import com.mojang.blaze3d.systems.RenderSystem;
+import moriyashiine.enchancement.common.init.ModEnchantmentEffectComponentTypes;
+import moriyashiine.enchancement.common.util.EnchancementUtil;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -34,7 +36,8 @@ public class MultichamberedIndicator {
     public static void drawIndicator(DrawContext drawContext, RenderTickCounter tickCounter) {
         if (MinecraftClient.getInstance().interactionManager == null || MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.SPECTATOR) return;
 
-        var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(MinecraftClient.getInstance().player);
+        var player = MinecraftClient.getInstance().player;
+        var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(player);
         if (crossbow.isEmpty()) {
             lastCrossbow = null;
             return;
@@ -60,10 +63,12 @@ public class MultichamberedIndicator {
 
         RenderSystem.enableBlend();
 
+        var shift = OmniCrossbow.ENCHANCEMENT_INSTALLED && EnchancementUtil.hasAnyEnchantmentsWith(player, ModEnchantmentEffectComponentTypes.ROTATION_BURST);
+
         for (int i = 0; i < max(maxShots, loadedShots); i++)
             drawContext.drawTexture(i < loadedShots ? FILLED_ARROW : EMPTY_ARROW,
                     drawContext.getScaledWindowWidth() / 2 + 9 * i - maxShots * 9 / 2,
-                    drawContext.getScaledWindowHeight() / 2 + 16,
+                    drawContext.getScaledWindowHeight() / 2 + (shift ? 28 : 16),
                     0,
                     0,
                     8,
