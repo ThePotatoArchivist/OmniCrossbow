@@ -1,0 +1,14 @@
+{
+  "pack": {
+    "description": "Fixes enchantments under Enchancement",
+    "pack_format": 48
+  },
+  "filter": {
+    "block": [
+      {
+        "namespace": "omnicrossbow",
+        "path": "enchantment/multichambered"
+      }
+    ]
+  }
+}

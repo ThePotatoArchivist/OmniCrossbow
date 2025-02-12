@@ -2,9 +2,10 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.AbstractBlock;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.component.ComponentType;
 import net.minecraft.enchantment.Enchantment;
@@ -19,6 +20,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import org.slf4j.Logger;
@@ -79,5 +81,10 @@ public class OmniCrossbow implements ModInitializer {
 		OmniCrossbowEnchantmentEffects.register();
 		OmniCrossbowEntities.register();
 		MultichamberedIndicatorTracker.register();
+		if (ENCHANCEMENT_INSTALLED) //noinspection OptionalGetWithoutIsPresent
+            ResourceManagerHelper.registerBuiltinResourcePack(id("enchancement_compat"),
+					FabricLoader.getInstance().getModContainer(MOD_ID).get(),
+					Text.translatable("resourcepack.omnicrossbow.enchancement_compat"),
+					ResourcePackActivationType.ALWAYS_ENABLED);
 	}
 }
