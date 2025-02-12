@@ -35,10 +35,11 @@ public class MultichamberedIndicator {
         if (MinecraftClient.getInstance().interactionManager == null || MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.SPECTATOR) return;
 
         var crossbow = MultichamberedEnchantment.getPrimaryCrossbow(MinecraftClient.getInstance().player);
-        if (crossbow.isEmpty() || !stackMaxShots.containsKey(crossbow)) {
+        if (crossbow.isEmpty()) {
             lastCrossbow = null;
             return;
         }
+        if (!stackMaxShots.containsKey(crossbow)) return;
 
         if (lastCrossbow != crossbow) {
             lastCrossbow = crossbow;
