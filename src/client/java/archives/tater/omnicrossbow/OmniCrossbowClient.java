@@ -9,6 +9,7 @@ import archives.tater.omnicrossbow.client.render.gui.hud.MultichamberedIndicator
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
@@ -32,5 +33,6 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
 		OmniCrossbowRenderer.register();
 		MultichamberedIndicator.register();
+        OmniCrossbow.CLIENT_NETWORKING = ClientPlayNetworking::send;
 	}
 }

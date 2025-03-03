@@ -1,10 +1,10 @@
 package archives.tater.omnicrossbow.entity;
 
+import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.ProjectileEntityAccessor;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.*;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -16,6 +16,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
 public class SlimeballEntity extends ThrownItemEntity {
+
     public SlimeballEntity(EntityType<? extends SlimeballEntity> type, World world) {
         super(type, world);
     }
@@ -61,12 +62,21 @@ public class SlimeballEntity extends ThrownItemEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         var entity = entityHitResult.getEntity();
+        bounceEntity(entity, false);
+    }
+
+    public void bounceEntity(Entity entity, boolean fromClient) {
         var velocity = getVelocity();
         entity.addVelocity(2.5 * velocity.x, ((entity.isOnGround() && velocity.y < 0) ? -0.5 : 1.5) * velocity.y, 2.5 * velocity.z);
-        entity.velocityModified = true;
+        if (!fromClient)
+            entity.velocityModified = true;
         playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
 
-        if (!this.getWorld().isClient) {
+        if (getWorld().isClient) {
+            var buf = PacketByteBufs.create();
+            buf.writeInt(this.getId());
+            OmniCrossbow.CLIENT_NETWORKING.send(OmniCrossbow.SLIMEBALL_BOUNCE_PACKET, buf);
+        } else {
             this.getWorld().sendEntityStatus(this, EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES);
             this.discard();
         }
@@ -87,5 +97,14 @@ public class SlimeballEntity extends ThrownItemEntity {
                     0.3 * random.nextDouble() - 0.15,
                     0.3 * random.nextDouble() - 0.15
             );
+    }
+
+    public static void registerPacketReceiver() {
+        ServerPlayNetworking.registerGlobalReceiver(OmniCrossbow.SLIMEBALL_BOUNCE_PACKET, (server, player, handler, buf, responseSender) -> {
+            var entity = player.getWorld().getEntityById(buf.readInt());
+            if (entity instanceof SlimeballEntity slimeballEntity) {
+                slimeballEntity.bounceEntity(player, true);
+            }
+        });
     }
 }

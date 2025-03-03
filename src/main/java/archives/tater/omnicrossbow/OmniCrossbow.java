@@ -2,6 +2,8 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import moriyashiine.enchancement.common.Enchancement;
+import archives.tater.omnicrossbow.entity.SlimeballEntity;
+import archives.tater.omnicrossbow.util.ClientNetworkingWorkaround;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -78,6 +80,9 @@ public class OmniCrossbow implements ModInitializer {
 	public static final SoundEvent SONIC_FIRE = of(id("projectile.sonic.fire"));
 	public static final SoundEvent END_CRYSTAL_HIT = of(id("projectile.endcrystal.hit"));
 
+	public static final Identifier SLIMEBALL_BOUNCE_PACKET = id("slimeball_bounce");
+	public static ClientNetworkingWorkaround CLIENT_NETWORKING = null;
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -101,5 +106,6 @@ public class OmniCrossbow implements ModInitializer {
 				}
 			});
 		}
+		SlimeballEntity.registerPacketReceiver();
 	}
 }
