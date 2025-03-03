@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.ProjectileEntityAccessor;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import archives.tater.omnicrossbow.networking.SlimeballBouncePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.*;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
@@ -73,9 +73,7 @@ public class SlimeballEntity extends ThrownItemEntity {
         playSound(SoundEvents.BLOCK_SLIME_BLOCK_FALL, 1f, 1f);
 
         if (getWorld().isClient) {
-            var buf = PacketByteBufs.create();
-            buf.writeInt(this.getId());
-            OmniCrossbow.CLIENT_NETWORKING.send(OmniCrossbow.SLIMEBALL_BOUNCE_PACKET, buf);
+            OmniCrossbow.CLIENT_NETWORKING.send(new SlimeballBouncePayload(this.getId()));
         } else {
             this.getWorld().sendEntityStatus(this, EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES);
             this.discard();
@@ -100,8 +98,9 @@ public class SlimeballEntity extends ThrownItemEntity {
     }
 
     public static void registerPacketReceiver() {
-        ServerPlayNetworking.registerGlobalReceiver(OmniCrossbow.SLIMEBALL_BOUNCE_PACKET, (server, player, handler, buf, responseSender) -> {
-            var entity = player.getWorld().getEntityById(buf.readInt());
+        ServerPlayNetworking.registerGlobalReceiver(SlimeballBouncePayload.ID, (payload, context) -> {
+            var player = context.player();
+            var entity = player.getWorld().getEntityById(payload.projectileId());
             if (entity instanceof SlimeballEntity slimeballEntity) {
                 slimeballEntity.bounceEntity(player, true);
             }
