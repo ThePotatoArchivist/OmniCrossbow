@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.render.RenderLayer;
@@ -49,5 +50,6 @@ public class OmniCrossbowClient implements ClientModInitializer {
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.disableBlend();
 		});
+		OmniCrossbow.CLIENT_NETWORKING = ClientPlayNetworking::send;
 	}
 }
