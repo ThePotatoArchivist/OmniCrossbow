@@ -3,15 +3,15 @@
 	"id": "omnicrossbow",
 	"version": "${version}",
 	"name": "Omni Crossbow",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Shoot any item from a crossbow!",
 	"authors": [
-		"Me!"
+		"ThePotatoArchivist"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/project/omni-crossbow",
+		"sources": "https://github.com/ThePotatoArchivist/OmniCrossbow/"
 	},
-	"license": "CC0-1.0",
+	"license": "LGPL-3.0-or-later",
 	"icon": "assets/omnicrossbow/icon.png",
 	"environment": "*",
 	"entrypoints": {
