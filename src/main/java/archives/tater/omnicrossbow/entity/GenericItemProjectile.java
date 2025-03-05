@@ -378,6 +378,14 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
+        if (stack.isOf(Items.OMINOUS_BOTTLE) && entity instanceof LivingEntity livingEntity) {
+            playSound(SoundEvents.ITEM_OMINOUS_BOTTLE_DISPOSE, 1.0F, 1.0F);
+            livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.BAD_OMEN, 120000, stack.getOrDefault(DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER, 0), false, false, true));
+            spawnItemParticles();
+            stack.decrement(1);
+            return true;
+        }
+
         if (stack.isOf(Items.FEATHER)) return true;
 
         if (entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {

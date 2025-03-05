@@ -283,7 +283,7 @@ public class OmniEnchantment {
             var stop = hitResult.getPos();
             var velocity = direction.y < 0 ? direction.multiply(4, -1, 4) : direction.multiply(4);
             for (var entity : RaycastUtil.pierce(world, start, stop, 1, shooter)) {
-                entity.addVelocity(entity instanceof LivingEntity livingEntity ? velocity.multiply(1 - livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)) : velocity);
+                entity.addVelocity(entity instanceof LivingEntity livingEntity ? velocity.multiply(1 - 0.6 * livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)) : velocity);
                 entity.velocityModified = true;
             }
             shooter.addVelocity(direction.multiply(-1));
