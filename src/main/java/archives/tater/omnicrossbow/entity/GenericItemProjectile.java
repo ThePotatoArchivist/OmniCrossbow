@@ -77,11 +77,12 @@ public class GenericItemProjectile extends ThrownItemEntity {
     }
 
     // Call server side
-    private @Nullable ItemEntity dropAt(HitResult hitResult) {
+    private @Nullable ItemEntity dropAt(HitResult hitResult, boolean randomVelocity) {
         if (getItem().isEmpty()) return null;
         ItemEntity itemEntity = new ItemEntity(this.getWorld(), hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, getItem());
         itemEntity.setToDefaultPickupDelay();
-        itemEntity.setVelocity(0, 0, 0);
+        if (!randomVelocity)
+            itemEntity.setVelocity(0, 0, 0);
         this.getWorld().spawnEntity(itemEntity);
         return itemEntity;
     }
@@ -139,8 +140,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         if (getWorld().isClient) return;
-        customBlockActions(blockHitResult, getItem(), null);
-        if (!getItem().isEmpty()) dropAt(blockHitResult);
+        var success = customBlockActions(blockHitResult, getItem(), null);
+        if (!getItem().isEmpty()) dropAt(blockHitResult, success);
     }
 
     private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack, @Nullable FakePlayer reusePlayer) {
@@ -297,7 +298,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         super.onEntityHit(entityHitResult);
         if (getWorld().isClient) return;
         if (customEntityActions(entityHitResult, getItem())) {
-            if (!getItem().isEmpty()) dropAt(entityHitResult);
+            if (!getItem().isEmpty()) dropAt(entityHitResult, true);
         }
     }
 
@@ -386,6 +387,17 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
+        if (stack.isOf(Items.MILK_BUCKET) && entity instanceof LivingEntity livingEntity) {
+            var effects = livingEntity.getStatusEffects();
+            if (!effects.isEmpty())
+                effects.stream()
+                        .skip(random.nextInt(effects.size())).findFirst()
+                        .ifPresent(effect -> livingEntity.removeStatusEffect(effect.getEffectType()));
+            playSound(SoundEvents.ENTITY_WANDERING_TRADER_DRINK_MILK, 1f, 1f);
+            setItem(Items.BUCKET.getDefaultStack());
+            return true;
+        }
+
         if (stack.isOf(Items.FEATHER)) return true;
 
         if (entity instanceof LivingEntity livingEntity && (livingEntity.getType().isIn(OmniCrossbow.CAN_EQUIP_TAG) || livingEntity.canEquip(stack))) {
@@ -416,8 +428,23 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
+        // Foods
+        if (entity instanceof LivingEntity livingEntity) {
+            var food = stack.get(DataComponentTypes.FOOD);
+            if (food != null) {
+                var count = stack.getCount();
+                setItem(stack.finishUsing(world, livingEntity));
+                if (!(entity instanceof PlayerEntity))
+                    food.usingConvertsTo().ifPresent(this::dropStack);
+                if (stack.getCount() == count) // Doesn't automatically decrement if not creative mode
+                    stack.decrement(1);
+                spawnItemParticles();
+                return true;
+            }
+        }
+
         // Potion ingredients
-        if (entity instanceof LivingEntity livingEntity)
+        if (entity instanceof LivingEntity livingEntity && !stack.isOf(Items.COBWEB)) // TODO make this not hardcoded
             for (var potion : new RegistryEntry[] {Potions.AWKWARD, Potions.WATER}) {
                 @SuppressWarnings("unchecked")
                 var inputStack = PotionContentsComponent.createStack(Items.POTION, potion);

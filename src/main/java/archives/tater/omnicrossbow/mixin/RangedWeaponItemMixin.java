@@ -39,8 +39,12 @@ public abstract class RangedWeaponItemMixin {
         ci.cancel();
         if (OmniEnchantment.shouldUnloadImmediate(projectile)) {
             stack.damage(getWeaponStackDamage(projectile), shooter, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-            if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer)
-                serverPlayer.getItemCooldownManager().set(stack.getItem(), OmniEnchantment.getCooldown(projectile));
+            if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer) {
+                var cooldown = OmniEnchantment.getCooldown(projectile);
+                if (cooldown > 0)
+                    serverPlayer.getItemCooldownManager().set(stack.getItem(), cooldown);
+            }
+            shooter.dropStack(OmniEnchantment.getRemainder(projectile), shooter.getEyeHeight(shooter.getPose()) - 0.1f);
         }
     }
 

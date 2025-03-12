@@ -24,12 +24,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Unit;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,20 +39,6 @@ import java.util.Objects;
 public abstract class CrossbowItemMixin {
 
     // --- OMNI ---
-
-    @Shadow protected abstract ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical);
-
-    @Inject(
-            method = "shootAll",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/CrossbowItem;shootAll(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;Ljava/util/List;FFZLnet/minecraft/entity/LivingEntity;)V", shift = At.Shift.AFTER)
-    )
-    private void ejectRemainder(World world, LivingEntity shooter, Hand hand, ItemStack stack, float speed, float divergence, LivingEntity target, CallbackInfo ci, @Local ChargedProjectilesComponent chargedProjectilesComponent) {
-        for (var projectile : chargedProjectilesComponent.getProjectiles()) {
-            var remainder = OmniEnchantment.getRemainder(projectile);
-            if (remainder.isEmpty()) continue;
-            shooter.dropStack(remainder, shooter.getEyeHeight(shooter.getPose()) - 0.1f);
-        }
-    }
 
     @ModifyExpressionValue(
             method = "shoot",
