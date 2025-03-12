@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.mixin.FireBlockInvoker;
+import archives.tater.omnicrossbow.util.OmniUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Vec3d;
@@ -42,6 +44,11 @@ public class EmberEntity extends ThrownEntity {
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
 
+    }
+
+    @Override
+    public boolean canModifyAt(World world, BlockPos pos) {
+        return super.canModifyAt(world, pos) && OmniUtil.modifyNotRestrictedAt(world, getOwner(), pos);
     }
 
     @Override
@@ -79,7 +86,7 @@ public class EmberEntity extends ThrownEntity {
         var blockPos = blockHitResult.getBlockPos();
         var state = world.getBlockState(blockPos);
         var placePos = blockPos.offset(blockHitResult.getSide());
-        if (world.getBlockState(placePos).isReplaceable() && state.getFluidState().isEmpty() && random.nextFloat() < (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0 ? 0.4f : 0.3f)) {
+        if (canModifyAt(world, placePos) && world.getBlockState(placePos).isReplaceable() && state.getFluidState().isEmpty() && random.nextFloat() < (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0 ? 0.4f : 0.3f)) {
             world.setBlockState(placePos, ((FireBlockInvoker) Blocks.FIRE).invokeGetStateForPosition(world, placePos));
             discard();
         }

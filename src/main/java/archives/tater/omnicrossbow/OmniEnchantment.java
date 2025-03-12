@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
+import archives.tater.omnicrossbow.util.OmniUtil;
 import archives.tater.omnicrossbow.util.RaycastUtil;
 import moriyashiine.enchancement.common.enchantment.effect.AllowLoadingProjectileEffect;
 import moriyashiine.enchancement.common.init.ModComponentTypes;
@@ -323,12 +324,12 @@ public class OmniEnchantment {
                     world.spawnParticles(ParticleTypes.CLOUD, current.x, current.y + 0.1, current.z, 8, 0, 0, 0, 0);
                 break;
             }
-            if (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0) {
+            if (OmniUtil.canModifyAt(world, shooter, blockPos) && ((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0) {
                 world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                 burntPositions.add(blockPos);
             } else {
                 var endPos = blockPos.offset(hitResult.getSide());
-                if (world.getBlockState(endPos).isReplaceable())
+                if (OmniUtil.canModifyAt(world, shooter, endPos) && world.getBlockState(endPos).isReplaceable())
                     burntPositions.add(endPos);
                 break;
             }
