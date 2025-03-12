@@ -126,6 +126,7 @@ public class OmniEnchantment {
 
     public static @Nullable Entity createProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
         if (isNotDynamic(crossbow, projectile)) return null;
+        if (projectile.isIn(OmniCrossbow.DISABLE_ACTION_TAG)) return new GenericItemProjectile(shooter, world);
 
         var x = shooter.getX();
         var y = shooter.getEyeY() - 0.1f;
@@ -248,53 +249,55 @@ public class OmniEnchantment {
     }
 
     public static boolean shootProjectile(ServerWorld world, LivingEntity shooter, ItemStack crossbow, ItemStack projectile) {
-        if (projectile.isOf(Items.BLAZE_ROD)) {
-            shootBlazeRod(world, shooter, crossbow);
-            return true;
-        }
-        if (projectile.isOf(Items.BLAZE_POWDER)) {
-            if (!shooter.isOnGround() && shooter.getVelocity().y < 0)
-                shooter.setVelocity(shooter.getVelocity().multiply(1, 0, 1));
-
-            var crossbowItem = crossbow.getItem() instanceof CrossbowItem crossbowItem1 ? crossbowItem1 : (CrossbowItem) Items.CROSSBOW;
-
-            for (int i = 0; i < 12; i++) {
-                var ember = new EmberEntity(shooter, world);
-
-                ((CrossbowItemInvoker) crossbowItem).invokeShoot(shooter, ember, 0, 1.0f, 32f, 0, shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget() : null);
-
-                world.spawnEntity(ember);
+        if (!projectile.isIn(OmniCrossbow.DISABLE_ACTION_TAG)) {
+            if (projectile.isOf(Items.BLAZE_ROD)) {
+                shootBlazeRod(world, shooter, crossbow);
+                return true;
             }
-            playSoundAt(shooter, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 0.5f, 1.2f);
-            playSoundAt(shooter, SoundEvents.ITEM_FIRECHARGE_USE, 1f, 1f);
-            var baseVelocity = getProjectileVel(shooter, 1);
-            if (shooter.isOnGround())
-                shooter.addVelocity(baseVelocity.multiply(-0.5, -0.5, -0.5));
-            else
-                shooter.addVelocity(baseVelocity.multiply(-1.2));
-            shooter.velocityModified = true;
-            return true;
-        }
-        if (projectile.isOf(Items.BREEZE_ROD)) {
-            var start = shooter.getEyePos().add(0, -0.1, 0);
-            var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getEyePos().subtract(start).normalize() : shooter.getRotationVector();
-            var end = start.add(direction.multiply(12));
-            var hitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, shooter));
-            var stop = hitResult.getPos();
-            var velocity = direction.y < 0 ? direction.multiply(4, -1, 4) : direction.multiply(4);
-            for (var entity : RaycastUtil.pierce(world, start, stop, 1, shooter)) {
-                entity.addVelocity(entity instanceof LivingEntity livingEntity ? velocity.multiply(1 - 0.6 * livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)) : velocity);
-                entity.velocityModified = true;
+            if (projectile.isOf(Items.BLAZE_POWDER)) {
+                if (!shooter.isOnGround() && shooter.getVelocity().y < 0)
+                    shooter.setVelocity(shooter.getVelocity().multiply(1, 0, 1));
+
+                var crossbowItem = crossbow.getItem() instanceof CrossbowItem crossbowItem1 ? crossbowItem1 : (CrossbowItem) Items.CROSSBOW;
+
+                for (int i = 0; i < 12; i++) {
+                    var ember = new EmberEntity(shooter, world);
+
+                    ((CrossbowItemInvoker) crossbowItem).invokeShoot(shooter, ember, 0, 1.0f, 32f, 0, shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget() : null);
+
+                    world.spawnEntity(ember);
+                }
+                playSoundAt(shooter, SoundEvents.ENTITY_GENERIC_EXPLODE.value(), 0.5f, 1.2f);
+                playSoundAt(shooter, SoundEvents.ITEM_FIRECHARGE_USE, 1f, 1f);
+                var baseVelocity = getProjectileVel(shooter, 1);
+                if (shooter.isOnGround())
+                    shooter.addVelocity(baseVelocity.multiply(-0.5, -0.5, -0.5));
+                else
+                    shooter.addVelocity(baseVelocity.multiply(-1.2));
+                shooter.velocityModified = true;
+                return true;
             }
-            shooter.addVelocity(direction.multiply(-1));
-            shooter.velocityModified = true;
-            var distance = stop.subtract(start).length();
-            for (int i = 0; i < distance; i++) {
-                var particlePos = start.add(direction.multiply(i)).add(2 * world.random.nextDouble() - 1, 2 * world.random.nextDouble() - 1, 2 * world.random.nextDouble() - 1);
-                world.spawnParticles(ParticleTypes.GUST, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0);
+            if (projectile.isOf(Items.BREEZE_ROD)) {
+                var start = shooter.getEyePos().add(0, -0.1, 0);
+                var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getEyePos().subtract(start).normalize() : shooter.getRotationVector();
+                var end = start.add(direction.multiply(12));
+                var hitResult = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, shooter));
+                var stop = hitResult.getPos();
+                var velocity = direction.y < 0 ? direction.multiply(4, -1, 4) : direction.multiply(4);
+                for (var entity : RaycastUtil.pierce(world, start, stop, 1, shooter)) {
+                    entity.addVelocity(entity instanceof LivingEntity livingEntity ? velocity.multiply(1 - 0.6 * livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE)) : velocity);
+                    entity.velocityModified = true;
+                }
+                shooter.addVelocity(direction.multiply(-1));
+                shooter.velocityModified = true;
+                var distance = stop.subtract(start).length();
+                for (int i = 0; i < distance; i++) {
+                    var particlePos = start.add(direction.multiply(i)).add(2 * world.random.nextDouble() - 1, 2 * world.random.nextDouble() - 1, 2 * world.random.nextDouble() - 1);
+                    world.spawnParticles(ParticleTypes.GUST, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0);
+                }
+                playSoundAt(shooter, SoundEvents.ENTITY_BREEZE_WIND_BURST.value(), 1.5f, 1f);
+                return true;
             }
-            playSoundAt(shooter, SoundEvents.ENTITY_BREEZE_WIND_BURST.value(), 1.5f, 1f);
-            return true;
         }
         var entity = createProjectile(world, shooter, crossbow, projectile);
         if (entity == null) return false;

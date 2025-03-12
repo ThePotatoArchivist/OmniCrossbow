@@ -140,7 +140,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         if (getWorld().isClient) return;
-        var success = customBlockActions(blockHitResult, getItem(), null);
+        var success = !getItem().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customBlockActions(blockHitResult, getItem(), null);
         if (!getItem().isEmpty()) dropAt(blockHitResult, success);
     }
 
@@ -297,7 +297,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         if (getWorld().isClient) return;
-        if (customEntityActions(entityHitResult, getItem())) {
+        if (!getItem().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customEntityActions(entityHitResult, getItem())) {
             if (!getItem().isEmpty()) dropAt(entityHitResult, true);
         }
     }
