@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin;
+package archives.tater.omnicrossbow.mixin.endereye;
 
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import archives.tater.omnicrossbow.entity.SpyEnderEyeEntity;

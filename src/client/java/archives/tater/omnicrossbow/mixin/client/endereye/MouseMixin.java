@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin.client;
+package archives.tater.omnicrossbow.mixin.client.endereye;
 
 import archives.tater.omnicrossbow.entity.SpyEnderEyeEntity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

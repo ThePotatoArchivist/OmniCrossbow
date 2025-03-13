@@ -21,7 +21,7 @@
     "PlayerEntityMixin",
     "ProjectileEntityAccessor",
     "RangedWeaponItemMixin",
-    "ServerPlayerEntityMixin",
+    "endereye.ServerPlayerEntityMixin",
     "ThrownEntityMixin"
   ],
   "injectors": {
