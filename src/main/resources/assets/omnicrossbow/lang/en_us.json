@@ -10,5 +10,6 @@
   "subtitles.omnicrossbow.projectile.sonic.prepare": "Echo shard charges",
   "subtitles.omnicrossbow.projectile.sonic.fire": "Echo shard booms",
   "subtitles.omnicrossbow.projectile.endcrystal.hit": "End crystal clangs",
-  "resourcepack.omnicrossbow.enchancement_compat": "Omni Crossbow Enchancement Compat"
+  "resourcepack.omnicrossbow.enchancement_compat": "Omni Crossbow Enchancement Compat",
+  "command.omnicrossbow.modifiable_area": "Set OmniCrossbow modifiable for area \"%s\" to %s"
 }

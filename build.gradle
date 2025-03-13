@@ -61,6 +61,8 @@ dependencies {
 
 	// Enchancement Compat
 	modCompileOnly "moriyashiine:enchancement:${project.enchancement_version}"
+	modRuntimeOnly modCompileOnly("maven.modrinth:area_lib:${project.arealib_version}")
+	modRuntimeOnly "maven.modrinth:area-tools:${project.areatools_version}"
 }
 
 processResources {
