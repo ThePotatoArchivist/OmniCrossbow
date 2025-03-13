@@ -13,6 +13,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -53,8 +54,8 @@ public class OmniCrossbowAreaLibCompat {
         });
     }
 
-    public static boolean containedInModifiableArea(World world, BlockPos pos) {
-        return world.getServer() != null &&
+    public static boolean containedInModifiableArea(@Nullable World world, BlockPos pos) {
+        return world != null && world.getServer() != null &&
                 AreaSavedData.getServerData(world.getServer())
                         .findTrackedAreasContaining(world, pos.toCenterPos()).stream()
                         .anyMatch(area -> area.has(BLOCKS_MODIFIABLE));

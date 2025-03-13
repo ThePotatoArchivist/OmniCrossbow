@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
+import archives.tater.omnicrossbow.area.AreaCheckExplosionBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -9,9 +10,11 @@ import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
 public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
@@ -76,7 +79,18 @@ public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
 
     private void explode() {
         if (getWorld().isClient) return;
-        this.getWorld().createExplosion(this, getX(), getY(), getZ(), getVelocity().length() > 0.5 ? 4f : 6F, true, World.ExplosionSourceType.MOB);
+        getWorld().createExplosion(this,
+                Explosion.createDamageSource(getWorld(), this),
+                OmniCrossbow.AREALIB_INSTALLED // TODO make this a function
+                        && getOwner() instanceof ServerPlayerEntity player
+                        && player.interactionManager.getGameMode().isBlockBreakingRestricted()
+                        ? new AreaCheckExplosionBehavior(null) : null,
+                getX(),
+                getBodyY(0.5),
+                getZ(),
+                getVelocity().length() > 0.5 ? 4f : 6F,
+                true,
+                World.ExplosionSourceType.MOB);
         discard();
     }
 }

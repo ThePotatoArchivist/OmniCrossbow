@@ -79,5 +79,15 @@ public class OmniCrossbowEntities {
                     .eyeHeight(0.0F)
     );
 
+    /**
+     * {@code null} if AreaLib is not installed, always check {@link OmniCrossbow#AREALIB_INSTALLED} before accessing
+     */
+    public static EntityType<AreaTntEntity> AREA_TNT = OmniCrossbow.AREALIB_INSTALLED ? register(
+            "area_tnt",
+            OmniCrossbowEntities.<AreaTntEntity>misc(AreaTntEntity::new, 0.98f, 0.98f, 10, 10)
+                    .makeFireImmune()
+                    .eyeHeight(0.15f)
+    ) : null;
+
     public static void register() {}
 }

@@ -159,6 +159,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         var state = world.getBlockState(blockPos);
 
         if (stack.isOf(Items.GUNPOWDER)) {
+            // TODO restrict explosion
             world.createExplosion(getOwner(), getX(), getY(), getZ(), 1, true, World.ExplosionSourceType.MOB);
             stack.decrement(1);
             return true;

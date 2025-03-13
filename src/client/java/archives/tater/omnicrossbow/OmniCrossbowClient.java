@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
+import net.minecraft.client.render.entity.TntEntityRenderer;
 import net.minecraft.client.render.entity.WindChargeEntityRenderer;
 import net.minecraft.util.Identifier;
 
@@ -30,6 +31,8 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, EndCrystalProjectileEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.SPY_ENDER_EYE, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.LARGE_WIND_CHARGE, WindChargeEntityRenderer::new);
+		if (OmniCrossbowEntities.AREA_TNT != null)
+			EntityRendererRegistry.register(OmniCrossbowEntities.AREA_TNT, TntEntityRenderer::new);
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
 		OmniCrossbowRenderer.register();
 		MultichamberedIndicator.register();
