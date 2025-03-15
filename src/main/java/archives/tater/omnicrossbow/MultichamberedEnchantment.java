@@ -4,8 +4,8 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class MultichamberedEnchantment {
     public static @Nullable Hand getPrimaryCrossbowHand(LivingEntity livingEntity) {
         for (var hand : Hand.values()) {
             var stack = livingEntity.getStackInHand(hand);
-            if (stack.isOf(Items.CROSSBOW) && hasMultichambered(stack))
+            if (stack.getItem() instanceof CrossbowItem && hasMultichambered(stack))
                 return hand;
         }
         return null;
@@ -37,7 +37,7 @@ public class MultichamberedEnchantment {
     public static ItemStack getPrimaryCrossbow(LivingEntity livingEntity) {
         for (var hand : Hand.values()) {
             var stack = livingEntity.getStackInHand(hand);
-            if (stack.isOf(Items.CROSSBOW) && hasMultichambered(stack))
+            if (stack.getItem() instanceof CrossbowItem && hasMultichambered(stack))
                 return stack;
         }
         return ItemStack.EMPTY;

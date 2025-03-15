@@ -1,5 +1,6 @@
 {
   "values": [
-    {"required": false, "id": "yungscavebiomes:icicle"}
+    {"required": false, "id": "yungscavebiomes:icicle"},
+    {"required": false, "id": "pierced:harpoon"}
   ]
 }

@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Items;
+import net.minecraft.item.CrossbowItem;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -22,7 +22,7 @@ public class MultichamberedIndicatorTracker {
         ServerEntityEvents.EQUIPMENT_CHANGE.register((livingEntity, equipmentSlot, previousStack, currentStack) -> {
             if (equipmentSlot.isArmorSlot()
                     || !(livingEntity instanceof ServerPlayerEntity serverPlayer)
-                    || !previousStack.isOf(Items.CROSSBOW) && !currentStack.isOf(Items.CROSSBOW)) return;
+                    || !(previousStack.getItem() instanceof CrossbowItem) && !(currentStack.getItem() instanceof CrossbowItem)) return;
 
             var hand = MultichamberedEnchantment.getPrimaryCrossbowHand(livingEntity);
             if (hand == null) return;

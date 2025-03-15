@@ -6,20 +6,25 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.json.JsonUnbakedModel;
+import net.minecraft.client.render.model.json.ModelOverride;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.data.client.ModelIds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,21 +36,9 @@ public class OmniCrossbowRenderer {
 
     private static Transforms transforms;
 
-    public static final Identifier DYNAMIC_CROSSBOW = OmniCrossbow.id("item/dynamic_crossbow");
-    public static final Identifier PULLED_CROSSBOW = OmniCrossbow.id("item/pulled_crossbow");
-
-    public static void renderCrossbow(ItemStack stack, ModelTransformationMode mode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
-        var world = MinecraftClient.getInstance().world;
-        var projectile = getMainProjectile(stack);
-        var loadedModel = itemRenderer.getModels().getModelManager().getModel(PULLED_CROSSBOW);
-        var leftHanded = mode == ModelTransformationMode.FIRST_PERSON_LEFT_HAND || mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND;
-
+    public static void renderProjectile(ItemRenderer itemRenderer, World world, ItemStack projectile, ModelTransformationMode mode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.push();
-        matrices.translate(0.5, 0.5, 0.5); // go to center
-        loadedModel.getTransformation().getTransformation(mode).apply(leftHanded, matrices);
-        itemRenderer.renderItem(stack, ModelTransformationMode.NONE, false, matrices, vertexConsumers, light, overlay, loadedModel);
-        matrices.translate(0, 0, 0.0625); // up one pixel
+        matrices.translate(0.5, 0.5, 0.5625); // go to center + up one pixel
         itemSpecificTransform(projectile.getItem(), matrices);
         matrices.scale(-1, 1, -1); // rotate 180 on y
         itemRenderer.renderItem(projectile, ModelTransformationMode.FIXED, light, overlay, matrices, vertexConsumers, world, 0);
@@ -53,15 +46,22 @@ public class OmniCrossbowRenderer {
     }
 
     public static void register() {
-        BuiltinItemRendererRegistry.INSTANCE.register(Items.CROSSBOW, OmniCrossbowRenderer::renderCrossbow);
-
-        ModelLoadingPlugin.register(pluginContext -> pluginContext.addModels(DYNAMIC_CROSSBOW, PULLED_CROSSBOW));
-
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> transforms = new Transforms());
+
+        var predicate = OmniCrossbow.id("dynamic");
+        ModelPredicateProviderRegistry.register(predicate, (stack, world, entity, seed) -> useDynamic(stack, entity) ? 1 : 0);
+
+        var crossbowModelId = new ModelIdentifier(Registries.ITEM.getId(Items.CROSSBOW), "inventory");
+        ModelLoadingPlugin.register(context -> context.modifyModelBeforeBake().register((unbakedModel, context1) -> {
+            if (!Objects.equals(context1.topLevelId(), crossbowModelId)) return unbakedModel;
+            if (!(unbakedModel instanceof JsonUnbakedModel jsonModel)) return unbakedModel;
+            jsonModel.getOverrides().add(new ModelOverride(ModelIds.getItemSubModelId(Items.CROSSBOW, "_pulling_2"), List.of(new ModelOverride.Condition(predicate, 1))));
+            return unbakedModel;
+        }));
     }
 
     public static boolean useDynamic(ItemStack maybeCrossbow, @Nullable LivingEntity user) {
-        if (!maybeCrossbow.isOf(Items.CROSSBOW)) return false;
+        if (!(maybeCrossbow.getItem() instanceof CrossbowItem)) return false;
         if (user != null && user.getActiveItem() == maybeCrossbow) return false;
         var projectile = getMainProjectile(maybeCrossbow);
         return !projectile.isEmpty() && !OmniEnchantment.isNotDynamic(maybeCrossbow, projectile);
