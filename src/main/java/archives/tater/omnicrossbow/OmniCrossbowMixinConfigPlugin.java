@@ -23,7 +23,7 @@ public class OmniCrossbowMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.startsWith(PREFIX + "area"))
+        if (mixinClassName.startsWith(PREFIX + "arealib"))
             return FabricLoader.getInstance().isModLoaded("area_lib");
         return true;
     }
