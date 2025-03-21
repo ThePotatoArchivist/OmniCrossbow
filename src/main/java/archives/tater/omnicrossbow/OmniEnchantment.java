@@ -12,7 +12,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -161,6 +160,18 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
 
         var projectileItem = projectile.getItem();
+        if (projectile.isIn(OmniCrossbow.CAN_CREATE_ENTITY_TAG)) {
+            var itemId = Registries.ITEM.getId(projectileItem);
+            if (Registries.ENTITY_TYPE.containsId(itemId)) {
+                var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
+                if (entity != null) {
+                    entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+                    if (entity instanceof ProjectileEntity projectileEntity)
+                        projectileEntity.setOwner(shooter);
+                    return entity;
+                }
+            }
+        }
         if (projectileItem instanceof ThrowablePotionItem) return new PotionEntity(world, shooter);
         if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
             var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
@@ -172,29 +183,12 @@ public class OmniEnchantment {
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
         if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(projectile), shooter, projectile, SpawnReason.SPAWN_EGG);
-        if (projectileItem instanceof BoatItem boatItem) {
+        if (projectile.isIn(OmniCrossbow.VANILLA_BOATS_TAG) && projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
                     ? new ChestBoatEntity(world, x, y, z)
                     : new BoatEntity(world, x, y, z);
             entity.setVariant(((BoatItemAccessor) boatItem).getType());
             return entity;
-        }
-
-        if (!projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
-            var itemId = Registries.ITEM.getId(projectileItem);
-            if (Registries.ENTITY_TYPE.containsId(itemId)) {
-                var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
-                if (entity != null) {
-                    if (!entity.isLiving() && !(entity instanceof AbstractDecorationEntity)) {
-                        entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-                        if (entity instanceof ProjectileEntity projectileEntity)
-                            projectileEntity.setOwner(shooter);
-                        return entity;
-                    }
-
-                    entity.discard();
-                }
-            }
         }
 
         return new GenericItemProjectile(shooter, world);

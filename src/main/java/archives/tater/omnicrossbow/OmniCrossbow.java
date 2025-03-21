@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.Enchantment;
@@ -66,10 +67,15 @@ public class OmniCrossbow implements ModInitializer {
 			.sounds(BlockSoundGroup.HONEY)
 	));
 
+	public static final Block TEMPORARY_COBWEB_BLOCK = Registry.register(Registries.BLOCK, id("temporary_cobweb"), new TemporaryCobwebBlock(AbstractBlock.Settings.copy(Blocks.COBWEB)));
+	public static final Block TEMPORARY_HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("temporary_honey_slick"), new TemporaryHoneySlickBlock(AbstractBlock.Settings.copy(HONEY_SLICK_BLOCK)));
+
 	public static final TagKey<Item> HAS_REMAINDER_TAG = TagKey.of(RegistryKeys.ITEM, id("has_remainder"));
 	public static final TagKey<Item> NOT_RANDOM_AMMO_TAG = TagKey.of(RegistryKeys.ITEM, id("not_random_ammo"));
 	public static final TagKey<Item> NON_OMNI_PROJECTILE_TAG = TagKey.of(RegistryKeys.ITEM, id("non_omni_projectile"));
 	public static final TagKey<Item> DISABLE_ACTION_TAG = TagKey.of(RegistryKeys.ITEM, id("disable_action"));
+	public static final TagKey<Item> CAN_CREATE_ENTITY_TAG = TagKey.of(RegistryKeys.ITEM, id("can_create_entity"));
+	public static final TagKey<Item> VANILLA_BOATS_TAG = TagKey.of(RegistryKeys.ITEM, id("vanilla_boats"));
 
 	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("beacon"));
 

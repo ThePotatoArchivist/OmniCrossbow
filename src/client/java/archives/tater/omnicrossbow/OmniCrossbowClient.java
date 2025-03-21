@@ -34,6 +34,8 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		if (OmniCrossbowEntities.AREA_TNT != null)
 			EntityRendererRegistry.register(OmniCrossbowEntities.AREA_TNT, TntEntityRenderer::new);
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.TEMPORARY_HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.TEMPORARY_COBWEB_BLOCK, RenderLayer.getCutout());
 		OmniCrossbowRenderer.register();
 		MultichamberedIndicator.register();
         OmniCrossbow.CLIENT_NETWORKING = ClientPlayNetworking::send;
