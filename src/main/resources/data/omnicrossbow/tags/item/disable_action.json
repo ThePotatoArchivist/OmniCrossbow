@@ -1,5 +1,6 @@
 {
   "values": [
+    {"required": false, "id": "playercontainer:self_container"}
   ],
   "replace": false
 }

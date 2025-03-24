@@ -320,7 +320,9 @@ public class GenericItemProjectile extends ThrownItemEntity {
         if (getWorld().isClient) return;
         if (!getItem().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customEntityActions(entityHitResult, getItem())) {
             if (!getItem().isEmpty()) dropAt(entityHitResult, true);
+            return;
         }
+        dropAt(entityHitResult, false);
     }
 
     private boolean customEntityActions(EntityHitResult entityHitResult, ItemStack stack) {
