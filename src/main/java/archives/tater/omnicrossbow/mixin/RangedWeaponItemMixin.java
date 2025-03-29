@@ -37,7 +37,7 @@ public abstract class RangedWeaponItemMixin {
     private void customProjectile(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target, CallbackInfo ci, @Local(ordinal = 1) ItemStack projectile, @Local int index) {
         if (!OmniEnchantment.shootProjectile(world, shooter, stack, projectile)) return;
         ci.cancel();
-        if (OmniEnchantment.shouldUnloadImmediate(projectile)) {
+        if (OmniEnchantment.shouldUnloadImmediate(projectile, shooter)) {
             stack.damage(getWeaponStackDamage(projectile), shooter, hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             if (shooter.isOnGround() && shooter instanceof ServerPlayerEntity serverPlayer) {
                 var cooldown = OmniEnchantment.getCooldown(projectile);

@@ -28,10 +28,12 @@ public class BeaconLaserEntity extends DelayedShotEntity {
 
     public BeaconLaserEntity(EntityType<? extends DelayedShotEntity> type, World world) {
         super(type, world);
+        ignoreCameraFrustum = true;
     }
 
     public BeaconLaserEntity(World world, LivingEntity owner, ItemStack launcher) {
         super(OmniCrossbowEntities.BEACON_LASER, world, owner, launcher, 14);
+        ignoreCameraFrustum = true;
         updateAnglesAndDistance();
     }
 

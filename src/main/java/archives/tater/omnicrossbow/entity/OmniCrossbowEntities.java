@@ -89,5 +89,12 @@ public class OmniCrossbowEntities {
                     .eyeHeight(0.15f)
     ) : null;
 
+    public static EntityType<GrappleFishingHookEntity> GRAPPLE_FISHING_HOOK = register(
+            "grapple_fishing_hook",
+            OmniCrossbowEntities.<GrappleFishingHookEntity>defaultProjectile(GrappleFishingHookEntity::new)
+                    .disableSaving()
+                    .disableSummon()
+    );
+
     public static void register() {}
 }

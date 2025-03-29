@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.FishingBobberEntityRenderer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.TntEntityRenderer;
 import net.minecraft.client.render.entity.WindChargeEntityRenderer;
@@ -31,6 +32,7 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, EndCrystalProjectileEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.SPY_ENDER_EYE, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.LARGE_WIND_CHARGE, WindChargeEntityRenderer::new);
+		EntityRendererRegistry.register(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, FishingBobberEntityRenderer::new);
 		if (OmniCrossbowEntities.AREA_TNT != null)
 			EntityRendererRegistry.register(OmniCrossbowEntities.AREA_TNT, TntEntityRenderer::new);
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());

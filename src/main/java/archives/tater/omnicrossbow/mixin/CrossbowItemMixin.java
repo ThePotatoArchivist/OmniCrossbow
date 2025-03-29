@@ -55,10 +55,10 @@ public abstract class CrossbowItemMixin {
             method = "shootAll",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;set(Lnet/minecraft/component/ComponentType;Ljava/lang/Object;)Ljava/lang/Object;")
     )
-    private <T> @Nullable T preventUncharge(ItemStack instance, ComponentType<T> type, @Nullable T value, Operation<T> original) {
+    private <T> @Nullable T preventUncharge(ItemStack instance, ComponentType<T> type, @Nullable T value, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter) {
         var component = instance.get(type);
         if (!(component instanceof ChargedProjectilesComponent projectilesComponent) || projectilesComponent.isEmpty()) return original.call(instance, type, value); // sanity check
-        if (!OmniEnchantment.shouldUnloadImmediate(projectilesComponent.getProjectiles().getFirst())) return component;
+        if (!OmniEnchantment.shouldUnloadImmediate(projectilesComponent.getProjectiles().getFirst(), shooter)) return component;
         if (EnchantmentHelper.hasAnyEnchantmentsWith(instance, OmniCrossbowEnchantmentEffects.ONE_PROJECTILE_AT_TIME) && projectilesComponent.getProjectiles().size() > 1) {
             MultichamberedEnchantment.unloadOneProjectile(instance);
             return component;

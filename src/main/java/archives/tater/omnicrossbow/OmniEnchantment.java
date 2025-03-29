@@ -52,8 +52,9 @@ public class OmniEnchantment {
         return projectile.isOf(Items.LAVA_BUCKET) && projectile.getOrDefault(ModComponentTypes.BRIMSTONE_DAMAGE, 0) == Integer.MAX_VALUE;
     }
 
-    public static boolean shouldUnloadImmediate(ItemStack projectile) {
-        return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR);
+    public static boolean shouldUnloadImmediate(ItemStack projectile, LivingEntity shooter) {
+        return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR)
+                && !(projectile.isOf(Items.FISHING_ROD) && (!(shooter instanceof PlayerEntity player) || player.fishHook == null));
     }
 
     public static SoundEvent getSound(ItemStack projectile) {
@@ -73,6 +74,7 @@ public class OmniEnchantment {
             case TridentEntity ignored -> SoundEvents.ITEM_TRIDENT_THROW.value();
             case SpyEnderEyeEntity ignored -> SoundEvents.ENTITY_ENDER_EYE_LAUNCH;
             case AbstractWindChargeEntity ignored -> SoundEvents.ENTITY_BREEZE_SHOOT;
+            case GrappleFishingHookEntity ignored -> SoundEvents.ENTITY_FISHING_BOBBER_THROW;
             case EmberEntity ignored -> SoundEvents.INTENTIONALLY_EMPTY; // Played separately so as not to play 32 sounds
             default -> null;
         };
@@ -155,6 +157,7 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
         if (projectile.isOf(Items.ARMOR_STAND)) return create(world, EntityType.ARMOR_STAND, shooter, projectile, SpawnReason.SPAWN_EGG);
+        if (projectile.isOf(Items.FISHING_ROD)) return new GrappleFishingHookEntity(world, shooter);
         if (projectile.isOf(Items.END_CRYSTAL)) return shootExplosive(world, shooter, 0.3f, EndCrystalProjectileEntity::new);
         if (projectile.isOf(Items.ECHO_SHARD)) return new DelayedSonicBoomEntity(world, shooter, crossbow);
         if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
@@ -294,6 +297,13 @@ public class OmniEnchantment {
                     world.spawnParticles(ParticleTypes.GUST, particlePos.x, particlePos.y, particlePos.z, 4, 0, 0, 0, 0);
                 }
                 playSoundAt(shooter, SoundEvents.ENTITY_BREEZE_WIND_BURST.value(), 1.5f, 1f);
+                return true;
+            }
+            if (projectile.isOf(Items.FISHING_ROD) && shooter instanceof PlayerEntity player && player.fishHook != null) {
+                player.fishHook.discard();
+                projectile.damage(1, world, null, item -> {});
+                shooter.dropStack(projectile, shooter.getEyeHeight(shooter.getPose()) - 0.1f);
+                playSoundAt(shooter, SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, 1f, 1f);
                 return true;
             }
         }
