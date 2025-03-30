@@ -2,10 +2,13 @@ package archives.tater.omnicrossbow.mixin;
 
 import archives.tater.omnicrossbow.duck.Grappler;
 import archives.tater.omnicrossbow.entity.GrappleFishingHookEntity;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin implements Grappler {
@@ -13,12 +16,28 @@ public class LivingEntityMixin implements Grappler {
     private @Nullable GrappleFishingHookEntity omnicrossbow$hook = null;
 
     @Override
-    public GrappleFishingHookEntity omnicrossbow$getHook() {
+    public @Nullable GrappleFishingHookEntity omnicrossbow$getHook() {
         return omnicrossbow$hook;
     }
 
     @Override
-    public void omnicrossbow$setHook(GrappleFishingHookEntity hook) {
+    public void omnicrossbow$setHook(@Nullable GrappleFishingHookEntity hook) {
         omnicrossbow$hook = hook;
+    }
+
+    @ModifyReturnValue(
+            method = "getGravity",
+            at = @At("RETURN")
+    )
+    private double noGravityReeling(double original) {
+        return omnicrossbow$hook != null && !omnicrossbow$hook.isRemoved() && omnicrossbow$hook.isPullingOwner() ? 0.0 : original;
+    }
+
+    @ModifyExpressionValue(
+            method = "travel",
+            at = @At(value = "CONSTANT", args = "doubleValue=0.9800000190734863")
+    )
+    private double sameDragReeling(double original) {
+        return omnicrossbow$hook != null && !omnicrossbow$hook.isRemoved() && omnicrossbow$hook.isPullingOwner() ? 0.91 : original;
     }
 }

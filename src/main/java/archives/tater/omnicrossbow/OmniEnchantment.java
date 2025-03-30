@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow;
 
+import archives.tater.omnicrossbow.duck.Grappler;
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
 import archives.tater.omnicrossbow.util.OmniUtil;
@@ -54,7 +55,7 @@ public class OmniEnchantment {
 
     public static boolean shouldUnloadImmediate(ItemStack projectile, LivingEntity shooter) {
         return !projectile.isOf(Items.ECHO_SHARD) && !projectile.isOf(Items.NETHER_STAR)
-                && !(projectile.isOf(Items.FISHING_ROD) && (!(shooter instanceof PlayerEntity player) || player.fishHook == null));
+                && !projectile.isOf(Items.FISHING_ROD); // External handling
     }
 
     public static SoundEvent getSound(ItemStack projectile) {
@@ -299,11 +300,8 @@ public class OmniEnchantment {
                 playSoundAt(shooter, SoundEvents.ENTITY_BREEZE_WIND_BURST.value(), 1.5f, 1f);
                 return true;
             }
-            if (projectile.isOf(Items.FISHING_ROD) && shooter instanceof PlayerEntity player && player.fishHook != null) {
-                player.fishHook.discard();
-                projectile.damage(1, world, null, item -> {});
-                shooter.dropStack(projectile, shooter.getEyeHeight(shooter.getPose()) - 0.1f);
-                playSoundAt(shooter, SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, 1f, 1f);
+            if (projectile.isOf(Items.FISHING_ROD) && shooter instanceof Grappler grappler && grappler.omnicrossbow$getHook() != null) {
+                grappler.omnicrossbow$getHook().unloadCrossbow();
                 return true;
             }
         }
