@@ -17,7 +17,7 @@ public class LivingEntityMixin implements Grappler {
 
     @Override
     public @Nullable GrappleFishingHookEntity omnicrossbow$getHook() {
-        return omnicrossbow$hook;
+        return omnicrossbow$hook == null || omnicrossbow$hook.isRemoved() ? null : omnicrossbow$hook;
     }
 
     @Override

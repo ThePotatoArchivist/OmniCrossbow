@@ -66,10 +66,15 @@ public class GrappleFishingHookEntity extends FishingBobberEntity {
     }
 
     @Override
-    public void remove(RemovalReason reason) {
-        var owner = getOwner();
+    public void onRemoved() {
+        super.onRemoved();
+        if (getOwner() instanceof Grappler grappler)
+            grappler.omnicrossbow$setHook(null);
+    }
 
-        if (owner instanceof Grappler grappler)
+    @Override
+    public void remove(RemovalReason reason) {
+        if (getOwner() instanceof Grappler grappler)
             grappler.omnicrossbow$setHook(null);
 
         super.remove(reason);
@@ -147,8 +152,7 @@ public class GrappleFishingHookEntity extends FishingBobberEntity {
     // TODO rename
     private boolean removeIfInvalid(LivingEntity player) {
         if (!player.isRemoved() && player.isAlive()
-                && (hasFishingRodLoaded(player.getMainHandStack()) || hasFishingRodLoaded(player.getOffHandStack())
-                && !(squaredDistanceTo(player) > 32 * 32)))
+                && (hasFishingRodLoaded(player.getMainHandStack()) || hasFishingRodLoaded(player.getOffHandStack())))
             return false;
 
         discard();

@@ -92,6 +92,7 @@ public class OmniCrossbowEntities {
     public static EntityType<GrappleFishingHookEntity> GRAPPLE_FISHING_HOOK = register(
             "grapple_fishing_hook",
             OmniCrossbowEntities.<GrappleFishingHookEntity>defaultProjectile(GrappleFishingHookEntity::new)
+                    .maxTrackingRange(10)
                     .disableSaving()
                     .disableSummon()
     );
