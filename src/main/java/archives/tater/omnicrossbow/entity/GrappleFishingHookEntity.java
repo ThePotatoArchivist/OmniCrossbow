@@ -3,7 +3,6 @@ package archives.tater.omnicrossbow.entity;
 import archives.tater.omnicrossbow.MultichamberedEnchantment;
 import archives.tater.omnicrossbow.duck.Grapplable;
 import archives.tater.omnicrossbow.duck.Grappler;
-import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.util.OmniUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -13,6 +12,8 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.decoration.EndCrystalEntity;
+import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -292,8 +293,12 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
     }
 
     public static float getWeightValue(Entity entity) {
-        if (((EntityAccessor) entity).invokeGetMoveEffect() == MoveEffect.NONE) return Float.MAX_VALUE;
-        if (!(entity instanceof LivingEntity livingEntity)) return square(entity.getWidth()) * entity.getHeight() * 20;
+        if (entity instanceof ShulkerEntity || entity instanceof EndCrystalEntity)
+            return Float.MAX_VALUE; // Stationary mobs
+
+        if (!(entity instanceof LivingEntity livingEntity))
+            return square(entity.getWidth()) * entity.getHeight() * 20;
+
         return livingEntity.getMaxHealth() + (entity instanceof PlayerEntity ? (float) livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) * 50 : 0f);
     }
 
