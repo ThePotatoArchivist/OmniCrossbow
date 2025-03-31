@@ -13,8 +13,6 @@
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
     "FireBlockInvoker",
-    "FishingBobberEntityAccessor",
-    "FishingBobberEntityMixin",
     "HoneyBlockInvoker",
     "HostileEntityMixin",
     "LivingEntityAccessor",
