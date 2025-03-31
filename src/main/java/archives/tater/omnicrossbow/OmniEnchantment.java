@@ -300,9 +300,15 @@ public class OmniEnchantment {
                 playSoundAt(shooter, SoundEvents.ENTITY_BREEZE_WIND_BURST.value(), 1.5f, 1f);
                 return true;
             }
-            if (projectile.isOf(Items.FISHING_ROD) && shooter instanceof Grappler grappler && grappler.omnicrossbow$getHook() != null) {
-                grappler.omnicrossbow$getHook().unloadCrossbow();
-                return true;
+            if (projectile.isOf(Items.FISHING_ROD) && shooter instanceof Grappler grappler) {
+                var hook = grappler.omnicrossbow$getHook();
+                if (hook != null) {
+                    if (hook.isHooked())
+                        hook.unloadCrossbow();
+                    else
+                        hook.discard();
+                    return true;
+                }
             }
         }
         var entity = createProjectile(world, shooter, crossbow, projectile);

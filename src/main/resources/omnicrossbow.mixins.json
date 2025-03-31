@@ -10,6 +10,7 @@
     "CrossbowItemMixin",
     "EntityAccessor",
     "EntityBucketItemAccessor",
+    "EntityMixin",
     "FallingBlockEntityInvoker",
     "FallingBlockInvoker",
     "FireBlockInvoker",

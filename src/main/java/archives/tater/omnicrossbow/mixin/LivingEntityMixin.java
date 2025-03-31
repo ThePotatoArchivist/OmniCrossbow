@@ -1,9 +1,9 @@
 package archives.tater.omnicrossbow.mixin;
 
+import archives.tater.omnicrossbow.duck.Grapplable;
 import archives.tater.omnicrossbow.duck.Grappler;
 import archives.tater.omnicrossbow.entity.GrappleFishingHookEntity;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,19 +25,11 @@ public class LivingEntityMixin implements Grappler {
         omnicrossbow$hook = hook;
     }
 
-    @ModifyReturnValue(
-            method = "getGravity",
-            at = @At("RETURN")
-    )
-    private double noGravityReeling(double original) {
-        return omnicrossbow$hook != null && !omnicrossbow$hook.isRemoved() && omnicrossbow$hook.isPullingOwner() ? 0.0 : original;
-    }
-
     @ModifyExpressionValue(
             method = "travel",
             at = @At(value = "CONSTANT", args = "doubleValue=0.9800000190734863")
     )
     private double sameDragReeling(double original) {
-        return omnicrossbow$hook != null && !omnicrossbow$hook.isRemoved() && omnicrossbow$hook.isPullingOwner() ? 0.91 : original;
+        return (omnicrossbow$hook != null && !omnicrossbow$hook.isRemoved() && omnicrossbow$hook.isPullingOwner()) || ((Grapplable) this).omnicrossbow$isGrappled() ? 0.91 : original;
     }
 }
