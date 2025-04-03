@@ -1,6 +1,9 @@
 package archives.tater.omnicrossbow;
 
 import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
+import archives.tater.omnicrossbow.block.HoneySlickBlock;
+import archives.tater.omnicrossbow.block.TemporaryCobwebBlock;
+import archives.tater.omnicrossbow.block.TemporaryHoneySlickBlock;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import archives.tater.omnicrossbow.entity.SlimeballEntity;
 import archives.tater.omnicrossbow.networking.SlimeballBouncePayload;

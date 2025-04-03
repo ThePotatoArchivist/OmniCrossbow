@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.entity;
 
-import archives.tater.omnicrossbow.HoneySlickBlock;
+import archives.tater.omnicrossbow.block.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;

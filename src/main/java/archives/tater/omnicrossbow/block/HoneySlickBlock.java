@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow;
+package archives.tater.omnicrossbow.block;
 
 import archives.tater.omnicrossbow.mixin.HoneyBlockInvoker;
 import net.minecraft.block.*;
