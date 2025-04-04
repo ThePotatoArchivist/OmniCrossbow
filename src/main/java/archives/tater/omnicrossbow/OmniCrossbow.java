@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
 import archives.tater.omnicrossbow.block.HoneySlickBlock;
 import archives.tater.omnicrossbow.block.TemporaryCobwebBlock;
 import archives.tater.omnicrossbow.block.TemporaryHoneySlickBlock;
+import archives.tater.omnicrossbow.block.WaxBlock;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import archives.tater.omnicrossbow.entity.SlimeballEntity;
 import archives.tater.omnicrossbow.networking.SlimeballBouncePayload;
@@ -18,6 +19,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.Enchantment;
@@ -68,6 +70,13 @@ public class OmniCrossbow implements ModInitializer {
 			.nonOpaque()
 			.strength(0.7f, 0)
 			.sounds(BlockSoundGroup.HONEY)
+	));
+	public static final WaxBlock WAX_BLOCK = Registry.register(Registries.BLOCK, id("wax"), new WaxBlock(AbstractBlock.Settings.create()
+			.replaceable()
+			.nonOpaque()
+			.strength(0.2F)
+			.sounds(BlockSoundGroup.HONEY)
+			.pistonBehavior(PistonBehavior.DESTROY)
 	));
 
 	public static final Block TEMPORARY_COBWEB_BLOCK = Registry.register(Registries.BLOCK, id("temporary_cobweb"), new TemporaryCobwebBlock(AbstractBlock.Settings.copy(Blocks.COBWEB)));

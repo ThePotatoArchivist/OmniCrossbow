@@ -207,6 +207,20 @@ public class GenericItemProjectile extends ThrownItemEntity {
             }
         }
 
+        if (stack.isOf(Items.HONEYCOMB)) {
+            var placePos = blockPos.offset(blockHitResult.getSide());
+            var blockState = OmniCrossbow.WAX_BLOCK.withDirection(OmniCrossbow.WAX_BLOCK.getDefaultState(), world, placePos, blockHitResult.getSide().getOpposite());
+            if (world.getBlockState(placePos).isReplaceable() && blockState != null && blockState.canPlaceAt(world, placePos)) {
+                world.setBlockState(placePos, blockState);
+                for (int i = 0; i < 2 + random.nextInt(2); i++)
+                    OmniCrossbow.WAX_BLOCK.getGrower().grow(blockState, world, placePos, random);
+                playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
+                spawnItemParticles();
+                stack.decrement(1);
+                return true;
+            }
+        }
+
         if (stack.isOf(Items.COBWEB) && OmniCrossbow.AREALIB_INSTALLED) {
             var placePos = blockPos.offset(blockHitResult.getSide());
             if (OmniCrossbowAreaLibCompat.containedInArea(world, placePos, OmniCrossbowAreaLibCompat.TEMPORARY_BLOCKS_PLACEABLE) && world.getBlockState(placePos).isReplaceable()) {
