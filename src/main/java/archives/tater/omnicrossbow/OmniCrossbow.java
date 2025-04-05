@@ -13,6 +13,7 @@ import moriyashiine.enchancement.common.Enchancement;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,12 +28,15 @@ import net.minecraft.enchantment.EnchantmentLevelBasedValue;
 import net.minecraft.enchantment.effect.value.SetEnchantmentEffect;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageType;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.item.Item;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
@@ -74,13 +78,17 @@ public class OmniCrossbow implements ModInitializer {
 	public static final WaxBlock WAX_BLOCK = Registry.register(Registries.BLOCK, id("wax"), new WaxBlock(AbstractBlock.Settings.create()
 			.replaceable()
 			.nonOpaque()
+			.noCollision()
 			.strength(0.2F)
 			.sounds(BlockSoundGroup.HONEY)
 			.pistonBehavior(PistonBehavior.DESTROY)
+			.burnable()
 	));
 
 	public static final Block TEMPORARY_COBWEB_BLOCK = Registry.register(Registries.BLOCK, id("temporary_cobweb"), new TemporaryCobwebBlock(AbstractBlock.Settings.copy(Blocks.COBWEB)));
 	public static final Block TEMPORARY_HONEY_SLICK_BLOCK = Registry.register(Registries.BLOCK, id("temporary_honey_slick"), new TemporaryHoneySlickBlock(AbstractBlock.Settings.copy(HONEY_SLICK_BLOCK)));
+
+	public static final RegistryEntry<StatusEffect> WAXED_EFFECT = Registry.registerReference(Registries.STATUS_EFFECT, id("waxed"), new StatusEffect(StatusEffectCategory.BENEFICIAL, 0xffffff) {});
 
 	public static final TagKey<Item> HAS_REMAINDER_TAG = TagKey.of(RegistryKeys.ITEM, id("has_remainder"));
 	public static final TagKey<Item> NOT_RANDOM_AMMO_TAG = TagKey.of(RegistryKeys.ITEM, id("not_random_ammo"));
@@ -132,5 +140,6 @@ public class OmniCrossbow implements ModInitializer {
 			OmniCrossbowAreaLibCompat.register();
 		PayloadTypeRegistry.playC2S().register(SlimeballBouncePayload.ID, SlimeballBouncePayload.CODEC);
 		SlimeballEntity.registerPacketReceiver();
+		FlammableBlockRegistry.getDefaultInstance().add(WAX_BLOCK, 60, 100);
 	}
 }

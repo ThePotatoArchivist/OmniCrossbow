@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.entity;
 import archives.tater.omnicrossbow.block.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
+import archives.tater.omnicrossbow.block.WaxBlock;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import archives.tater.omnicrossbow.mixin.PlayerEntityInvoker;
@@ -207,18 +208,11 @@ public class GenericItemProjectile extends ThrownItemEntity {
             }
         }
 
-        if (stack.isOf(Items.HONEYCOMB)) {
-            var placePos = blockPos.offset(blockHitResult.getSide());
-            var blockState = OmniCrossbow.WAX_BLOCK.withDirection(OmniCrossbow.WAX_BLOCK.getDefaultState(), world, placePos, blockHitResult.getSide().getOpposite());
-            if (world.getBlockState(placePos).isReplaceable() && blockState != null && blockState.canPlaceAt(world, placePos)) {
-                world.setBlockState(placePos, blockState);
-                for (int i = 0; i < 2 + random.nextInt(2); i++)
-                    OmniCrossbow.WAX_BLOCK.getGrower().grow(blockState, world, placePos, random);
-                playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
-                spawnItemParticles();
-                stack.decrement(1);
-                return true;
-            }
+        if (stack.isOf(Items.HONEYCOMB) && WaxBlock.trySpread(world, blockPos.offset(blockHitResult.getSide()), blockHitResult.getSide().getOpposite(), true, 2, 2 + world.random.nextInt(2))) {
+            playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
+            spawnItemParticles();
+            stack.decrement(1);
+            return true;
         }
 
         if (stack.isOf(Items.COBWEB) && OmniCrossbow.AREALIB_INSTALLED) {

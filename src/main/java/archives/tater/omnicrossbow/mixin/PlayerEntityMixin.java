@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.mixin;
 
-import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.OmniCrossbowEnchantmentEffects;
+import archives.tater.omnicrossbow.duck.Slider;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -39,6 +39,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSwimming()Z")
     )
     private boolean crawlOnWax(boolean original) {
-        return original || supportingBlockPos.map(pos -> getWorld().getBlockState(pos).isOf(OmniCrossbow.WAX_BLOCK)).orElse(false) && isSprinting();
+        return original || ((Slider) this).omnicrossbow$shouldSlide();
     }
 }
