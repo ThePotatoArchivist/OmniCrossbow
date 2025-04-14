@@ -74,6 +74,7 @@ public class OmniCrossbow implements ModInitializer {
 	public static final TagKey<Item> NOT_RANDOM_AMMO_TAG = TagKey.of(RegistryKeys.ITEM, id("not_random_ammo"));
 	public static final TagKey<Item> NON_OMNI_PROJECTILE_TAG = TagKey.of(RegistryKeys.ITEM, id("non_omni_projectile"));
 	public static final TagKey<Item> DISABLE_ACTION_TAG = TagKey.of(RegistryKeys.ITEM, id("disable_action"));
+	public static final TagKey<Item> MOD_ENABLE_ACTION_TAG = TagKey.of(RegistryKeys.ITEM, id("mod_enable_action"));
 	public static final TagKey<Item> CAN_CREATE_ENTITY_TAG = TagKey.of(RegistryKeys.ITEM, id("can_create_entity"));
 	public static final TagKey<Item> VANILLA_BOATS_TAG = TagKey.of(RegistryKeys.ITEM, id("vanilla_boats"));
 

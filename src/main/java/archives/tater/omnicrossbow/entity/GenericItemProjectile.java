@@ -32,6 +32,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.potion.Potions;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -288,6 +289,9 @@ public class GenericItemProjectile extends ThrownItemEntity {
             }
             return true;
         }
+
+        if (!Registries.ITEM.getId(stack.getItem()).getNamespace().equals("minecraft") && !stack.isIn(OmniCrossbow.MOD_ENABLE_ACTION_TAG))
+            return false;
 
         if (state.onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
             handleItemsFrom(fakePlayer);
