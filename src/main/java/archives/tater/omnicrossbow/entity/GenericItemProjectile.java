@@ -5,7 +5,6 @@ import archives.tater.omnicrossbow.OmniCrossbow;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import archives.tater.omnicrossbow.mixin.PlayerEntityInvoker;
-import archives.tater.omnicrossbow.util.OmniUtil;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
@@ -47,7 +46,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -89,11 +87,6 @@ public class GenericItemProjectile extends ThrownItemEntity {
         return itemEntity;
     }
 
-    @Override
-    public boolean canModifyAt(World world, BlockPos pos) {
-        return super.canModifyAt(world, pos) && OmniUtil.modifyNotRestrictedAt(world, getOwner(), pos);
-    }
-
     private FakePlayer createFakePlayer() {
         @Nullable var owner = getOwner();
         var fakePlayer = FakePlayer.get((ServerWorld) getWorld(), owner == null ? new GameProfile(FakePlayer.DEFAULT_UUID, "a crossbow projectile") : new GameProfile(owner.getUuid(), "a crossbow projectile shot by " + owner.getName()));
@@ -103,8 +96,6 @@ public class GenericItemProjectile extends ThrownItemEntity {
         ((EntityAccessor) fakePlayer).setStandingEyeHeight(0);
         ((LivingEntityAccessor) fakePlayer).invokeGetEquipmentChanges();
         ((LivingEntityAccessor) fakePlayer).setLastAttackedTicks(MathHelper.ceil(fakePlayer.getAttackCooldownProgressPerTick()));
-        if (owner instanceof ServerPlayerEntity serverPlayer)
-            fakePlayer.changeGameMode(serverPlayer.interactionManager.getGameMode() == GameMode.ADVENTURE ? GameMode.ADVENTURE : GameMode.SURVIVAL);
         return fakePlayer;
     }
 
@@ -195,7 +186,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         if (stack.isOf(Items.HONEY_BOTTLE)) {
             var blockState = OmniCrossbow.HONEY_SLICK_BLOCK.getDefaultState().with(HoneySlickBlock.FACING, blockHitResult.getSide().getOpposite());
             var placePos = blockPos.offset(blockHitResult.getSide());
-            if (canModifyAt(world, placePos) && world.getBlockState(placePos).isReplaceable() && blockState.canPlaceAt(world, placePos)) {
+            if (world.getBlockState(placePos).isReplaceable() && blockState.canPlaceAt(world, placePos)) {
                 world.setBlockState(placePos, blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
@@ -212,7 +203,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (stack.isIn(ConventionalItemTags.DYES) && canModifyAt(world, blockPos) && !state.hasBlockEntity() && state.getBlock().asItem() != Items.AIR) {
+        if (stack.isIn(ConventionalItemTags.DYES) && !state.hasBlockEntity() && state.getBlock().asItem() != Items.AIR) {
             var blockStack = state.getBlock().asItem().getDefaultStack();
             for (var items : new List[] {
                 List.of(stack, blockStack),
@@ -256,9 +247,9 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (isSuitableTool(stack, blockPos, state, fakePlayer) && fakePlayer.interactionManager.tryBreakBlock(blockPos)) return true;
+        if (isSuitableTool(stack, blockPos, state, fakePlayer) && ((ServerWorld) world).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(blockPos)) return true;
         var offsetPos = blockPos.offset(blockHitResult.getSide());
-        if (isSuitableTool(stack, offsetPos, state, fakePlayer) && fakePlayer.interactionManager.tryBreakBlock(offsetPos)) return true;
+        if (isSuitableTool(stack, offsetPos, state, fakePlayer) && ((ServerWorld) world).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(offsetPos)) return true;
 
         if (stack.isOf(Items.NOTE_BLOCK))
             for (int i = 0; i < 12; i++)
@@ -347,6 +338,18 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
+        if (stack.isOf(Items.HONEY_BOTTLE)) {
+            var blockState = OmniCrossbow.HONEY_SLICK_BLOCK.getDefaultState();
+            if (world.getBlockState(entity.getBlockPos()).isReplaceable() && blockState.canPlaceAt(world, entity.getBlockPos())) {
+                world.setBlockState(entity.getBlockPos(), blockState);
+                playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
+                playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
+                spawnItemParticles();
+                stack.decrement(1);
+                return true;
+            }
+        }
+
         if (stack.isOf(Items.LIGHTNING_ROD) && entity instanceof LivingEntity && world.isThundering() && world.isSkyVisible(entity.getBlockPos())) {
             var lightningBolt = EntityType.LIGHTNING_BOLT.create(world);
             if (lightningBolt != null) {
@@ -428,7 +431,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         }
 
         // Foods
-        if (entity instanceof LivingEntity livingEntity && !stack.isOf(Items.HONEY_BOTTLE)) {
+        if (entity instanceof LivingEntity livingEntity) {
             var food = stack.get(DataComponentTypes.FOOD);
             if (food != null) {
                 var count = stack.getCount();
