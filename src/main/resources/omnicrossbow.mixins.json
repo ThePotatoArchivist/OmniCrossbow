@@ -23,15 +23,10 @@
     "PlayerEntityMixin",
     "ProjectileEntityAccessor",
     "RangedWeaponItemMixin",
-    "ThrownEntityMixin",
-    "TntEntityAccessor",
-    "TntEntityMixin",
-    "arealib.ItemStackMixin",
-    "arealib.PlayerEntityMixin",
-    "endereye.ServerPlayerEntityMixin"
+    "endereye.ServerPlayerEntityMixin",
+    "ThrownEntityMixin"
   ],
-  "plugin": "archives.tater.omnicrossbow.OmniCrossbowMixinConfigPlugin",
   "injectors": {
     "defaultRequire": 1
-  }
+	}
 }

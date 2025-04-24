@@ -1,7 +1,6 @@
 package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.OmniCrossbow;
-import archives.tater.omnicrossbow.util.OmniUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -77,7 +76,7 @@ public class EndCrystalProjectileEntity extends ExplosiveProjectileEntity {
 
     private void explode() {
         if (getWorld().isClient) return;
-        OmniUtil.areaCheckExplosion(getWorld(), this, getOwner(), getVelocity().length() > 0.5 ? 4f : 6F);
+        this.getWorld().createExplosion(this, getX(), getY(), getZ(), getVelocity().length() > 0.5 ? 4f : 6F, true, World.ExplosionSourceType.MOB);
         discard();
     }
 }

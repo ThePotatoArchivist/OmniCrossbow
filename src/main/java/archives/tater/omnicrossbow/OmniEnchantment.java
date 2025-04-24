@@ -3,7 +3,6 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.duck.Grappler;
 import archives.tater.omnicrossbow.entity.*;
 import archives.tater.omnicrossbow.mixin.*;
-import archives.tater.omnicrossbow.util.OmniUtil;
 import archives.tater.omnicrossbow.util.RaycastUtil;
 import moriyashiine.enchancement.common.enchantment.effect.AllowLoadingProjectileEffect;
 import moriyashiine.enchancement.common.init.ModComponentTypes;
@@ -13,6 +12,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -23,7 +23,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -151,9 +150,7 @@ public class OmniEnchantment {
         }
         if (projectile.isOf(Items.WIND_CHARGE)) return new LargeWindChargeEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_EYE)) return new SpyEnderEyeEntity(shooter, world);
-        if (projectile.isOf(Items.TNT)) return OmniCrossbow.AREALIB_INSTALLED && shooter instanceof ServerPlayerEntity player && player.interactionManager.getGameMode().isBlockBreakingRestricted()
-                ? new AreaTntEntity(world, x, y, z, shooter)
-                : new TntEntity(world, x, y, z, shooter);
+        if (projectile.isOf(Items.TNT)) return new TntEntity(world, x, y, z, shooter);
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return shootExplosive(world, shooter, 1f, WitherSkullEntity::new);
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
@@ -164,18 +161,6 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.NETHER_STAR)) return new BeaconLaserEntity(world, shooter, crossbow);
 
         var projectileItem = projectile.getItem();
-        if (projectile.isIn(OmniCrossbow.CAN_CREATE_ENTITY_TAG)) {
-            var itemId = Registries.ITEM.getId(projectileItem);
-            if (Registries.ENTITY_TYPE.containsId(itemId)) {
-                var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
-                if (entity != null) {
-                    entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-                    if (entity instanceof ProjectileEntity projectileEntity)
-                        projectileEntity.setOwner(shooter);
-                    return entity;
-                }
-            }
-        }
         if (projectileItem instanceof ThrowablePotionItem) return new PotionEntity(world, shooter);
         if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
             var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
@@ -187,12 +172,29 @@ public class OmniEnchantment {
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
         if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(projectile), shooter, projectile, SpawnReason.SPAWN_EGG);
-        if (projectile.isIn(OmniCrossbow.VANILLA_BOATS_TAG) && projectileItem instanceof BoatItem boatItem) {
+        if (projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
                     ? new ChestBoatEntity(world, x, y, z)
                     : new BoatEntity(world, x, y, z);
             entity.setVariant(((BoatItemAccessor) boatItem).getType());
             return entity;
+        }
+
+        if (!projectile.isOf(Items.POTION)) { // Temporary fix, need more robust solution
+            var itemId = Registries.ITEM.getId(projectileItem);
+            if (Registries.ENTITY_TYPE.containsId(itemId)) {
+                var entity = Registries.ENTITY_TYPE.get(itemId).create(world);
+                if (entity != null) {
+                    if (!entity.isLiving() && !(entity instanceof AbstractDecorationEntity)) {
+                        entity.setPosition(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+                        if (entity instanceof ProjectileEntity projectileEntity)
+                            projectileEntity.setOwner(shooter);
+                        return entity;
+                    }
+
+                    entity.discard();
+                }
+            }
         }
 
         return new GenericItemProjectile(shooter, world);
@@ -335,12 +337,12 @@ public class OmniEnchantment {
                     world.spawnParticles(ParticleTypes.CLOUD, current.x, current.y + 0.1, current.z, 8, 0, 0, 0, 0);
                 break;
             }
-            if (OmniUtil.canModifyAt(world, shooter, blockPos) && ((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0) {
+            if (((FireBlockInvoker) Blocks.FIRE).invokeGetBurnChance(state) > 0) {
                 world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                 burntPositions.add(blockPos);
             } else {
                 var endPos = blockPos.offset(hitResult.getSide());
-                if (OmniUtil.canModifyAt(world, shooter, endPos) && world.getBlockState(endPos).isReplaceable())
+                if (world.getBlockState(endPos).isReplaceable())
                     burntPositions.add(endPos);
                 break;
             }

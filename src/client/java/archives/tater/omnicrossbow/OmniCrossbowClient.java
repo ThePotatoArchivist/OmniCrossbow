@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
-import net.minecraft.client.render.entity.TntEntityRenderer;
 import net.minecraft.client.render.entity.WindChargeEntityRenderer;
 import net.minecraft.util.Identifier;
 
@@ -29,11 +28,7 @@ public class OmniCrossbowClient implements ClientModInitializer {
 		EntityRendererRegistry.register(OmniCrossbowEntities.SPY_ENDER_EYE, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.LARGE_WIND_CHARGE, WindChargeEntityRenderer::new);
 		EntityRendererRegistry.register(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, GrappleFishingHookEntityRenderer::new);
-		if (OmniCrossbowEntities.AREA_TNT != null)
-			EntityRendererRegistry.register(OmniCrossbowEntities.AREA_TNT, TntEntityRenderer::new);
 		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
-		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.TEMPORARY_HONEY_SLICK_BLOCK, RenderLayer.getTranslucent());
-		BlockRenderLayerMap.INSTANCE.putBlock(OmniCrossbow.TEMPORARY_COBWEB_BLOCK, RenderLayer.getCutout());
 		OmniCrossbowRenderer.register();
 		MultichamberedIndicator.register();
         OmniCrossbow.CLIENT_NETWORKING = ClientPlayNetworking::send;
