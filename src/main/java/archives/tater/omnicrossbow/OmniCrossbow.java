@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
 import archives.tater.omnicrossbow.networking.SlimeballBouncePayload;
 import moriyashiine.enchancement.common.Enchancement;
+import archives.tater.omnicrossbow.block.HoneySlickBlock;
 import archives.tater.omnicrossbow.entity.SlimeballEntity;
 import archives.tater.omnicrossbow.util.ClientNetworkingWorkaround;
 import net.fabricmc.api.ModInitializer;
