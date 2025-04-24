@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow;
 
-import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -24,7 +23,7 @@ public class OmniCrossbowMixinConfigPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.startsWith(PREFIX + "area"))
-            return FabricLoader.getInstance().isModLoaded("area_lib");
+            return OmniCrossbow.AREALIB_INSTALLED;
         return true;
     }
 

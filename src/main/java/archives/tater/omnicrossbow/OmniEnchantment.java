@@ -24,7 +24,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -152,9 +151,7 @@ public class OmniEnchantment {
         }
         if (projectile.isOf(Items.WIND_CHARGE)) return new LargeWindChargeEntity(world, shooter);
         if (projectile.isOf(Items.ENDER_EYE)) return new SpyEnderEyeEntity(shooter, world);
-        if (projectile.isOf(Items.TNT)) return OmniCrossbow.AREALIB_INSTALLED && shooter instanceof ServerPlayerEntity player && player.interactionManager.getGameMode().isBlockBreakingRestricted()
-                ? new AreaTntEntity(world, x, y, z, shooter)
-                : new TntEntity(world, x, y, z, shooter);
+        if (projectile.isOf(Items.TNT)) return new TntEntity(world, x, y, z, shooter);
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return shootExplosive(world, shooter, 1f, WitherSkullEntity::new);
         if (projectile.isOf(Items.FIRE_CHARGE)) return shootExplosive(world, shooter, 1f, SmallFireballEntity::new);
         if (projectile.isOf(Items.DRAGON_BREATH)) return shootExplosive(world, shooter, 1f, DragonFireballEntity::new); // TODO small dragon fireball
