@@ -172,7 +172,7 @@ public class OmniEnchantment {
         }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
         if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(projectile), shooter, projectile, SpawnReason.SPAWN_EGG);
-        if (projectileItem instanceof BoatItem boatItem) {
+        if (projectile.isIn(OmniCrossbow.VANILLA_BOATS_TAG) && projectileItem instanceof BoatItem boatItem) {
             var entity = ((BoatItemAccessor) boatItem).getChest()
                     ? new ChestBoatEntity(world, x, y, z)
                     : new BoatEntity(world, x, y, z);
