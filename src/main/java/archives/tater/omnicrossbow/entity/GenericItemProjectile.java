@@ -2,7 +2,6 @@ package archives.tater.omnicrossbow.entity;
 
 import archives.tater.omnicrossbow.block.HoneySlickBlock;
 import archives.tater.omnicrossbow.OmniCrossbow;
-import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
 import archives.tater.omnicrossbow.mixin.EntityAccessor;
 import archives.tater.omnicrossbow.mixin.LivingEntityAccessor;
 import archives.tater.omnicrossbow.mixin.PlayerEntityInvoker;
@@ -194,24 +193,13 @@ public class GenericItemProjectile extends ThrownItemEntity {
         }
 
         if (stack.isOf(Items.HONEY_BOTTLE)) {
+            var blockState = OmniCrossbow.HONEY_SLICK_BLOCK.getDefaultState().with(HoneySlickBlock.FACING, blockHitResult.getSide().getOpposite());
             var placePos = blockPos.offset(blockHitResult.getSide());
-            var inTemporary = OmniCrossbow.AREALIB_INSTALLED && OmniCrossbowAreaLibCompat.containedInArea(world, placePos, OmniCrossbowAreaLibCompat.TEMPORARY_BLOCKS_PLACEABLE);
-            var blockState = (inTemporary ? OmniCrossbow.TEMPORARY_HONEY_SLICK_BLOCK : OmniCrossbow.HONEY_SLICK_BLOCK).getDefaultState().with(HoneySlickBlock.FACING, blockHitResult.getSide().getOpposite());
-            if ((inTemporary || canModifyAt(world, placePos)) && world.getBlockState(placePos).isReplaceable() && blockState.canPlaceAt(world, placePos)) {
+            if (canModifyAt(world, placePos) && world.getBlockState(placePos).isReplaceable() && blockState.canPlaceAt(world, placePos)) {
                 world.setBlockState(placePos, blockState);
                 playSound(SoundEvents.BLOCK_GLASS_BREAK, 0.3f, 1f);
                 playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE, 1f, 1f);
                 spawnItemParticles();
-                stack.decrement(1);
-                return true;
-            }
-        }
-
-        if (stack.isOf(Items.COBWEB) && OmniCrossbow.AREALIB_INSTALLED) {
-            var placePos = blockPos.offset(blockHitResult.getSide());
-            if (OmniCrossbowAreaLibCompat.containedInArea(world, placePos, OmniCrossbowAreaLibCompat.TEMPORARY_BLOCKS_PLACEABLE) && world.getBlockState(placePos).isReplaceable()) {
-                world.setBlockState(placePos, OmniCrossbow.TEMPORARY_COBWEB_BLOCK.getDefaultState());
-                playSound(SoundEvents.BLOCK_COBWEB_PLACE, 1f, 1f);
                 stack.decrement(1);
                 return true;
             }

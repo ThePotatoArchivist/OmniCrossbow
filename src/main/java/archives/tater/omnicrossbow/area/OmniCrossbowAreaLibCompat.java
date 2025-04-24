@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import dev.doublekekse.area_lib.Area;
 import dev.doublekekse.area_lib.command.argument.AreaArgument;
-import dev.doublekekse.area_lib.component.AreaDataComponent;
 import dev.doublekekse.area_lib.component.AreaDataComponentType;
 import dev.doublekekse.area_lib.data.AreaSavedData;
 import dev.doublekekse.area_lib.registry.AreaDataComponentTypeRegistry;
@@ -24,66 +23,42 @@ public class OmniCrossbowAreaLibCompat {
     public static final AreaDataComponentType<BlocksModifiableComponent> BLOCKS_MODIFIABLE =
             AreaDataComponentTypeRegistry.registerTracking(OmniCrossbow.id("blocks_modifiable"), BlocksModifiableComponent::new);
 
-    public static final AreaDataComponentType<TemporaryBlocksPlaceableComponent> TEMPORARY_BLOCKS_PLACEABLE =
-            AreaDataComponentTypeRegistry.registerTracking(OmniCrossbow.id("temporary_blocks_placeable"), TemporaryBlocksPlaceableComponent::new);
-
     private static final String AREA_ARG = "area";
     private static final String ALLOWED_ARG = "allowed";
 
-    private static <T extends AreaDataComponent> int runAreaCommand(CommandContext<ServerCommandSource> context, Area area, AreaDataComponentType<T> type, boolean allowed) {
+    private static int runAreaCommand(CommandContext<ServerCommandSource> context, Area area, boolean allowed) {
         if (allowed)
-            area.put(context.getSource().getServer(), type, type.factory().get());
+            area.put(context.getSource().getServer(), BLOCKS_MODIFIABLE, new BlocksModifiableComponent());
         else
-            area.remove(context.getSource().getServer(), type);
+            area.remove(context.getSource().getServer(), BLOCKS_MODIFIABLE);
         context.getSource().sendFeedback(() -> Text.translatable("command.omnicrossbow.modifiable_area", area.getId().toString(), allowed ? "true" : "false"), false);
         return allowed ? 1 : 0;
     }
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(literal("omnicrossbow_area")
+            dispatcher.register(literal("omnicrossbow_modifiable_area")
                     .requires(source -> source.hasPermissionLevel(3))
                     .then(argument(AREA_ARG, AreaArgument.area())
-                        .then(literal("modifiable")
-                            .then(argument(ALLOWED_ARG, BoolArgumentType.bool())
-                                .executes(command -> runAreaCommand(
-                                        command,
-                                        AreaArgument.getArea(command, AREA_ARG),
-                                        BLOCKS_MODIFIABLE,
-                                        BoolArgumentType.getBool(command, ALLOWED_ARG)
-                                )))
+                        .then(argument(ALLOWED_ARG, BoolArgumentType.bool())
                             .executes(command -> runAreaCommand(
                                     command,
                                     AreaArgument.getArea(command, AREA_ARG),
-                                    BLOCKS_MODIFIABLE,
-                                    true
+                                    BoolArgumentType.getBool(command, ALLOWED_ARG)
                             )))
-                        .then(literal("temporary_placeable")
-                                .then(argument(ALLOWED_ARG, BoolArgumentType.bool())
-                                        .executes(command -> runAreaCommand(
-                                                command,
-                                                AreaArgument.getArea(command, AREA_ARG),
-                                                TEMPORARY_BLOCKS_PLACEABLE,
-                                                BoolArgumentType.getBool(command, ALLOWED_ARG)
-                                        )))
-                                .executes(command -> runAreaCommand(
-                                        command,
-                                        AreaArgument.getArea(command, AREA_ARG),
-                                        TEMPORARY_BLOCKS_PLACEABLE,
-                                        true
-                                )))
-            ));
+                    .executes(command -> runAreaCommand(
+                            command,
+                            AreaArgument.getArea(command, AREA_ARG),
+                            true
+                    )))
+            );
         });
     }
 
-    public static boolean containedInArea(@Nullable World world, BlockPos pos, AreaDataComponentType<?> type) {
+    public static boolean containedInModifiableArea(@Nullable World world, BlockPos pos) {
         return world != null && world.getServer() != null &&
                 AreaSavedData.getServerData(world.getServer())
                         .findTrackedAreasContaining(world, pos.toCenterPos()).stream()
-                        .anyMatch(area -> area.has(type));
-    }
-
-    public static boolean containedInModifiableArea(@Nullable World world, BlockPos pos) {
-        return containedInArea(world, pos, OmniCrossbowAreaLibCompat.BLOCKS_MODIFIABLE);
+                        .anyMatch(area -> area.has(BLOCKS_MODIFIABLE));
     }
 }
