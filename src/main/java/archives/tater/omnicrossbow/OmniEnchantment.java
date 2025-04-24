@@ -7,8 +7,6 @@ import archives.tater.omnicrossbow.util.RaycastUtil;
 import moriyashiine.enchancement.common.enchantment.effect.AllowLoadingProjectileEffect;
 import moriyashiine.enchancement.common.init.ModComponentTypes;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageTypes;
@@ -36,8 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static archives.tater.omnicrossbow.mixin.FallingBlockEntityInvoker.newFallingBlockEntity;
 
 public class OmniEnchantment {
     private static List<Item> RANDOM_AMMO = null;
@@ -173,14 +169,6 @@ public class OmniEnchantment {
             }
         }
         if (projectileItem instanceof ThrowablePotionItem) return new PotionEntity(world, shooter);
-        if (projectileItem instanceof BlockItem blockItem && blockItem.getBlock() instanceof FallingBlock fallingBlock) {
-            var entity =  newFallingBlockEntity(world, x, y, z, fallingBlock.getDefaultState());
-            ((FallingBlockInvoker) fallingBlock).invokeConfigureFallingBlockEntity(entity);
-            var nbtComponent = projectile.get(DataComponentTypes.BLOCK_ENTITY_DATA);
-            if (nbtComponent != null)
-                ((FallingBlockEntityInvoker) entity).setBlockEntityData(nbtComponent.copyNbt());
-            return entity;
-        }
         if (projectileItem instanceof EntityBucketItem entityBucketItem) return create(world, ((EntityBucketItemAccessor) entityBucketItem).getEntityType(), shooter, projectile, SpawnReason.BUCKET);
         if (projectileItem instanceof SpawnEggItem spawnEggItem && !projectile.isOf(Items.SHULKER_SPAWN_EGG)) return create(world, spawnEggItem.getEntityType(projectile), shooter, projectile, SpawnReason.SPAWN_EGG);
         if (projectile.isIn(OmniCrossbow.VANILLA_BOATS_TAG) && projectileItem instanceof BoatItem boatItem) {

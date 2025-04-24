@@ -1,5 +1,7 @@
 {
   "values": [
+    "minecraft:fire_charge",
+    "minecraft:wind_charge",
     {"required": false, "id": "playercontainer:self_container"}
   ],
   "replace": false

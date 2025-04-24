@@ -24,6 +24,7 @@
     "ThrownEntityMixin",
     "TntEntityAccessor",
     "TntEntityMixin",
+    "TrialSpawnerLogicMixin",
     "arealib.ItemStackMixin",
     "arealib.PlayerEntityMixin",
     "endereye.ServerPlayerEntityMixin"
