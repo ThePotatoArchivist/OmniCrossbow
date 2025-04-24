@@ -1,14 +1,10 @@
 package archives.tater.omnicrossbow;
 
-import archives.tater.omnicrossbow.area.OmniCrossbowAreaLibCompat;
-import archives.tater.omnicrossbow.block.HoneySlickBlock;
-import archives.tater.omnicrossbow.block.TemporaryCobwebBlock;
-import archives.tater.omnicrossbow.block.TemporaryHoneySlickBlock;
 import archives.tater.omnicrossbow.entity.OmniCrossbowEntities;
-import archives.tater.omnicrossbow.entity.SlimeballEntity;
 import archives.tater.omnicrossbow.networking.SlimeballBouncePayload;
-import archives.tater.omnicrossbow.util.ClientNetworkingWorkaround;
 import moriyashiine.enchancement.common.Enchancement;
+import archives.tater.omnicrossbow.entity.SlimeballEntity;
+import archives.tater.omnicrossbow.util.ClientNetworkingWorkaround;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -52,7 +48,6 @@ public class OmniCrossbow implements ModInitializer {
 	}
 
     public static final boolean ENCHANCEMENT_INSTALLED = FabricLoader.getInstance().isModLoaded("enchancement");
-	public static final boolean AREALIB_INSTALLED = FabricLoader.getInstance().isModLoaded("area_lib");
 
 	public static final RegistryKey<Enchantment> OMNI = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
 	public static final RegistryKey<Enchantment> MULTICHAMBERED = RegistryKey.of(RegistryKeys.ENCHANTMENT, id("omni"));
@@ -113,8 +108,6 @@ public class OmniCrossbow implements ModInitializer {
 				}
 			});
 		}
-		if (AREALIB_INSTALLED)
-			OmniCrossbowAreaLibCompat.register();
 		PayloadTypeRegistry.playC2S().register(SlimeballBouncePayload.ID, SlimeballBouncePayload.CODEC);
 		SlimeballEntity.registerPacketReceiver();
 	}
