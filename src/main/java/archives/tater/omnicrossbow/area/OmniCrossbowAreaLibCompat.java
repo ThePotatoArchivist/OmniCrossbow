@@ -38,7 +38,6 @@ public class OmniCrossbowAreaLibCompat {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("omnicrossbow_modifiable_area")
-                    .requires(source -> source.hasPermissionLevel(3))
                     .then(argument(AREA_ARG, AreaArgument.area())
                         .then(argument(ALLOWED_ARG, BoolArgumentType.bool())
                             .executes(command -> runAreaCommand(
