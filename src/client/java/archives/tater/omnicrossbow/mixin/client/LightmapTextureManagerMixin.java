@@ -15,9 +15,8 @@ public class LightmapTextureManagerMixin {
 
     @ModifyVariable(
             method = "update",
-            at = @At(value = "INVOKE", target = "Lorg/joml/Vector3f;<init>(FFF)V", ordinal = 0),
-            ordinal = 6,
-            remap = false
+            at = @At(value = "INVOKE", target = "Lorg/joml/Vector3f;<init>(FFF)V", ordinal = 0, remap = false),
+            ordinal = 6
     )
     private float nightVisionEnderEye(float value) {
         return value == 0.0 && client.cameraEntity instanceof SpyEnderEyeEntity ? 1 : value;
