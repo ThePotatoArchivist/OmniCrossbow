@@ -71,15 +71,10 @@ public class GenericItemProjectile extends ThrownItemEntity {
         return Items.AIR;
     }
 
-    @Deprecated
-    private ItemStack getItem() {
-        return getStack();
-    }
-
     // Call server side
     private @Nullable ItemEntity dropAt(HitResult hitResult, boolean randomVelocity) {
-        if (getItem().isEmpty()) return null;
-        ItemEntity itemEntity = new ItemEntity(this.getWorld(), hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, getItem());
+        if (getStack().isEmpty()) return null;
+        ItemEntity itemEntity = new ItemEntity(this.getWorld(), hitResult.getPos().x, hitResult.getPos().y, hitResult.getPos().z, getStack());
         itemEntity.setToDefaultPickupDelay();
         if (!randomVelocity)
             itemEntity.setVelocity(0, 0, 0);
@@ -92,7 +87,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         var fakePlayer = FakePlayer.get((ServerWorld) getWorld(), owner == null ? new GameProfile(FakePlayer.DEFAULT_UUID, "a crossbow projectile") : new GameProfile(owner.getUuid(), "a crossbow projectile shot by " + owner.getName()));
         fakePlayer.refreshPositionAndAngles(getX(), getY(), getZ(), -getYaw(), getPitch()); // idk why yaw is negative but it's negative
         fakePlayer.setVelocity(getVelocity());
-        fakePlayer.setStackInHand(Hand.MAIN_HAND, getItem());
+        fakePlayer.setStackInHand(Hand.MAIN_HAND, getStack());
         ((EntityAccessor) fakePlayer).setStandingEyeHeight(0);
         ((LivingEntityAccessor) fakePlayer).invokeGetEquipmentChanges();
         ((LivingEntityAccessor) fakePlayer).setLastAttackedTicks(MathHelper.ceil(fakePlayer.getAttackCooldownProgressPerTick()));
@@ -110,7 +105,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
         super.handleStatus(status);
 
         if (status == EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES) {
-            var particleEffect = new ItemStackParticleEffect(ParticleTypes.ITEM, getItem());
+            var particleEffect = new ItemStackParticleEffect(ParticleTypes.ITEM, getStack());
 
             for (int i = 0; i < 6; i++)
                 getWorld().addParticle(particleEffect,
@@ -140,8 +135,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         if (getWorld().isClient) return;
-        var success = !getItem().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customBlockActions(blockHitResult, getItem(), null);
-        if (!getItem().isEmpty()) dropAt(blockHitResult, success);
+        var success = !getStack().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customBlockActions(blockHitResult, getStack(), null);
+        if (!getStack().isEmpty()) dropAt(blockHitResult, success);
     }
 
     private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack, @Nullable FakePlayer reusePlayer) {
@@ -297,8 +292,8 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         if (getWorld().isClient) return;
-        if (!getItem().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customEntityActions(entityHitResult, getItem())) {
-            if (!getItem().isEmpty()) dropAt(entityHitResult, true);
+        if (!getStack().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customEntityActions(entityHitResult, getStack())) {
+            if (!getStack().isEmpty()) dropAt(entityHitResult, true);
             return;
         }
         dropAt(entityHitResult, false);

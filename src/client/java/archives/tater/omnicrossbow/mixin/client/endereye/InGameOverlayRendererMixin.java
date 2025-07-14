@@ -25,7 +25,8 @@ public class InGameOverlayRendererMixin {
 
     @WrapOperation(
             method = "renderOverlays",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameOverlayRenderer;getInWallBlockState(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameOverlayRenderer;getInWallBlockState(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;"),
+            require = 0
     )
     private static BlockState useEnderEyeBlockState(PlayerEntity player, Operation<BlockState> original, @Local(argsOnly = true) MinecraftClient client) {
         if (!(client.getCameraEntity() instanceof SpyEnderEyeEntity)) return original.call(player);
