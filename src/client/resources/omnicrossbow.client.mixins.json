@@ -8,7 +8,6 @@
     "endereye.ClientPlayerEntityMixin",
     "endereye.HeldItemRendererMixin",
     "endereye.InGameHudMixin",
-    "endereye.InGameOverlayRendererMixin",
     "endereye.LightmapTextureManagerMixin",
     "endereye.MouseMixin",
     "endereye.WorldRendererMixin"
