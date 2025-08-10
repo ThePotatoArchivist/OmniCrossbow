@@ -282,6 +282,9 @@ public class OmniEnchantment {
                 return true;
             }
             if (projectile.isOf(Items.BREEZE_ROD)) {
+                if (!shooter.isOnGround() && shooter.getVelocity().y < 0)
+                    shooter.setVelocity(shooter.getVelocity().multiply(1, 0, 1));
+
                 var start = shooter.getEyePos().add(0, -0.1, 0);
                 var direction = shooter instanceof CrossbowUser crossbowUser ? crossbowUser.getTarget().getEyePos().subtract(start).normalize() : shooter.getRotationVector();
                 var end = start.add(direction.multiply(12));
