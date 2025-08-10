@@ -5,7 +5,6 @@ import archives.tater.omnicrossbow.util.RaycastUtil;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -24,7 +23,7 @@ public class DelayedSonicBoomEntity extends DelayedShotEntity {
     }
 
     public DelayedSonicBoomEntity(World world, LivingEntity owner, ItemStack launcher) {
-        super(OmniCrossbowEntities.DELAYED_SONIC_BOOM, world, owner, launcher, 32);
+        super(OmniCrossbowEntities.DELAYED_SONIC_BOOM, world, owner, launcher, 36);
     }
 
     @Override
@@ -38,13 +37,12 @@ public class DelayedSonicBoomEntity extends DelayedShotEntity {
         var difference = stop.subtract(start);
         var direction = difference.normalize();
 
-        var knockback = direction.multiply(2.5, 0.5, 2.5);
+        var knockback = direction.multiply(2.5);
         var targets = RaycastUtil.pierce(world, start, stop, 1f, owner, null);
         for (var entity : targets) {
             if (entity instanceof LivingEntity || entity instanceof EndCrystalEntity)
                 entity.damage(world.getDamageSources().sonicBoom(owner), 10);
-            var knockbackResist = entity instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE) : 0;
-            entity.addVelocity(knockback.multiply(1 - knockbackResist));
+            entity.addVelocity(knockback);
         }
         owner.addVelocity(knockback.multiply(-0.5));
         owner.velocityModified = true;
