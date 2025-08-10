@@ -74,6 +74,7 @@ public class OmniCrossbow implements ModInitializer {
 	public static final RegistryKey<DamageType> BEACON_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("beacon"));
 
 	public static final TagKey<EntityType<?>> CAN_EQUIP_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, id("can_equip"));
+	public static final TagKey<EntityType<?>> EXTRA_BEACON_DAMAGE_TAG = TagKey.of(RegistryKeys.ENTITY_TYPE, id("extra_beacon_damage"));
 
 	private static SoundEvent of(Identifier id) {
 		return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
