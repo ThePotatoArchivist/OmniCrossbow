@@ -13,6 +13,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.decoration.EndCrystalEntity;
+import net.minecraft.entity.mob.FlyingEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -21,6 +22,7 @@ import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -121,6 +123,12 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
         return owner instanceof LivingEntity livingEntity ? livingEntity : null;
     }
 
+    private void playPullSound() {
+        var owner = getOwner();
+        if (owner == null) return;
+        getWorld().playSoundFromEntity(null, owner, SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, owner.getSoundCategory(), 1f, 1f);
+    }
+
     @Override
     public void setOwner(@Nullable Entity entity) {
         super.setOwner(entity);
@@ -134,14 +142,17 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
         if (!getWorld().isClient) {
             setPosition(blockHitResult.getPos());
             setHookedOnBlock(blockHitResult.getSide());
+            playPullSound();
         }
     }
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        if (!getWorld().isClient)
+        if (!getWorld().isClient) {
             setHookedEntity(entityHitResult.getEntity());
+            playPullSound();
+        }
     }
 
     @Override
@@ -215,7 +226,7 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
         if (getWorld().isClient)
             pullingOwner = isPullingOwner();
         else {
-            pullingOwner = state == State.HOOKED_IN_BLOCK || hookedEntity == null || getWeightValue(hookedEntity) > getWeightValue(owner);
+            pullingOwner = state == State.HOOKED_IN_BLOCK || hookedEntity == null || hookedEntity instanceof FlyingEntity || getWeightValue(hookedEntity) > getWeightValue(owner);
             setPullingOwner(pullingOwner);
         }
         var movedEntity = pullingOwner ? owner : hookedEntity;
@@ -223,6 +234,9 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
             movedEntity.dismountVehicle();
             var targetPos = pullingOwner ? this.getPos() : owner.getEyePos();
             var offset = targetPos.subtract((state == State.HOOKED_IN_BLOCK && getHookedBlockSide() == Direction.UP) ? movedEntity.getPos() : movedEntity.getEyePos());
+            var direction = offset.normalize();
+            var velocity = movedEntity.getVelocity();
+            var directionVelocity = velocity.dotProduct(direction);
             if (offset.lengthSquared() < square(MIN_DISTANCE)) {
                 if (getWorld().isClient) return;
 
@@ -234,11 +248,12 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
                     }
                 }
 
+                if (!pullingOwner)
+                    movedEntity.setVelocity(velocity.subtract(direction.multiply(directionVelocity)));
+
                 unloadCrossbow();
                 return;
             }
-            var direction = offset.normalize();
-            var directionVelocity = movedEntity.getVelocity().dotProduct(direction);
             if (movedEntity.isLogicalSideForUpdatingMovement() && directionVelocity < MAX_VELOCITY)
                 movedEntity.addVelocity(direction.multiply((MAX_VELOCITY - directionVelocity) * 0.5));
         }

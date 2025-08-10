@@ -19,12 +19,13 @@
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MinecartItemAccessor",
+    "MobEntityMixin",
     "PlayerEntityInvoker",
     "PlayerEntityMixin",
     "ProjectileEntityAccessor",
     "RangedWeaponItemMixin",
-    "endereye.ServerPlayerEntityMixin",
-    "ThrownEntityMixin"
+    "ThrownEntityMixin",
+    "endereye.ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

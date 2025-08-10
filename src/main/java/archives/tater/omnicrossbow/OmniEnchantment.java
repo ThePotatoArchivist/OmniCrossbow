@@ -65,6 +65,7 @@ public class OmniEnchantment {
         if (projectile.isOf(Items.WITHER_SKELETON_SKULL)) return SoundEvents.ENTITY_WITHER_SHOOT;
         if (projectile.isOf(Items.BLAZE_POWDER) || projectile.isOf(Items.BLAZE_ROD)) return SoundEvents.ITEM_FIRECHARGE_USE;
         if (projectile.isOf(Items.WIND_CHARGE)) return SoundEvents.ENTITY_WIND_CHARGE_THROW;
+        if (projectile.isOf(Items.FISHING_ROD)) return SoundEvents.ENTITY_FISHING_BOBBER_THROW;
         return SoundEvents.ITEM_CROSSBOW_SHOOT;
     }
 
