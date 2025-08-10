@@ -38,7 +38,7 @@ public class OmniCrossbowRenderer {
 
     public static void renderProjectile(ItemRenderer itemRenderer, World world, ItemStack projectile, ModelTransformationMode mode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.push();
-        matrices.translate(0.5, 0.5, 0.5625); // go to center + up one pixel
+        matrices.translate(0.5, 0.5, 0.565); // go to center + up one pixel + shift epsilon
         itemSpecificTransform(projectile.getItem(), matrices);
         matrices.scale(-1, 1, -1); // rotate 180 on y
         itemRenderer.renderItem(projectile, ModelTransformationMode.FIXED, light, overlay, matrices, vertexConsumers, world, 0);
