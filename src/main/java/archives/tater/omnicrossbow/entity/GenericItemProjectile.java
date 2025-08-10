@@ -135,11 +135,56 @@ public class GenericItemProjectile extends ThrownItemEntity {
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
         if (getWorld().isClient) return;
-        var success = !getStack().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customBlockActions(blockHitResult, getStack(), null);
+        var success = !getStack().isIn(OmniCrossbow.DISABLE_ACTION_TAG) && customBlockActions(blockHitResult, getStack());
         if (!getStack().isEmpty()) dropAt(blockHitResult, success);
     }
 
-    private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack, @Nullable FakePlayer reusePlayer) {
+    private boolean commonHitActions(BlockHitResult blockHitResult, ItemStack stack, FakePlayer fakePlayer) {
+        var blockPos = blockHitResult.getBlockPos();
+        var world = getWorld();
+        var state = world.getBlockState(blockPos);
+
+        if (stack.getItem() instanceof BucketItem) {
+            var side = blockHitResult.getSide();
+            var centerPos = blockPos.offset(side).toCenterPos();
+            var pitch = switch (side.getOpposite()) {
+                case UP -> -90;
+                case DOWN -> 90;
+                default -> 0;
+            };
+            var yaw = side.getOpposite().asRotation();
+            fakePlayer.updatePositionAndAngles(centerPos.x, centerPos.y, centerPos.z, yaw, pitch);
+
+            var result = stack.use(world, fakePlayer, Hand.MAIN_HAND);
+            if (result.getResult().isAccepted()) {
+                this.setItem(result.getValue());
+            }
+            return true;
+        }
+
+        if (state.onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+        var offsetPos = blockPos.offset(blockHitResult.getSide());
+        var offsetHit = new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), offsetPos, true);
+        if (world.getBlockState(offsetPos).onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, offsetHit).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, offsetHit)).isAccepted()) {
+            handleItemsFrom(fakePlayer);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean customBlockActions(BlockHitResult blockHitResult, ItemStack stack) {
         var blockPos = blockHitResult.getBlockPos();
         var world = getWorld();
         var state = world.getBlockState(blockPos);
@@ -222,25 +267,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             }
         }
 
-        var fakePlayer = reusePlayer == null ? createFakePlayer() : reusePlayer;
-
-        if (stack.getItem() instanceof BucketItem) {
-            var side = blockHitResult.getSide();
-            var centerPos = blockPos.offset(side).toCenterPos();
-            var pitch = switch (side.getOpposite()) {
-                case UP -> -90;
-                case DOWN -> 90;
-                default -> 0;
-            };
-            var yaw = side.getOpposite().asRotation();
-            fakePlayer.updatePositionAndAngles(centerPos.x, centerPos.y, centerPos.z, yaw, pitch);
-
-            var result = stack.use(world, fakePlayer, Hand.MAIN_HAND);
-            if (result.getResult().isAccepted()) {
-                this.setItem(result.getValue());
-            }
-            return true;
-        }
+        var fakePlayer = createFakePlayer();
 
         if (isSuitableTool(stack, blockPos, state, fakePlayer) && ((ServerWorld) world).getServer().getPlayerInteractionManager(fakePlayer).tryBreakBlock(blockPos)) return true;
         var offsetPos = blockPos.offset(blockHitResult.getSide());
@@ -263,29 +290,13 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (state.onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, blockHitResult).isAccepted()) {
-            handleItemsFrom(fakePlayer);
-            return true;
-        }
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, blockHitResult)).isAccepted()) {
-            handleItemsFrom(fakePlayer);
-            return true;
-        }
-        var offsetHit = new BlockHitResult(blockHitResult.getPos(), blockHitResult.getSide(), offsetPos, true);
-        if (world.getBlockState(offsetPos).onUseWithItem(stack, world, fakePlayer, Hand.MAIN_HAND, offsetHit).isAccepted()) {
-            handleItemsFrom(fakePlayer);
-            return true;
-        }
-        if (stack.useOnBlock(new ItemUsageContext(world, fakePlayer, Hand.MAIN_HAND, stack, offsetHit)).isAccepted()) {
-            handleItemsFrom(fakePlayer);
-            return true;
-        }
+        commonHitActions(blockHitResult, stack, fakePlayer);
 
         return false;
     }
 
     private boolean isSuitableTool(ItemStack tool, BlockPos blockPos, BlockState state, PlayerEntity fakePlayer) {
-        return tool.isSuitableFor(state) || tool.isIn(ConventionalItemTags.SHEAR_TOOLS) && state.isIn(BlockTags.LEAVES) || (tool.getItem() instanceof MiningToolItem && !state.isIn(BlockTags.AXE_MINEABLE) && !state.isIn(BlockTags.HOE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) & state.calcBlockBreakingDelta(fakePlayer, getWorld(), blockPos) >= 0.005);
+        return tool.isSuitableFor(state) || tool.isIn(ConventionalItemTags.SHEAR_TOOLS) && state.isIn(BlockTags.LEAVES) || (tool.getItem() instanceof MiningToolItem && !state.isIn(BlockTags.AXE_MINEABLE) && !state.isIn(BlockTags.HOE_MINEABLE) && !state.isIn(BlockTags.PICKAXE_MINEABLE) && !state.isIn(BlockTags.SHOVEL_MINEABLE) && state.calcBlockBreakingDelta(fakePlayer, getWorld(), blockPos) >= 0.005);
     }
 
     @Override
@@ -473,7 +484,7 @@ public class GenericItemProjectile extends ThrownItemEntity {
             return true;
         }
 
-        if (customBlockActions(new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false), stack, fakePlayer)) return true;
+        if (commonHitActions(new BlockHitResult(entity.getPos(), Direction.UP, entity.getBlockPos().down(), false), stack, fakePlayer)) return true;
 
         // Still use the original player for damaging so that mobs don't aggro on a ghost player
         var source = world.getDamageSources().thrown(this, getOwner());
