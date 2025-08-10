@@ -248,8 +248,11 @@ public class GrappleFishingHookEntity extends ProjectileEntity {
                     }
                 }
 
-                if (!pullingOwner)
-                    movedEntity.setVelocity(velocity.subtract(direction.multiply(directionVelocity)));
+                if (state == State.HOOKED_IN_ENTITY) {
+                    var lookDirection = owner.getRotationVector();
+                    movedEntity.setVelocity(velocity.subtract(lookDirection.multiply(velocity.dotProduct(lookDirection))));
+                    movedEntity.velocityModified = true;
+                }
 
                 unloadCrossbow();
                 return;
