@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.enchantment.Enchantment
 
 object OmniCrossbowEnchantments {
@@ -11,4 +12,8 @@ object OmniCrossbowEnchantments {
     @JvmField
     val MULTICHAMBERED = of("multichambered")
 
+    @JvmField
+    val PUMP_CHARGE = of("pump_charge")
+
+    val MULTICHAMBERED_EXCLUSIVE: TagKey<Enchantment> = TagKey.create(Registries.ENCHANTMENT, OmniCrossbow.id("exclusive_set/multichambered"))
 }

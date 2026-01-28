@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow.datagen
 
-import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
@@ -27,13 +26,14 @@ class EnchantmentTagGenerator(
         buildTag(EnchantmentTags.NON_TREASURE) {
             +OmniCrossbowEnchantments.MULTICHAMBERED
         }
-        buildTag(MULTICHAMBERED_EXCLUSIVE) {
+        buildTag(EnchantmentTags.CROSSBOW_EXCLUSIVE) {
+            +OmniCrossbowEnchantments.PUMP_CHARGE
+        }
+        buildTag(OmniCrossbowEnchantments.MULTICHAMBERED_EXCLUSIVE) {
             +Enchantments.QUICK_CHARGE
             +Enchantments.MULTISHOT
+            +OmniCrossbowEnchantments.PUMP_CHARGE
         }
     }
 
-    companion object {
-        val MULTICHAMBERED_EXCLUSIVE: TagKey<Enchantment> = TagKey.create(Registries.ENCHANTMENT, OmniCrossbow.id("exclusive_set/multichambered"))
-    }
 }

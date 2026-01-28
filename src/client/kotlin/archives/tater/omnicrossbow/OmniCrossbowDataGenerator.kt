@@ -16,7 +16,7 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 
 	override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
 		with (fabricDataGenerator.createPack()) {
-			addProvider(::EnchantmentGenerator)
+			addProvider(EnchantmentGenerator::Provider)
 			addProvider(::EnchantmentTagGenerator)
 		}
 	}
