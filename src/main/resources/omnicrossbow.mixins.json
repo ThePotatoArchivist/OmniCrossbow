@@ -1,14 +1,15 @@
 {
-	"required": true,
-	"package": "archives.tater.omnicrossbow.mixin",
-	"compatibilityLevel": "JAVA_25",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
+  "required": true,
+  "package": "archives.tater.omnicrossbow.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "CrossbowItemMixin",
+    "ProjectileWeaponItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
 	}
 }

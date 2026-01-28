@@ -1,0 +1,92 @@
+package archives.tater.omnicrossbow.mixin;
+
+import archives.tater.omnicrossbow.enchantment.LoadMultiple;
+import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
+import org.apache.commons.lang3.mutable.MutableFloat;
+import org.jspecify.annotations.Nullable;
+
+import java.util.stream.Stream;
+
+@Mixin(CrossbowItem.class)
+public class CrossbowItemMixin {
+    @WrapOperation(
+            method = "use",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/component/ChargedProjectiles;isEmpty()Z")
+    )
+    // Returns true: Load
+    // Returns false: Shoot
+    private boolean loadMultiple(ChargedProjectiles instance, Operation<Boolean> original, @Local(name = "itemStack") ItemStack stack, @Local(argsOnly = true) Player player) {
+        if (original.call(instance)) return true;
+        if (!player.isSecondaryUseActive()) return false;
+
+        return instance.items().size() < LoadMultiple.maxProjectilesOrDefault(stack);
+    }
+
+    @WrapOperation(
+            method = "tryLoadProjectiles",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;set(Lnet/minecraft/core/component/DataComponentType;Ljava/lang/Object;)Ljava/lang/Object;")
+    )
+    private static <T> T mergeProjectiles(ItemStack instance, DataComponentType<T> type, @Nullable T value, Operation<T> original) {
+        if (type != DataComponents.CHARGED_PROJECTILES || value == null) return original.call(instance, type, value);
+
+        var existing = (ChargedProjectiles) instance.get(type);
+        if (existing == null) return original.call(instance, type, value);
+
+        return original.call(instance, type, new ChargedProjectiles(Stream.concat(
+                existing.items().stream(),
+                ((ChargedProjectiles) value).items().stream()
+        ).toList()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @WrapOperation(
+            method = "performShooting",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;set(Lnet/minecraft/core/component/DataComponentType;Ljava/lang/Object;)Ljava/lang/Object;")
+    )
+    private <T> T firedCount(ItemStack instance, DataComponentType<T> type, @Nullable T value, Operation<T> original, @Local(name = "serverLevel") ServerLevel serverLevel, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter) {
+        if (type != DataComponents.CHARGED_PROJECTILES) return original.call(instance, type, value);
+
+        var projectiles = (ChargedProjectiles) instance.get(type);
+        if (projectiles == null) return original.call(instance, type, value);
+        var items = projectiles.items();
+
+        var dirtyCount = new MutableFloat(items.size());
+        EnchantmentHelper.runIterationOnItem(instance, (enchantment, level) ->
+                enchantment.value().modifyEntityFilteredValue(
+                        OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT,
+                        serverLevel,
+                        level,
+                        instance,
+                        shooter,
+                        dirtyCount
+                )
+        );
+        var count = dirtyCount.intValue();
+
+        // If not trying to shoot less, use base logic
+        if (count >= items.size()) return original.call(instance, type, value);
+
+        // Set to remainder
+        original.call(instance, type, new ChargedProjectiles(items.subList(count, items.size())));
+
+        // Return head
+        return (T) new ChargedProjectiles(items.subList(0, count));
+    }
+}

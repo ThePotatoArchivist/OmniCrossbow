@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.datagen
 
+import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
@@ -29,6 +30,7 @@ class EnchantmentGenerator(output: FabricPackOutput, registriesFuture: Completab
     companion object : RegistrySetBuilder.RegistryBootstrap<Enchantment> {
         override fun run(registry: BootstrapContext<Enchantment>) {
             val items = registry.lookup(Registries.ITEM)
+            val enchantments = registry.lookup(Registries.ENCHANTMENT)
 
             fun register(key: ResourceKey<Enchantment>, definition: EnchantmentDefinition, init: Enchantment.Builder.() -> Unit) =
                 enchantment(definition).apply(init).build(key.identifier()).also {
@@ -36,16 +38,16 @@ class EnchantmentGenerator(output: FabricPackOutput, registriesFuture: Completab
                 }
 
             register(OmniCrossbowEnchantments.MULTICHAMBERED, definition(
-                items.getOrThrow(ItemTags.MELEE_WEAPON_ENCHANTABLE),
+                items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
                 4,
                 3,
                 dynamicCost(12, 20),
                 constantCost(50),
                 2,
                 EquipmentSlotGroup.MAINHAND
-            )
-            ) {
-                withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LevelBasedValue.perLevel(2f))
+            )) {
+                exclusiveWith(enchantments.getOrThrow(EnchantmentTagGenerator.MULTICHAMBERED_EXCLUSIVE))
+                withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.perLevel(2f)))
                 withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT, SetValue(LevelBasedValue.constant(1f)))
             }
         }
