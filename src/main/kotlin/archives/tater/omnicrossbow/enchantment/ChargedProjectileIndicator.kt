@@ -14,7 +14,7 @@ data class ChargedProjectileIndicator(
 
         @JvmStatic
         fun maxProjectiles(stack: ItemStack) =
-            getFirstEnchantmentComponent(stack, OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE) { component, level ->
+            getFirstEnchantmentComponent(stack, OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR) { component, level ->
                 component.maxProjectiles.calculate(level)
             }?.toInt()
 
