@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
 import com.mojang.serialization.Codec
@@ -44,6 +45,17 @@ object OmniCrossbowEnchantmentEffects {
     @JvmField
     val PROJECTILE_UNCERTAINTY = register("projectile_uncertainty", validatedListCodec(
         ConditionalEffect.codec(ProjectileUncertainty.CODEC),
+        LootContextParamSets.ENCHANTED_ENTITY
+    ))
+
+    // TODO implement, apply
+    @JvmField
+    val CHARGED_PROJECTILE_INDICATOR = register("charged_projectile_indicator", ChargedProjectileIndicator.CODEC)
+
+    // TODO implement
+    @JvmField
+    val CROSSBOW_COOLDOWN = register("crossbow_cooldown", validatedListCodec(
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
         LootContextParamSets.ENCHANTED_ENTITY
     ))
 

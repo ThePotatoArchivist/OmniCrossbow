@@ -28,11 +28,13 @@ class EnchantmentTagGenerator(
         }
         buildTag(EnchantmentTags.CROSSBOW_EXCLUSIVE) {
             +OmniCrossbowEnchantments.PUMP_CHARGE
+            +OmniCrossbowEnchantments.MAGAZINE
         }
         buildTag(OmniCrossbowEnchantments.MULTICHAMBERED_EXCLUSIVE) {
             +Enchantments.QUICK_CHARGE
             +Enchantments.MULTISHOT
             +OmniCrossbowEnchantments.PUMP_CHARGE
+            +OmniCrossbowEnchantments.MAGAZINE
         }
     }
 

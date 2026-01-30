@@ -4,6 +4,16 @@
     "translate": "enchantment.omnicrossbow.pump_charge"
   },
   "effects": {
+    "minecraft:crossbow_charge_time": {
+      "type": "minecraft:add",
+      "value": -0.5
+    },
+    "minecraft:crossbow_charging_sounds": [
+      {
+        "end": "minecraft:item.crossbow.loading_end",
+        "start": "minecraft:item.crossbow.quick_charge_2"
+      }
+    ],
     "omnicrossbow:load_multiple": {
       "max_projectiles": 8.0
     },
@@ -14,8 +24,8 @@
             "type": "minecraft:add",
             "value": {
               "type": "minecraft:linear",
-              "base": 4.0,
-              "per_level_above_first": 4.0
+              "base": 2.0,
+              "per_level_above_first": 2.0
             }
           }
         }
