@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow
 
+import archives.tater.omnicrossbow.registry.OmniCrossbowComponents
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.Identifier
@@ -17,5 +18,6 @@ object OmniCrossbow : ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		OmniCrossbowEnchantmentEffects.init()
+		OmniCrossbowComponents.init()
 	}
 }
