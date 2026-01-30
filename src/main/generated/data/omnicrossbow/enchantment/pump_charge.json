@@ -6,7 +6,7 @@
   "effects": {
     "minecraft:crossbow_charge_time": {
       "type": "minecraft:add",
-      "value": -0.5
+      "value": -0.4
     },
     "minecraft:crossbow_charging_sounds": [
       {

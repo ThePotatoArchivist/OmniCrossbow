@@ -1,0 +1,73 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.omnicrossbow.magazine"
+  },
+  "effects": {
+    "minecraft:crossbow_charge_time": {
+      "type": "minecraft:add",
+      "value": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 2.0
+      }
+    },
+    "minecraft:projectile_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 4.0,
+            "per_level_above_first": 4.0
+          }
+        }
+      }
+    ],
+    "omnicrossbow:crossbow_cooldown": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": 0.5
+        }
+      }
+    ],
+    "omnicrossbow:projectile_fired_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 1.0
+        }
+      }
+    ],
+    "omnicrossbow:projectile_uncertainty": [
+      {
+        "effect": {
+          "projectile_count": {
+            "type": "minecraft:add",
+            "value": {
+              "type": "minecraft:linear",
+              "base": 0.5,
+              "per_level_above_first": 0.5
+            }
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#minecraft:exclusive_set/crossbow",
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 0
+  },
+  "max_level": 4,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 20
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/crossbow",
+  "weight": 1
+}
