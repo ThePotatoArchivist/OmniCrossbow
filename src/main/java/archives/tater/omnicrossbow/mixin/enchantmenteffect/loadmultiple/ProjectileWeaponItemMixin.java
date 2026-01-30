@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.component.ChargedProjectiles;
 
 import static java.lang.Math.min;
 
@@ -24,12 +25,10 @@ public class ProjectileWeaponItemMixin {
     private static int limitProjectileCount(ServerLevel serverLevel, ItemStack weapon, Entity shooter, int count, Operation<Integer> original) {
         var result = original.call(serverLevel, weapon, shooter, count);
 
-        var charged = weapon.get(DataComponents.CHARGED_PROJECTILES);
-        if (charged == null) return result;
-
         var maxProjectiles = LoadMultiple.maxProjectiles(weapon);
         if (maxProjectiles == null) return result;
 
-        return min(result, maxProjectiles - charged.items().size());
+        var chargedCount = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).items().size();
+        return min(result, maxProjectiles - chargedCount);
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ChargedProjectiles;
 
 @Mixin(Item.class)
 public class ItemMixin {
@@ -27,8 +28,7 @@ public class ItemMixin {
         if (!(owner instanceof LivingEntity livingEntity) || livingEntity.isUsingItem()) return;
         var additional = itemStack.remove(OmniCrossbowComponents.ADDITIONAL_CHARGED_PROJECTILES);
         if (additional == null) return;
-        var chargedProjectiles = itemStack.get(DataComponents.CHARGED_PROJECTILES);
-        if (chargedProjectiles == null || chargedProjectiles.isEmpty())
+        if (itemStack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).isEmpty())
             itemStack.set(DataComponents.CHARGED_PROJECTILES, additional);
     }
 }

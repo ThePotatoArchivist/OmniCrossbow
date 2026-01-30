@@ -3,7 +3,7 @@
 	"package": "archives.tater.omnicrossbow.mixin.client",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin"
+      "ChargeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
