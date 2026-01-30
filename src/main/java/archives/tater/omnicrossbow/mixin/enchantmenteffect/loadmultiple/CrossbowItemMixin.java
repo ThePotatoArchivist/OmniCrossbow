@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.mixin.enchantmenteffect.loadmultiple;
 import archives.tater.omnicrossbow.enchantment.LoadMultiple;
 import archives.tater.omnicrossbow.registry.OmniCrossbowComponents;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -34,11 +35,16 @@ public class CrossbowItemMixin {
     )
     // Returns true: Load
     // Returns false: Shoot
-    private boolean loadMultiple(ChargedProjectiles instance, Operation<Boolean> original, @Local(name = "itemStack") ItemStack stack, @Local(argsOnly = true) Player player) {
-        if (original.call(instance)) return true;
-        if (!player.isSecondaryUseActive()) return false;
+    private boolean loadMultiple(ChargedProjectiles instance, Operation<Boolean> original, @Local(argsOnly = true) Player player) {
+        return original.call(instance) || player.isSecondaryUseActive();
+    }
 
-        return instance.items().size() < LoadMultiple.maxProjectilesOrDefault(stack);
+    @ModifyExpressionValue(
+            method = "use",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z")
+    )
+    private boolean failIfFull(boolean original, @Local(name = "chargedProjectiles") ChargedProjectiles chargedProjectiles, @Local(name = "itemStack") ItemStack stack) {
+        return original || chargedProjectiles.items().size() >= LoadMultiple.maxProjectilesOrDefault(stack);
     }
 
     @Inject(
