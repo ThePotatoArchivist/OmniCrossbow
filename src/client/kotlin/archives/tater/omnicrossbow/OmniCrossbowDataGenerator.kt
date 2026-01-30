@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow
 
+import archives.tater.omnicrossbow.datagen.DamageTagGenerator
 import archives.tater.omnicrossbow.datagen.EnchantmentGenerator
 import archives.tater.omnicrossbow.datagen.EnchantmentTagGenerator
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
@@ -18,6 +19,7 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 		with (fabricDataGenerator.createPack()) {
 			addProvider(EnchantmentGenerator::Provider)
 			addProvider(::EnchantmentTagGenerator)
+			addProvider(::DamageTagGenerator)
 		}
 	}
 }
