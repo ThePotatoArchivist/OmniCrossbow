@@ -24,6 +24,13 @@
         }
       }
     ],
+    "omnicrossbow:charged_projectile_indicator": {
+      "max_projectiles": {
+        "type": "minecraft:linear",
+        "base": 4.0,
+        "per_level_above_first": 4.0
+      }
+    },
     "omnicrossbow:crossbow_cooldown": [
       {
         "effect": {

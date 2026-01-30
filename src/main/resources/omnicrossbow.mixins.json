@@ -3,16 +3,21 @@
   "package": "archives.tater.omnicrossbow.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "enchantmenteffect.uncertainty.ProjectileWeaponItemMixin",
+    "ProjectileWeaponItemMixin",
+    "enchantmenteffect.cooldown.CrossbowItemMixin",
     "enchantmenteffect.firedcount.CrossbowItemMixin",
     "enchantmenteffect.loadmultiple.CrossbowItemMixin",
     "enchantmenteffect.loadmultiple.ItemMixin",
-    "enchantmenteffect.loadmultiple.ProjectileWeaponItemMixin"
+    "enchantmenteffect.loadmultiple.ProjectileWeaponItemMixin",
+    "enchantmenteffect.uncertainty.ProjectileWeaponItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "overwrites": {
     "requireAnnotations": true
-	}
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
 }

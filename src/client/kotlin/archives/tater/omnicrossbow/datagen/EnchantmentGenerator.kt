@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.datagen
 
+import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
@@ -42,6 +43,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(OmniCrossbowEnchantments.MULTICHAMBERED_EXCLUSIVE))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.perLevel(2f)))
+            withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.perLevel(2f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT, SetValue(LevelBasedValue.constant(1f)))
         }
 
@@ -56,6 +58,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.constant(8f)))
+            withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.constant(8f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(2f))))
             withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGE_TIME, AddValue(LevelBasedValue.constant(-0.4F)))
             withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGING_SOUNDS, listOf(
@@ -74,6 +77,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withEffect(EnchantmentEffectComponents.PROJECTILE_COUNT, SetValue(LevelBasedValue.perLevel(4f)))
+            withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.perLevel(4f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT, SetValue(LevelBasedValue.constant(1f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(0.5f))))
             withEffect(OmniCrossbowEnchantmentEffects.CROSSBOW_COOLDOWN, AddValue(LevelBasedValue.constant(0.5f)))

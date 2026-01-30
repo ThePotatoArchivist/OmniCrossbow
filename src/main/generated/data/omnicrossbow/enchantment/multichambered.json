@@ -4,6 +4,13 @@
     "translate": "enchantment.omnicrossbow.multichambered"
   },
   "effects": {
+    "omnicrossbow:charged_projectile_indicator": {
+      "max_projectiles": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 2.0
+      }
+    },
     "omnicrossbow:load_multiple": {
       "max_projectiles": {
         "type": "minecraft:linear",

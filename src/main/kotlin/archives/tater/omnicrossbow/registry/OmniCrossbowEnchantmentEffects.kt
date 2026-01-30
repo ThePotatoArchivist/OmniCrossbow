@@ -48,7 +48,7 @@ object OmniCrossbowEnchantmentEffects {
         LootContextParamSets.ENCHANTED_ENTITY
     ))
 
-    // TODO implement, apply
+    // TODO implement
     @JvmField
     val CHARGED_PROJECTILE_INDICATOR = register("charged_projectile_indicator", ChargedProjectileIndicator.CODEC)
 
