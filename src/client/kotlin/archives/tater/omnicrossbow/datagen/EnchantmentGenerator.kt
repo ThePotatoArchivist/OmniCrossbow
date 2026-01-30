@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
+import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.item.enchantment.Enchantment.*
 import net.minecraft.world.item.enchantment.LevelBasedValue
+import net.minecraft.world.item.enchantment.effects.AddValue
 import net.minecraft.world.item.enchantment.effects.SetValue
 import java.util.concurrent.CompletableFuture
 
@@ -54,6 +56,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.constant(8f)))
+            withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(4f))))
         }
     }
 

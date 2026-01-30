@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin;
+package archives.tater.omnicrossbow.mixin.enchantmenteffect.loadmultiple;
 
 import archives.tater.omnicrossbow.enchantment.LoadMultiple;
 

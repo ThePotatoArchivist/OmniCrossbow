@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
+import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
 import com.mojang.serialization.Codec
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponentType
@@ -37,6 +38,12 @@ object OmniCrossbowEnchantmentEffects {
     @JvmField
     val PROJECTILE_FIRED_COUNT = register("projectile_fired_count", validatedListCodec(
         ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
+        LootContextParamSets.ENCHANTED_ENTITY
+    ))
+
+    @JvmField
+    val PROJECTILE_UNCERTAINTY = register("projectile_uncertainty", validatedListCodec(
+        ConditionalEffect.codec(ProjectileUncertainty.CODEC),
         LootContextParamSets.ENCHANTED_ENTITY
     ))
 
