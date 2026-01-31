@@ -14,6 +14,14 @@
         "start": "minecraft:item.crossbow.quick_charge_2"
       }
     ],
+    "minecraft:projectile_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 2.0
+        }
+      }
+    ],
     "omnicrossbow:charged_projectile_indicator": {
       "max_projectiles": 8.0
     },
@@ -31,6 +39,14 @@
               "per_level_above_first": 2.0
             }
           }
+        }
+      }
+    ],
+    "omnicrossbow:projectile_velocity": [
+      {
+        "effect": {
+          "type": "minecraft:multiply",
+          "factor": 0.5
         }
       }
     ]

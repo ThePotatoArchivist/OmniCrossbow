@@ -20,7 +20,7 @@ object ChargedProjectileIndicatorRenderer : HudElement {
 
     const val ICON_WIDTH = 8
     const val ICON_HEIGHT = 8
-    const val GAP = 1
+    const val GAP = 2
     const val Y_MARGIN = 12
 
     val ID = OmniCrossbow.id("charged_projectile_indicator")

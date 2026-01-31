@@ -19,6 +19,7 @@ import net.minecraft.world.item.enchantment.Enchantment.*
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents
 import net.minecraft.world.item.enchantment.LevelBasedValue
 import net.minecraft.world.item.enchantment.effects.AddValue
+import net.minecraft.world.item.enchantment.effects.MultiplyValue
 import net.minecraft.world.item.enchantment.effects.SetValue
 import java.util.*
 
@@ -60,6 +61,8 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.constant(8f)))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.constant(8f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(2f))))
+            withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_VELOCITY, MultiplyValue(LevelBasedValue.constant(0.5f)))
+            withEffect(EnchantmentEffectComponents.PROJECTILE_COUNT, SetValue(LevelBasedValue.constant(2f)))
             withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGE_TIME, AddValue(LevelBasedValue.constant(-0.4F)))
             withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGING_SOUNDS, listOf(
                     CrossbowItem.ChargingSounds(Optional.of(SoundEvents.CROSSBOW_QUICK_CHARGE_2), Optional.empty(), Optional.of(SoundEvents.CROSSBOW_LOADING_END)),

@@ -48,15 +48,19 @@ object OmniCrossbowEnchantmentEffects {
         LootContextParamSets.ENCHANTED_ENTITY
     ))
 
-    // TODO implement
+    @JvmField
+    val PROJECTILE_VELOCITY = register("projectile_velocity", validatedListCodec(
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
+        LootContextParamSets.ENCHANTED_ENTITY
+    ))
+
     @JvmField
     val CHARGED_PROJECTILE_INDICATOR = register("charged_projectile_indicator", ChargedProjectileIndicator.CODEC)
 
-    // TODO implement
     @JvmField
     val CROSSBOW_COOLDOWN = register("crossbow_cooldown", validatedListCodec(
         ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
-        LootContextParamSets.ENCHANTED_ENTITY
+        LootContextParamSets.ENCHANTED_ITEM
     ))
 
     fun init() {
