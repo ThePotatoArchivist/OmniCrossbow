@@ -4,17 +4,23 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.registry.OmniCrossbowComponents
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.multiplayer.ClientPacketListener
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import kotlin.math.max
 
-object ChargedProjectileIndicatorRenderer : HudElement {
+object ChargedProjectileIndicatorRenderer : HudElement, ClientTickEvents.EndLevelTick, ClientPlayConnectionEvents.Disconnect {
     val ARROW_EMPTY = OmniCrossbow.id("hud/arrow_empty")
     val ARROW_FULL = OmniCrossbow.id("hud/arrow_full")
 
@@ -25,15 +31,23 @@ object ChargedProjectileIndicatorRenderer : HudElement {
 
     val ID = OmniCrossbow.id("charged_projectile_indicator")
 
+    const val DISPLAY_TICKS = 15 * 20
+
+    private var crossbow: ItemStack? = null
+    private var displayTicks: Int = 0
+
+    fun register() {
+        HudElementRegistry.addLast(ID, this)
+        ClientTickEvents.END_LEVEL_TICK.register(this)
+        ClientPlayConnectionEvents.DISCONNECT.register(this)
+    }
+
     override fun render(
         graphics: GuiGraphics,
         deltaTracker: DeltaTracker
     ) {
-        val player = Minecraft.getInstance().player ?: return
-        val crossbow = InteractionHand.entries
-            .map { player.getItemInHand(it) }
-            .firstOrNull { EnchantmentHelper.has(it, OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR) }
-            ?: return
+        if (displayTicks <= 0) return
+        val crossbow = crossbow ?: return
         val maxDisplay = ChargedProjectileIndicator.maxProjectilesOrDefault(crossbow)
         val charged = (crossbow[DataComponents.CHARGED_PROJECTILES]?.takeUnless { it.isEmpty } ?: crossbow[OmniCrossbowComponents.ADDITIONAL_CHARGED_PROJECTILES])?.items?.size ?: 0
         val width = max(maxDisplay, charged)
@@ -49,5 +63,29 @@ object ChargedProjectileIndicatorRenderer : HudElement {
                 ICON_WIDTH
             )
         }
+    }
+
+    override fun onEndTick(level: ClientLevel) {
+        if (displayTicks > 0) displayTicks--
+
+        val player = Minecraft.getInstance().player ?: run {
+            crossbow = null
+            displayTicks = 0
+            return
+        }
+
+        val crossbow = InteractionHand.entries
+            .map { player.getItemInHand(it) }
+            .firstOrNull { EnchantmentHelper.has(it, OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR) }
+
+        if (crossbow != this.crossbow) {
+            displayTicks = DISPLAY_TICKS
+            this.crossbow = crossbow
+        }
+    }
+
+    override fun onPlayDisconnect(listener: ClientPacketListener, client: Minecraft) {
+        displayTicks = 0
+        crossbow = null
     }
 }
