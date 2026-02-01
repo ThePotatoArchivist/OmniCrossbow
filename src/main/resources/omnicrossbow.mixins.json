@@ -3,7 +3,9 @@
   "package": "archives.tater.omnicrossbow.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "behavior.AbstractArrowAccessor",
     "ProjectileWeaponItemMixin",
+    "behavior.ProjectileWeaponItemMixin",
     "enchantmenteffect.cooldown.CrossbowItemMixin",
     "enchantmenteffect.firedcount.CrossbowItemMixin",
     "enchantmenteffect.loadmultiple.CrossbowItemMixin",
