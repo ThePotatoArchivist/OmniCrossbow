@@ -9,6 +9,7 @@
     "behavior.BoatItemAccessor",
     "behavior.CrossbowItemMixin",
     "behavior.FallingBlockEntityAccessor",
+    "behavior.FallingBlockInvoker",
     "behavior.MinecartItemAccessor",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",

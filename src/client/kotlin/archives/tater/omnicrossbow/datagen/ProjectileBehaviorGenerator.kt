@@ -10,6 +10,7 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
+import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.HolderSet
 import net.minecraft.core.registries.BuiltInRegistries
@@ -23,6 +24,9 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.PointedDripstoneBlock
+import net.minecraft.world.level.block.state.properties.DripstoneThickness
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -65,6 +69,12 @@ class ProjectileBehaviorGenerator(
         register(Items.TNT) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.TNT)) }
         register(ItemTags.BOATS) { ProjectileBehavior(it, SpawnEntity.Boat, 0.5f) }
 
+        register(Items.POINTED_DRIPSTONE) { ProjectileBehavior(it, SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
+            .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
+            .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP_MERGE),
+            damagePerDistance = 6f,
+            damageMax = 40,
+        ), 0.7f) }
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }

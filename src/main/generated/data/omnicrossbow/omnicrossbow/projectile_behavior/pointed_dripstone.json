@@ -1,0 +1,19 @@
+{
+  "items": "minecraft:pointed_dripstone",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_entity/falling_block",
+    "hurts_entities": {
+      "damage_max": 40,
+      "damage_per_distance": 6.0
+    },
+    "state": {
+      "Name": "minecraft:pointed_dripstone",
+      "Properties": {
+        "thickness": "tip_merge",
+        "vertical_direction": "down",
+        "waterlogged": "false"
+      }
+    }
+  },
+  "velocity_scale": 0.7
+}

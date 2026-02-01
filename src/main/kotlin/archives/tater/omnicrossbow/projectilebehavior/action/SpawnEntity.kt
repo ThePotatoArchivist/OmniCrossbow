@@ -2,9 +2,13 @@ package archives.tater.omnicrossbow.projectilebehavior.action
 
 import archives.tater.omnicrossbow.mixin.behavior.BoatItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
 import archives.tater.omnicrossbow.mixin.behavior.MinecartItemAccessor
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
+import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntitySpawnReason
@@ -13,12 +17,11 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart
-import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.SpawnEggItem
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
+import java.util.*
 
 interface SpawnEntity<T: Entity> : Delegated {
 
@@ -66,23 +69,49 @@ interface SpawnEntity<T: Entity> : Delegated {
     }
 
     @JvmRecord
-    data class FallingBlock(val state: BlockState) : SpawnEntity<FallingBlockEntity> {
+    data class FallingBlock(
+        val state: BlockState,
+        val hurtsEntities: Optional<HurtsEntities> = Optional.empty(),
+    ) : SpawnEntity<FallingBlockEntity> {
+
+        constructor(state: BlockState, damagePerDistance: Float, damageMax: Int)
+            : this(state, Optional.of(HurtsEntities(damagePerDistance, damageMax)))
+
         override fun getType(projectile: ItemStack): EntityType<out FallingBlockEntity> = EntityType.FALLING_BLOCK
 
         override fun FallingBlockEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
             this as FallingBlockEntityAccessor
-            blockState = ((projectile.item as? BlockItem)?.block ?: Blocks.SAND).defaultBlockState()
+            blockState = state
             blocksBuilding = true
             xo = position().x
             yo = position().y
             zo = position().z
             startPos = blockPosition()
+            if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE))
+                disableDrop()
+            (state.block as? FallingBlockInvoker)?.invokeFalling(this)
+            hurtsEntities.ifPresent {
+                setHurtsEntities(it.damagePerDistance, it.damageMax)
+            }
         }
 
         override val codec: MapCodec<out ProjectileAction> get() = CODEC
 
+        @JvmRecord
+        data class HurtsEntities(val damagePerDistance: Float, val damageMax: Int) {
+            companion object {
+                val CODEC: Codec<HurtsEntities> = RecordCodecBuilder.create { it.group(
+                    Codec.floatRange(0f, Float.MAX_VALUE).fieldOf("damage_per_distance").forGetter(HurtsEntities::damagePerDistance),
+                    Codec.intRange(0, Int.MAX_VALUE).fieldOf("damage_max").forGetter(HurtsEntities::damageMax),
+                ).apply(it, ::HurtsEntities) }
+            }
+        }
+
         companion object {
-            val CODEC: MapCodec<FallingBlock> = BlockState.CODEC.fieldOf("state").xmap(::FallingBlock, FallingBlock::state)
+            val CODEC: MapCodec<FallingBlock> = RecordCodecBuilder.mapCodec { it.group(
+                BlockState.CODEC.fieldOf("state").forGetter(FallingBlock::state),
+                HurtsEntities.CODEC.optionalFieldOf("hurts_entities").forGetter(FallingBlock::hurtsEntities)
+            ).apply(it, ::FallingBlock) }
         }
     }
 
