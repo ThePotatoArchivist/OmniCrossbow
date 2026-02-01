@@ -8,9 +8,9 @@ import archives.tater.omnicrossbow.projectilebehavior.action.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 
 object OmniCrossbowProjectileActions {
@@ -22,10 +22,10 @@ object OmniCrossbowProjectileActions {
         override fun shoot(
             pos: Vec3,
             velocity: Vec3,
-            level: Level,
+            level: ServerLevel,
             shooter: LivingEntity,
             weapon: ItemStack,
-            projectile: ItemStack,
+            projectile: ItemStack
         ) {
             shoot(pos, velocity, level, shooter, weapon, projectile)
         }

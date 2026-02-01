@@ -21,5 +21,6 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowProjectileActions.init()
 		OmniCrossbowEnchantmentEffects.init()
 		OmniCrossbowComponents.init()
+		OmniCrossbowEntities.init()
 	}
 }

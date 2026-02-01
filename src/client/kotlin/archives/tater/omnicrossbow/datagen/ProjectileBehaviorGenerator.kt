@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
+import archives.tater.omnicrossbow.projectilebehavior.action.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
 import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
@@ -52,6 +53,11 @@ class ProjectileBehaviorGenerator(
         register(Items.WIND_CHARGE, SpawnProjectile(EntityType.WIND_CHARGE))
         register(Items.DRAGON_BREATH, SpawnProjectile(EntityType.DRAGON_FIREBALL))
         register(Items.TRIDENT, SpawnProjectile(EntityType.TRIDENT))
+        register(Items.WITHER_SKELETON_SKULL, SpawnProjectile(EntityType.WITHER_SKULL))
+
+        register(Items.ARMOR_STAND, SpawnEntity(EntityType.ARMOR_STAND))
+        register(Items.TNT, SpawnEntity(EntityType.TNT))
+        register(Items.CHICKEN_SPAWN_EGG, SpawnEntity(EntityType.CHICKEN))
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES, ProjectileAction.Default)
     }

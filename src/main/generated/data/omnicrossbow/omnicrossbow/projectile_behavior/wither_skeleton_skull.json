@@ -1,0 +1,7 @@
+{
+  "items": "minecraft:wither_skeleton_skull",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity_type": "minecraft:wither_skull"
+  }
+}
