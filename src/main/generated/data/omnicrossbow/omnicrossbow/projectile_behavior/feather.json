@@ -1,0 +1,7 @@
+{
+  "items": "minecraft:feather",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_entity/item"
+  },
+  "velocity_scale": 0.3
+}

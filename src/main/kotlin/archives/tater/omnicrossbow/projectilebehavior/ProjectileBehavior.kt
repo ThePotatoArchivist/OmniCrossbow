@@ -42,7 +42,7 @@ data class ProjectileBehavior(
     )
         : this(items, projectileAction, velocityScale, Optional.ofNullable(shootSound), Either.right(remainder))
 
-    fun getRemainder(projectile: ItemStack): ItemStack = remainder.map(
+    fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
         { if (it) projectile.craftingRemainder?.create() else null },
         { it.create() }
     )

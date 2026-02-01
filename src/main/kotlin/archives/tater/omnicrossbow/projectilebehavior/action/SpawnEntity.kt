@@ -9,6 +9,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart
 import net.minecraft.world.item.ItemStack
@@ -126,5 +127,19 @@ interface SpawnEntity<T: Entity> : Delegated {
     data object FromBucket : Singleton(), SpawnEntity<Mob> {
         override fun getType(projectile: ItemStack): EntityType<out Mob>? =
             (projectile.item as? MobBucketItemAccessor)?.type
+    }
+
+    data object Item : Singleton(), SpawnEntity<ItemEntity> {
+        override fun getType(projectile: ItemStack): EntityType<out ItemEntity> = EntityType.ITEM
+
+        override fun ItemEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
+            this as ItemEntityAccessor
+            item = projectile.copy()
+            if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE)) {
+                setNeverPickUp()
+                age = 6000 - 10 * 20
+            } else
+                setDefaultPickUpDelay()
+        }
     }
 }

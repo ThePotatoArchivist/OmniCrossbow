@@ -10,6 +10,7 @@
     "behavior.CrossbowItemMixin",
     "behavior.FallingBlockEntityAccessor",
     "behavior.FallingBlockInvoker",
+    "behavior.ItemEntityAccessor",
     "behavior.MinecartItemAccessor",
     "behavior.MobBucketItemAccessor",
     "behavior.ProjectileMixin",

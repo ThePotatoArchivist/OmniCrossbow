@@ -86,6 +86,8 @@ class ProjectileBehaviorGenerator(
             }
         }, SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 
+        register(Items.FEATHER) { ProjectileBehavior(it, SpawnEntity.Item, velocityScale = 0.3f) }
+
         register(Items.POINTED_DRIPSTONE) { ProjectileBehavior(it, SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
             .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP_MERGE),

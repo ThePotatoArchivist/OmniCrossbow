@@ -58,7 +58,7 @@ public class ProjectileWeaponItemMixin {
                 projectile.setAttached(OmniCrossbowAttachments.SHOOT_SOUND, sound)
         );
         var remainder = behavior.getRemainder(projectileItem);
-        if (!remainder.isEmpty()) shooter.handleExtraItemsCreatedOnUse(remainder);
+        if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);
         if (!(behavior.projectileAction() instanceof Delegated delegated)) return original.call(projectile, serverLevel, itemStack, shootFunction);
 
         shootFunction.accept(projectile);
