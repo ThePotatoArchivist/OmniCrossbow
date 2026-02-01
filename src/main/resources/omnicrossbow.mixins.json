@@ -6,6 +6,7 @@
     "ProjectileWeaponItemMixin",
     "ThrownTridentMixin",
     "behavior.AbstractArrowAccessor",
+    "behavior.CrossbowItemMixin",
     "behavior.ProjectileWeaponItemMixin",
     "behavior.ThrownTridentAccessor",
     "enchantmenteffect.ammo.MonsterMixin",

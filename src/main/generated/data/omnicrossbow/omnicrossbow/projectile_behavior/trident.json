@@ -3,5 +3,6 @@
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:trident"
-  }
+  },
+  "shoot_sound": "minecraft:item.trident.throw"
 }

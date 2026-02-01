@@ -20,6 +20,7 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowBuiltinRegistries.init()
 		OmniCrossbowProjectileActions.init()
 		OmniCrossbowEnchantmentEffects.init()
+		OmniCrossbowAttachments.init()
 		OmniCrossbowComponents.init()
 		OmniCrossbowEntities.init()
 	}
