@@ -1,25 +1,28 @@
 package archives.tater.omnicrossbow.client.render.item
 
+import archives.tater.omnicrossbow.client.render.AmmoPosition
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.math.Axis
 import com.mojang.serialization.MapCodec
 import net.minecraft.client.Minecraft
 import net.minecraft.client.data.models.model.ItemModelUtils
 import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.block.model.ItemTransform
 import net.minecraft.client.renderer.item.*
 import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem
 import net.minecraft.client.renderer.item.properties.numeric.CrossbowPull
 import net.minecraft.client.renderer.special.SpecialModelRenderer
 import net.minecraft.core.component.DataComponents
+import net.minecraft.util.Mth.PI
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import org.joml.Quaternionf
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import java.util.function.Consumer
 
-class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelRenderer<ItemStackRenderState> {
+class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelRenderer<OmniAmmoRenderer.State> {
     override fun submit(
-        argument: ItemStackRenderState?,
+        argument: State?,
         type: ItemDisplayContext,
         poseStack: PoseStack,
         submitNodeCollector: SubmitNodeCollector,
@@ -30,10 +33,11 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
     ) {
         if (argument == null) return
         poseStack.pushPose()
-        poseStack.translate(8 / 16f, 8 / 16f, 9 / 16f)
-        poseStack.mulPose(Axis.YP.rotationDegrees(180f))
-        poseStack.mulPose(Axis.ZP.rotationDegrees(-90f))
-        argument.submit(poseStack, submitNodeCollector, lightCoords, overlayCoords, outlineColor)
+        poseStack.translate(0.5f, 0.5f, 0.5f)
+        argument.transform.apply(false, poseStack.last())
+        poseStack.translate(0.5f, 0.5f, 0.5f)
+        poseStack.mulPose(Quaternionf().rotationXYZ(0f, PI, 0f))
+        argument.stack.submit(poseStack, submitNodeCollector, lightCoords, overlayCoords, outlineColor)
         poseStack.popPose()
     }
 
@@ -51,19 +55,28 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
         }
     }
 
-    override fun extractArgument(stack: ItemStack): ItemStackRenderState? =
+    override fun extractArgument(stack: ItemStack): State? =
         stack.get(DataComponents.CHARGED_PROJECTILES)?.items?.firstOrNull()?.create()?.let { projectile ->
-            ItemStackRenderState().also {
-                itemModelResolver.updateForTopItem(
-                    it,
-                    projectile,
-                    ItemDisplayContext.FIXED,
-                    null,
-                    null,
-                    0
-                )
-            }
+            State(
+                ItemStackRenderState().also {
+                    itemModelResolver.updateForTopItem(
+                        it,
+                        projectile,
+                        ItemDisplayContext.FIXED,
+                        null,
+                        null,
+                        0
+                    )
+                },
+                AmmoPosition[projectile.item]
+            )
         }
+
+    @JvmRecord
+    data class State(
+        val stack: ItemStackRenderState,
+        val transform: ItemTransform,
+    )
 
     object Unbaked : SpecialModelRenderer.Unbaked {
         override fun bake(context: SpecialModelRenderer.BakingContext): SpecialModelRenderer<*> =

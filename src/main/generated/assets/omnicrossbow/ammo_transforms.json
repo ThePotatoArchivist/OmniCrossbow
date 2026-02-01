@@ -1,0 +1,19 @@
+[
+  {
+    "items": [
+      "minecraft:iron_pickaxe"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "translation": [
+        -0.1875,
+        0.125,
+        0.0625
+      ]
+    }
+  }
+]

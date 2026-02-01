@@ -20,6 +20,7 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 			addProvider(::EnchantmentTagGenerator)
 			addProvider(::DamageTagGenerator)
 			addProvider(::LangGenerator)
+			addProvider(::AmmoPositionGenerator)
 			addProvider(::ProjectileBehaviorGenerator)
 		}
 	}
