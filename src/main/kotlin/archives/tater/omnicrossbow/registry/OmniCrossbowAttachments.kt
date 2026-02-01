@@ -11,6 +11,9 @@ object OmniCrossbowAttachments {
     @JvmField
     val SHOOT_SOUND: AttachmentType<Holder<SoundEvent>> = AttachmentRegistry.create(OmniCrossbow.id("shoot_sound"))
 
+    @JvmField
+    val VELOCITY_SCALE: AttachmentType<Float> = AttachmentRegistry.create(OmniCrossbow.id("velocity_scale"))
+
     fun init() {
 
     }

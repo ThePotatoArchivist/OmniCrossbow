@@ -10,7 +10,6 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
-import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.HolderSet
 import net.minecraft.core.registries.BuiltInRegistries
@@ -23,6 +22,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.ItemLike
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -39,41 +39,35 @@ class ProjectileBehaviorGenerator(
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
         }
 
-        fun register(tag: TagKey<Item>, action: ProjectileAction, shootSound: Holder<SoundEvent>? = null) {
-            register(tag.location.path, ProjectileBehavior(items.getOrThrow(tag), action, shootSound))
+        fun register(tag: TagKey<Item>, create: (HolderSet<Item>) -> ProjectileBehavior) {
+            register(tag.location.path, create(items.getOrThrow(tag)))
         }
 
-        fun register(tag: TagKey<Item>, action: ProjectileAction, shootSound: SoundEvent) {
-            register(tag, action, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(shootSound))
+        fun register(item: ItemLike, create: (HolderSet<Item>) -> ProjectileBehavior) {
+            register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, create(HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(item.asItem()))))
         }
 
-        fun register(item: Item, action: ProjectileAction, shootSound: Holder<SoundEvent>? = null) {
-            register(BuiltInRegistries.ITEM.getKey(item).path, ProjectileBehavior(HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(item)), action, shootSound))
-        }
+        fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
 
-        fun register(item: Item, action: ProjectileAction, shootSound: SoundEvent) {
-            register(item, action, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(shootSound))
-        }
+        register(ItemTags.EGGS) { ProjectileBehavior(it, SpawnProjectile(EntityType.EGG)) }
+        register(Items.SNOWBALL) { ProjectileBehavior(it, SpawnProjectile(EntityType.SNOWBALL)) }
+        register(Items.ENDER_PEARL) { ProjectileBehavior(it, SpawnProjectile(EntityType.ENDER_PEARL)) }
+        register(Items.EXPERIENCE_BOTTLE) { ProjectileBehavior(it, SpawnProjectile(EntityType.EXPERIENCE_BOTTLE)) }
+        register(Items.SPLASH_POTION) { ProjectileBehavior(it, SpawnProjectile(EntityType.SPLASH_POTION)) }
+        register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile(EntityType.LINGERING_POTION)) }
+        register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
+        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.WIND_CHARGE), 0.03f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
+        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT)) }
+        register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
+        register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
 
-        register(ItemTags.EGGS, SpawnProjectile(EntityType.EGG))
-        register(Items.SNOWBALL, SpawnProjectile(EntityType.SNOWBALL))
-        register(Items.ENDER_PEARL, SpawnProjectile(EntityType.ENDER_PEARL))
-        register(Items.EXPERIENCE_BOTTLE, SpawnProjectile(EntityType.EXPERIENCE_BOTTLE))
-        register(Items.SPLASH_POTION, SpawnProjectile(EntityType.SPLASH_POTION))
-        register(Items.LINGERING_POTION, SpawnProjectile(EntityType.LINGERING_POTION))
-        register(Items.FIRE_CHARGE, SpawnProjectile(EntityType.SMALL_FIREBALL), SoundEvents.BLAZE_SHOOT)
-        register(Items.WIND_CHARGE, SpawnProjectile(EntityType.WIND_CHARGE), SoundEvents.WIND_CHARGE_THROW)
-        register(Items.DRAGON_BREATH, SpawnProjectile(EntityType.DRAGON_FIREBALL), SoundEvents.ENDER_DRAGON_SHOOT)
-        register(Items.TRIDENT, SpawnProjectile(EntityType.TRIDENT), SoundEvents.TRIDENT_THROW)
-        register(Items.WITHER_SKELETON_SKULL, SpawnProjectile(EntityType.WITHER_SKULL), SoundEvents.WITHER_SHOOT)
+        register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity(EntityType.ARMOR_STAND)) }
+        register(Items.TNT) { ProjectileBehavior(it, SpawnEntity(EntityType.TNT)) }
+        register(Items.CHICKEN_SPAWN_EGG) { ProjectileBehavior(it, SpawnEntity(EntityType.CHICKEN)) }
 
-        register(Items.ARMOR_STAND, SpawnEntity(EntityType.ARMOR_STAND))
-        register(Items.TNT, SpawnEntity(EntityType.TNT))
-        register(Items.CHICKEN_SPAWN_EGG, SpawnEntity(EntityType.CHICKEN))
+        register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
-        register(Items.ECHO_SHARD, OmniCrossbowProjectileActions.SONIC_BOOM)
-
-        register(OmniCrossbowItemTags.BUILTIN_PROJECTILES, ProjectileAction.Default)
+        register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
     }
 
     override fun getName(): String = "Projectile Behaviors"

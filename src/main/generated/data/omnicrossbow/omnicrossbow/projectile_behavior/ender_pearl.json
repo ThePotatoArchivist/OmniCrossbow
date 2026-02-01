@@ -3,6 +3,5 @@
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:ender_pearl"
-  },
-  "shoot_sound": "minecraft:entity.ender_pearl.throw"
+  }
 }

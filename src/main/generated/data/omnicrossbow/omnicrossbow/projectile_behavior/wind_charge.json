@@ -4,5 +4,6 @@
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:wind_charge"
   },
-  "shoot_sound": "minecraft:entity.wind_charge.throw"
+  "shoot_sound": "minecraft:entity.wind_charge.throw",
+  "velocity_scale": 0.03
 }

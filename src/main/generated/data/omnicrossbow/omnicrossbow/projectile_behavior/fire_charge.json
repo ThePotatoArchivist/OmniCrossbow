@@ -4,5 +4,6 @@
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:small_fireball"
   },
-  "shoot_sound": "minecraft:entity.blaze.shoot"
+  "shoot_sound": "minecraft:entity.blaze.shoot",
+  "velocity_scale": 0.03
 }

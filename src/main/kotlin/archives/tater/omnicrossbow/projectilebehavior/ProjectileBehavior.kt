@@ -19,16 +19,18 @@ import java.util.*
 data class ProjectileBehavior(
     val items: HolderSet<Item>,
     val projectileAction: ProjectileAction,
+    val velocityScale: Float,
     val shootSound: Optional<Holder<SoundEvent>>,
 ) {
-    constructor(items: HolderSet<Item>, projectileAction: ProjectileAction, shootSound: Holder<SoundEvent>? = null)
-            : this(items, projectileAction, Optional.ofNullable(shootSound))
+    constructor(items: HolderSet<Item>, projectileAction: ProjectileAction, velocityScale: Float = 1f, shootSound: Holder<SoundEvent>? = null)
+            : this(items, projectileAction, velocityScale, Optional.ofNullable(shootSound))
 
     companion object {
         val CODEC: Codec<ProjectileBehavior> = RecordCodecBuilder.create { it.group(
             RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("items").forGetter(ProjectileBehavior::items),
             ProjectileAction.CODEC.fieldOf("projectile_action").forGetter(ProjectileBehavior::projectileAction),
-            SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound)
+            Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("velocity_scale", 1f).forGetter(ProjectileBehavior::velocityScale),
+            SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound),
         ).apply(it, ::ProjectileBehavior) }
 
         @JvmStatic

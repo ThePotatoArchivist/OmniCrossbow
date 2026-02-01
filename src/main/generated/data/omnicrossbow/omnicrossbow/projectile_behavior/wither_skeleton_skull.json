@@ -4,5 +4,6 @@
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:wither_skull"
   },
-  "shoot_sound": "minecraft:entity.wither.shoot"
+  "shoot_sound": "minecraft:entity.wither.shoot",
+  "velocity_scale": 0.03
 }

@@ -31,7 +31,7 @@ public class ProjectileWeaponItemMixin {
             method = "shoot",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ProjectileWeaponItem;createProjectile(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/entity/projectile/Projectile;")
     )
-    private Projectile modifyProjectile(ProjectileWeaponItem instance, Level level, LivingEntity shooter, ItemStack weapon, ItemStack projectile, boolean isCrit, Operation<Projectile> original, @Local(argsOnly = true) ServerLevel serverLevel, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
+    private Projectile modifyProjectile(ProjectileWeaponItem instance, Level level, LivingEntity shooter, ItemStack weapon, ItemStack projectile, boolean isCrit, Operation<Projectile> original, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
         var behavior = ProjectileBehavior.getBehavior(level, projectile);
         if (behavior == null) return original.call(instance, level, shooter, weapon, projectile, isCrit);
 
@@ -52,6 +52,7 @@ public class ProjectileWeaponItemMixin {
     private <T extends Projectile> T modifyProjectileShoot(T projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<T> shootFunction, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Local(name = "projectile") ItemStack projectileItem, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
         var behavior = projectileBehavior.get();
         if (behavior == null) return original.call(projectile, serverLevel, itemStack, shootFunction);
+        projectile.setAttached(OmniCrossbowAttachments.VELOCITY_SCALE, behavior.velocityScale());
         behavior.shootSound().ifPresent(sound ->
                 projectile.setAttached(OmniCrossbowAttachments.SHOOT_SOUND, sound)
         );
