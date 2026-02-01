@@ -8,6 +8,6 @@ import net.minecraft.world.item.Item
 object OmniCrossbowItemTags {
     fun of(path: String): TagKey<Item> = TagKey.create(Registries.ITEM, OmniCrossbow.id(path))
 
-    @JvmField
-    val BUILTIN_PROJECTILES = of("builtin_projectiles")
+    @JvmField val BUILTIN_PROJECTILES = of("builtin_projectiles")
+    @JvmField val FALLING_BLOCKS = of("falling_blocks")
 }

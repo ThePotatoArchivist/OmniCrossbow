@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior
 
 import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
+import archives.tater.omnicrossbow.projectilebehavior.action.SpawnEntity
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import archives.tater.omnicrossbow.util.contains
 import com.mojang.serialization.Codec
@@ -10,9 +11,9 @@ import net.minecraft.core.HolderSet
 import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.registries.Registries
 import net.minecraft.sounds.SoundEvent
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.FallingBlock
 import java.util.*
 
 @JvmRecord
@@ -33,12 +34,22 @@ data class ProjectileBehavior(
             SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound),
         ).apply(it, ::ProjectileBehavior) }
 
+        fun getFallback(item: Item): ProjectileBehavior = when (item) {
+            is SpawnEggItem -> SpawnEntity.FromEgg
+            is BoatItem -> SpawnEntity.Boat
+            is MinecartItem -> SpawnEntity.Minecart
+            is BlockItem if item.block is FallingBlock -> SpawnEntity.FallingBlock(item.block.defaultBlockState())
+            else -> null
+        }?.let {
+            ProjectileBehavior(HolderSet.empty(), it, 0.3f)
+        } ?: ProjectileBehavior(HolderSet.empty(), ProjectileAction.Default) // TODO generic item projectile
+
         @JvmStatic
         fun getBehavior(level: Level, projectile: ItemStack): ProjectileBehavior? =
             level.registryAccess().lookupOrThrow<ProjectileBehavior>(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR)
                 .stream()
                 .filter { projectile in it.items }
                 .findFirst()
-                .orElse(null)
+                .orElseGet { getFallback(projectile.item) }
     }
 }

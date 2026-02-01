@@ -61,9 +61,9 @@ class ProjectileBehaviorGenerator(
         register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
         register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
 
-        register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity(EntityType.ARMOR_STAND)) }
-        register(Items.TNT) { ProjectileBehavior(it, SpawnEntity(EntityType.TNT)) }
-        register(Items.CHICKEN_SPAWN_EGG) { ProjectileBehavior(it, SpawnEntity(EntityType.CHICKEN)) }
+        register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.ARMOR_STAND)) }
+        register(Items.TNT) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.TNT)) }
+        register(ItemTags.BOATS) { ProjectileBehavior(it, SpawnEntity.Boat, 0.5f) }
 
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
