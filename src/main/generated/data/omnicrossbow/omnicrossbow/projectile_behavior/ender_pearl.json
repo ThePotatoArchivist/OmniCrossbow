@@ -1,0 +1,7 @@
+{
+  "items": "minecraft:ender_pearl",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity_type": "minecraft:ender_pearl"
+  }
+}

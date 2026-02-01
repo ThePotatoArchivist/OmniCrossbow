@@ -1,0 +1,7 @@
+{
+  "items": "minecraft:wind_charge",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity_type": "minecraft:wind_charge"
+  }
+}

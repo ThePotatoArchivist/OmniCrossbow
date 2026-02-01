@@ -1,0 +1,7 @@
+{
+  "items": "#minecraft:eggs",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity_type": "minecraft:egg"
+  }
+}
