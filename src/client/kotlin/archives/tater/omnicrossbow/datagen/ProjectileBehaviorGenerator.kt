@@ -26,6 +26,7 @@ import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
@@ -65,7 +66,7 @@ class ProjectileBehaviorGenerator(
         register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile(EntityType.LINGERING_POTION)) }
         register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
         register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.WIND_CHARGE), 0.03f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
-        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT)) }
+        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true) }
         register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
         register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
 
@@ -79,11 +80,11 @@ class ProjectileBehaviorGenerator(
             }
         }, SpawnEntity.FromEgg, 0.5f))
 
-        register("entity_buckets", ProjectileBehavior(ItemPredicate {
+        register("entity_buckets", ProjectileBehavior.of(ItemPredicate {
             withComponents {
                 any<DataComponentType<*>>(DataComponents.BUCKET_ENTITY_DATA)
             }
-        }, SpawnEntity.FromBucket, 0.5f))
+        }, SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 
         register(Items.POINTED_DRIPSTONE) { ProjectileBehavior(it, SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)

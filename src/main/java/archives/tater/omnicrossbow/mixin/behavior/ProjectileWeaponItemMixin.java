@@ -52,13 +52,18 @@ public class ProjectileWeaponItemMixin {
     private <T extends Projectile> T modifyProjectileShoot(T projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<T> shootFunction, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Local(name = "projectile") ItemStack projectileItem, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
         var behavior = projectileBehavior.get();
         if (behavior == null) return original.call(projectile, serverLevel, itemStack, shootFunction);
+
         projectile.setAttached(OmniCrossbowAttachments.VELOCITY_SCALE, behavior.velocityScale());
         behavior.shootSound().ifPresent(sound ->
                 projectile.setAttached(OmniCrossbowAttachments.SHOOT_SOUND, sound)
         );
+        var remainder = behavior.getRemainder(projectileItem);
+        if (!remainder.isEmpty()) shooter.handleExtraItemsCreatedOnUse(remainder);
         if (!(behavior.projectileAction() instanceof Delegated delegated)) return original.call(projectile, serverLevel, itemStack, shootFunction);
+
         shootFunction.accept(projectile);
         delegated.shoot(projectile.position(), projectile.getDeltaMovement(), serverLevel, shooter, weapon, projectileItem);
+
         return projectile;
     }
 }

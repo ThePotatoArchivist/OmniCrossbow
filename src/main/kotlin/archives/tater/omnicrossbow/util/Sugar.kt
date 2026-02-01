@@ -14,6 +14,8 @@ operator fun Vec3.times(scale: Double): Vec3 = scale(scale)
 
 fun ItemPredicate(init: ItemPredicate.Builder.() -> Unit): ItemPredicate = ItemPredicate.Builder.item().apply(init).build()
 
+val EMPTY_ITEM_PREDICATE = ItemPredicate {  }
+
 fun ItemPredicate.Builder.withComponents(init: DataComponentMatchers.Builder.() -> Unit) {
     withComponents(DataComponentMatchers.Builder.components().apply(init).build())
 }

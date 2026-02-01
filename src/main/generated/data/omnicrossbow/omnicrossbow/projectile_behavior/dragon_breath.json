@@ -4,6 +4,7 @@
     "type": "omnicrossbow:spawn_projectile",
     "entity_type": "minecraft:dragon_fireball"
   },
+  "remainder": true,
   "shoot_sound": "minecraft:entity.ender_dragon.shoot",
   "velocity_scale": 0.03
 }
