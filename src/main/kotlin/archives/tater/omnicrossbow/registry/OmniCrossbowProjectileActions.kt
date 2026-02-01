@@ -37,6 +37,7 @@ object OmniCrossbowProjectileActions {
         registerSingleton("special/$path", shoot)
     }
 
+    @JvmField
     val NONE = registerSingleton("none") { _, _, _, _, _, _ -> }
 
     fun init() {

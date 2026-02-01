@@ -2,6 +2,6 @@
   "items": "minecraft:fire_charge",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "minecraft:fireball"
+    "entity_type": "minecraft:small_fireball"
   }
 }

@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
+import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
@@ -52,8 +53,7 @@ class ProjectileBehaviorGenerator(
         register(Items.DRAGON_BREATH, SpawnProjectile(EntityType.DRAGON_FIREBALL))
         register(Items.TRIDENT, SpawnProjectile(EntityType.TRIDENT))
 
-        register(ItemTags.ARROWS, ProjectileAction.Default)
-        register(Items.FIREWORK_ROCKET, ProjectileAction.Default)
+        register(OmniCrossbowItemTags.BUILTIN_PROJECTILES, ProjectileAction.Default)
     }
 
     override fun getName(): String = "Projectile Behaviors"
