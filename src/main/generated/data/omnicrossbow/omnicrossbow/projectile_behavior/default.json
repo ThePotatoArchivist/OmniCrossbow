@@ -1,0 +1,6 @@
+{
+  "items": "#minecraft:arrows",
+  "projectile_action": {
+    "type": "omnicrossbow:default"
+  }
+}

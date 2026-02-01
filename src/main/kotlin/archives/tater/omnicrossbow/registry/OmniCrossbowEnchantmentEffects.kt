@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.enchantment.Ammo
 import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
@@ -62,6 +63,9 @@ object OmniCrossbowEnchantmentEffects {
         ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
         LootContextParamSets.ENCHANTED_ITEM
     ))
+
+    @JvmField
+    val AMMO = register("ammo", Ammo.CODEC.listOf())
 
     fun init() {
 
