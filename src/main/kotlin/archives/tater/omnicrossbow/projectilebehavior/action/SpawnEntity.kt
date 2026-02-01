@@ -1,19 +1,13 @@
 package archives.tater.omnicrossbow.projectilebehavior.action
 
-import archives.tater.omnicrossbow.mixin.behavior.BoatItemAccessor
-import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
-import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
-import archives.tater.omnicrossbow.mixin.behavior.MinecartItemAccessor
+import archives.tater.omnicrossbow.mixin.behavior.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart
@@ -127,5 +121,10 @@ interface SpawnEntity<T: Entity> : Delegated {
 
     data object FromEgg : Singleton(), SpawnEntity<Entity> {
         override fun getType(projectile: ItemStack): EntityType<*>? = SpawnEggItem.getType(projectile)
+    }
+
+    data object FromBucket : Singleton(), SpawnEntity<Mob> {
+        override fun getType(projectile: ItemStack): EntityType<out Mob>? =
+            (projectile.item as? MobBucketItemAccessor)?.type
     }
 }

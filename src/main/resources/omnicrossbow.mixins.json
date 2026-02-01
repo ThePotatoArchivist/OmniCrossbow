@@ -11,6 +11,7 @@
     "behavior.FallingBlockEntityAccessor",
     "behavior.FallingBlockInvoker",
     "behavior.MinecartItemAccessor",
+    "behavior.MobBucketItemAccessor",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",
     "behavior.ThrownTridentAccessor",

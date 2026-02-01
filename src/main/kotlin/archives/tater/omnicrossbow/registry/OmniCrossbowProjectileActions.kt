@@ -80,6 +80,7 @@ object OmniCrossbowProjectileActions {
         register("spawn_entity", SpawnEntity.Direct.CODEC)
         register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
         registerSingleton("spawn_entity/from_egg", SpawnEntity.FromEgg)
+        registerSingleton("spawn_entity/from_bucket", SpawnEntity.FromBucket)
         registerSingleton("spawn_entity/boat", SpawnEntity.Boat)
         registerSingleton("spawn_entity/minecart", SpawnEntity.Minecart)
         registerSingleton("default", ProjectileAction.Default)

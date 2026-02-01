@@ -1,7 +1,0 @@
-{
-  "items": "minecraft:chicken_spawn_egg",
-  "projectile_action": {
-    "type": "omnicrossbow:spawn_entity",
-    "entity_type": "minecraft:chicken"
-  }
-}

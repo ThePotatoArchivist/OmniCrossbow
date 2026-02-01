@@ -8,11 +8,15 @@ import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
 import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
+import archives.tater.omnicrossbow.util.ItemPredicate
+import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
+import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.HolderSet
+import net.minecraft.core.component.DataComponentType
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
@@ -43,12 +47,12 @@ class ProjectileBehaviorGenerator(
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
         }
 
-        fun register(tag: TagKey<Item>, create: (HolderSet<Item>) -> ProjectileBehavior) {
-            register(tag.location.path, create(items.getOrThrow(tag)))
+        fun register(tag: TagKey<Item>, create: (ItemPredicate) -> ProjectileBehavior) {
+            register(tag.location.path, create(ItemPredicate { of(items, tag) }))
         }
 
-        fun register(item: ItemLike, create: (HolderSet<Item>) -> ProjectileBehavior) {
-            register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, create(HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(item.asItem()))))
+        fun register(item: ItemLike, create: (ItemPredicate) -> ProjectileBehavior) {
+            register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, create(ItemPredicate { of(items, item) }))
         }
 
         fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
@@ -68,6 +72,18 @@ class ProjectileBehaviorGenerator(
         register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.ARMOR_STAND)) }
         register(Items.TNT) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.TNT)) }
         register(ItemTags.BOATS) { ProjectileBehavior(it, SpawnEntity.Boat, 0.5f) }
+
+        register("spawn_eggs", ProjectileBehavior(ItemPredicate {
+            withComponents {
+                any<DataComponentType<*>>(DataComponents.ENTITY_DATA)
+            }
+        }, SpawnEntity.FromEgg, 0.5f))
+
+        register("entity_buckets", ProjectileBehavior(ItemPredicate {
+            withComponents {
+                any<DataComponentType<*>>(DataComponents.BUCKET_ENTITY_DATA)
+            }
+        }, SpawnEntity.FromBucket, 0.5f))
 
         register(Items.POINTED_DRIPSTONE) { ProjectileBehavior(it, SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)

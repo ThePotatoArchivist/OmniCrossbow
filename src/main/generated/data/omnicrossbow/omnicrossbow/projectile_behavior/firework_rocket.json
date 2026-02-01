@@ -1,6 +1,0 @@
-{
-  "items": "minecraft:firework_rocket",
-  "projectile_action": {
-    "type": "omnicrossbow:default"
-  }
-}
