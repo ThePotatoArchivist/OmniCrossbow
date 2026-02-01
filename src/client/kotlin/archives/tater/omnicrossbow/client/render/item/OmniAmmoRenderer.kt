@@ -9,10 +9,8 @@ import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.item.*
 import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem
 import net.minecraft.client.renderer.item.properties.numeric.CrossbowPull
-import net.minecraft.client.renderer.item.properties.select.Charge
 import net.minecraft.client.renderer.special.SpecialModelRenderer
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.CrossbowItem
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.joml.Vector3f
@@ -77,24 +75,34 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
     }
 
     companion object {
-        private fun findPulling(model: ItemModel.Unbaked): BlockModelWrapper.Unbaked? = when (model) {
-            is RangeSelectItemModel.Unbaked if model.property is CrossbowPull -> findPulling(model.entries.last().model)
+        private fun findPulling(model: ItemModel.Unbaked): ItemModel.Unbaked? = when (model) {
+            is RangeSelectItemModel.Unbaked if model.property is CrossbowPull -> model.entries.last().model
             is RangeSelectItemModel.Unbaked -> findPulling(model.fallback.orElseGet { model.entries.first().model })
             is SelectItemModel.Unbaked -> findPulling(model.fallback.orElseGet { model.unbakedSwitch.cases.first().model })
             is ConditionalItemModel.Unbaked if model.property is IsUsingItem -> findPulling(model.onTrue)
             is ConditionalItemModel.Unbaked -> findPulling(model.onFalse)
             is CompositeModel.Unbaked -> findPulling(model.models.first())
+            else -> null
+        }
+
+        private fun findDefault(model: ItemModel.Unbaked): BlockModelWrapper.Unbaked? = when (model) {
+            is RangeSelectItemModel.Unbaked -> findDefault(model.fallback.orElseGet { model.entries.first().model })
+            is SelectItemModel.Unbaked -> findDefault(model.fallback.orElseGet { model.unbakedSwitch.cases.first().model })
+            is ConditionalItemModel.Unbaked -> findDefault(model.onFalse)
+            is CompositeModel.Unbaked -> findDefault(model.models.first())
             is BlockModelWrapper.Unbaked -> model
             else -> null
         }
 
         fun wrapModel(model: ItemModel.Unbaked): ItemModel.Unbaked {
-            val reference = findPulling(model) ?: return model
-            return ItemModelUtils.select(Charge(), model,
-                ItemModelUtils.`when`(CrossbowItem.ChargeType.ARROW, ItemModelUtils.composite(
-                    reference,
+            val pulling = findPulling(model) ?: return model
+            val reference = findDefault(pulling) ?: return model
+            return ItemModelUtils.conditional(IsOmniAmmo,
+                ItemModelUtils.composite(
+                    pulling,
                     SpecialModelWrapper.Unbaked(reference.model, Unbaked)
-                ))
+                ),
+                model,
             )
         }
     }
