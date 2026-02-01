@@ -6,6 +6,7 @@ import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.action.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
 import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
+import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
@@ -58,6 +59,8 @@ class ProjectileBehaviorGenerator(
         register(Items.ARMOR_STAND, SpawnEntity(EntityType.ARMOR_STAND))
         register(Items.TNT, SpawnEntity(EntityType.TNT))
         register(Items.CHICKEN_SPAWN_EGG, SpawnEntity(EntityType.CHICKEN))
+
+        register(Items.ECHO_SHARD, OmniCrossbowProjectileActions.SONIC_BOOM)
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES, ProjectileAction.Default)
     }

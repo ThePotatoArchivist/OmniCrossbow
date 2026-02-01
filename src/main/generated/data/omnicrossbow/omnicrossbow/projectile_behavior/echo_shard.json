@@ -1,0 +1,6 @@
+{
+  "items": "minecraft:echo_shard",
+  "projectile_action": {
+    "type": "omnicrossbow:special/sonic_boom"
+  }
+}
