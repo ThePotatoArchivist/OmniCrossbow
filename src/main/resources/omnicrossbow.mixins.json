@@ -4,8 +4,10 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "ProjectileWeaponItemMixin",
+    "ThrownTridentMixin",
     "behavior.AbstractArrowAccessor",
     "behavior.ProjectileWeaponItemMixin",
+    "behavior.ThrownTridentAccessor",
     "enchantmenteffect.ammo.MonsterMixin",
     "enchantmenteffect.ammo.PlayerMixin",
     "enchantmenteffect.cooldown.CrossbowItemMixin",

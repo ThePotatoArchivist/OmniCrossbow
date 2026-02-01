@@ -35,7 +35,7 @@ public class ProjectileWeaponItemMixin {
         if (behavior == null) return original.call(instance, level, shooter, weapon, projectile, isCrit);
         projectileBehavior.set(behavior);
         return switch (behavior.projectileAction()) {
-            case SpawnProjectile spawnProjectile -> spawnProjectile.createProjectile(level, shooter, weapon, projectile, isCrit);
+            case SpawnProjectile spawnProjectile -> spawnProjectile.createProjectile(level, shooter, weapon, projectile);
             case Delegated ignored -> null;
             case ProjectileAction.Default ignored -> original.call(instance, level, shooter, weapon, projectile, isCrit);
             default -> throw new AssertionError("Invalid subclass");
