@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.projectilebehavior.action
+package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowBuiltinRegistries
 import com.mojang.serialization.Codec

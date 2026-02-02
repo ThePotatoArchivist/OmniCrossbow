@@ -2,7 +2,8 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -15,6 +16,8 @@ object OmniCrossbowRegistries {
 
     @JvmField
     val PROJECTILE_ACTION_TYPE = of<MapCodec<out ProjectileAction>>("projectile_action_type")
+    @JvmField
+    val IMPACT_ACTION_TYPE = of<MapCodec<out ImpactAction>>("impact_action_type")
 
     // Dynamic
 

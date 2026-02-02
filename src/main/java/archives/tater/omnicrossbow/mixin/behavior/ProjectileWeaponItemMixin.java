@@ -2,8 +2,8 @@ package archives.tater.omnicrossbow.mixin.behavior;
 
 import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
-import archives.tater.omnicrossbow.projectilebehavior.action.Delegated;
-import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile;
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated;
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

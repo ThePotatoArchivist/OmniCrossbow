@@ -1,0 +1,11 @@
+{
+  "items": "#c:tools",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile/custom",
+    "impact_actions": [
+      {
+        "type": "omnicrossbow:break_block"
+      }
+    ]
+  }
+}

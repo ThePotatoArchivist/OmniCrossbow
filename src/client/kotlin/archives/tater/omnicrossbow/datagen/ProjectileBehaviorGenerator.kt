@@ -2,9 +2,11 @@ package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.action.ProjectileAction
-import archives.tater.omnicrossbow.projectilebehavior.action.SpawnEntity
-import archives.tater.omnicrossbow.projectilebehavior.action.SpawnProjectile
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.BreakBlock
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCustomProjectile
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
 import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
@@ -12,6 +14,7 @@ import archives.tater.omnicrossbow.util.ItemPredicate
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
@@ -97,6 +100,8 @@ class ProjectileBehaviorGenerator(
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
+
+        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(listOf(BreakBlock()))) }
     }
 
     override fun getName(): String = "Projectile Behaviors"

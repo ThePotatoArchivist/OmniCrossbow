@@ -1,8 +1,8 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
-import archives.tater.omnicrossbow.projectilebehavior.action.*
-import archives.tater.omnicrossbow.projectilebehavior.action.Delegated
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated
 import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.times
 import com.mojang.serialization.MapCodec
@@ -46,6 +46,19 @@ object OmniCrossbowProjectileActions {
     private fun registerSpecial(path: String, shoot: Delegated.ShootAction) =
         registerSingleton("special/$path", shoot)
 
+    init {
+        register("spawn_projectile", SpawnProjectile.Direct.CODEC)
+        register("spawn_projectile/custom", SpawnCustomProjectile.CODEC)
+        register("spawn_entity", SpawnEntity.Direct.CODEC)
+        register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
+        registerSingleton("spawn_entity/from_egg", SpawnEntity.FromEgg)
+        registerSingleton("spawn_entity/from_bucket", SpawnEntity.FromBucket)
+        registerSingleton("spawn_entity/boat", SpawnEntity.Boat)
+        registerSingleton("spawn_entity/minecart", SpawnEntity.Minecart)
+        registerSingleton("spawn_entity/item", SpawnEntity.Item)
+        registerSingleton("default", ProjectileAction.Default)
+    }
+
     @JvmField
     val NONE = registerSingleton("none") { _, _, _, _, _, _ -> }
 
@@ -76,15 +89,6 @@ object OmniCrossbowProjectileActions {
     }
 
     fun init() {
-        register("spawn_projectile", SpawnProjectile.Direct.CODEC)
-        register("spawn_projectile/custom", SpawnCustomProjectile.CODEC)
-        register("spawn_entity", SpawnEntity.Direct.CODEC)
-        register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
-        registerSingleton("spawn_entity/from_egg", SpawnEntity.FromEgg)
-        registerSingleton("spawn_entity/from_bucket", SpawnEntity.FromBucket)
-        registerSingleton("spawn_entity/boat", SpawnEntity.Boat)
-        registerSingleton("spawn_entity/minecart", SpawnEntity.Minecart)
-        registerSingleton("spawn_entity/item", SpawnEntity.Item)
-        registerSingleton("default", ProjectileAction.Default)
+
     }
 }

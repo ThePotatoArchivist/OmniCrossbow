@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.projectilebehavior.action
+package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.LivingEntity

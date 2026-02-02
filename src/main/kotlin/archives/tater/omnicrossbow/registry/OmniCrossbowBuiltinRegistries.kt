@@ -10,6 +10,7 @@ object OmniCrossbowBuiltinRegistries {
         FabricRegistryBuilder.create(key).apply(init).buildAndRegister()
 
     val PROJECTILE_ACTION_TYPE = register(OmniCrossbowRegistries.PROJECTILE_ACTION_TYPE)
+    val IMPACT_ACTION_TYPE = register(OmniCrossbowRegistries.IMPACT_ACTION_TYPE)
 
     fun init() {
 
