@@ -15,33 +15,25 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
 interface SpawnProjectile<T: Projectile> : ProjectileAction {
-    fun create(level: Level): T?
-
-    fun T.setup(
-        shooter: LivingEntity,
-        weapon: ItemStack,
-        projectile: ItemStack,
-    ) {}
-
     fun createProjectile(
         level: Level,
         shooter: LivingEntity,
         weapon: ItemStack,
         projectile: ItemStack,
-    ): Projectile? = create(level)?.apply {
-        setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
-        owner = shooter
-        setup(shooter, weapon, projectile)
-    }
+    ): T?
 
     @ConsistentCopyVisibility
     @JvmRecord
     data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile> {
 
-        @Suppress("USELESS_IS_CHECK")
-        override fun create(level: Level): Projectile? = type.create(level, EntitySpawnReason.SPAWN_ITEM_USE) as? Projectile
-
-        override fun Projectile.setup(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
+        override fun createProjectile(
+            level: Level,
+            shooter: LivingEntity,
+            weapon: ItemStack,
+            projectile: ItemStack
+        ): Projectile? = (type.create(level, EntitySpawnReason.SPAWN_ITEM_USE) as? Projectile)?.apply {
+            setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
+            owner = shooter
             (this as? ThrowableItemProjectile)?.item = projectile
             (this as? AbstractArrow)?.apply {
                 this as AbstractArrowAccessor

@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.DelegateProjectile
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -36,6 +37,14 @@ object OmniCrossbowEntities {
         noLootTable()
         sized(0f, 0f)
         clientTrackingRange(0)
+    }
+
+    @JvmField
+    val CUSTOM_ITEM_PROJECTILE = register("custom_item_projectile", ::CustomItemProjectile) {
+        noLootTable()
+        sized(0.25f, 0.25f)
+        clientTrackingRange(4)
+        updateInterval(10)
     }
 
     fun init() {

@@ -39,7 +39,7 @@ public class ProjectileWeaponItemMixin {
         projectileBehavior.set(behavior);
 
         return switch (behavior.projectileAction()) {
-            case SpawnProjectile spawnProjectile -> spawnProjectile.createProjectile(level, shooter, weapon, projectile);
+            case SpawnProjectile<?> spawnProjectile -> spawnProjectile.createProjectile(level, shooter, weapon, projectile);
             case Delegated ignored -> new DelegateProjectile(level, shooter);
             default -> original.call(instance, level, shooter, weapon, projectile, isCrit);
         };
