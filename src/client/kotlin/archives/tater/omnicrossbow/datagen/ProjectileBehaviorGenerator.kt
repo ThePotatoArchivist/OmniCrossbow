@@ -58,17 +58,17 @@ class ProjectileBehaviorGenerator(
 
         fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
 
-        register(ItemTags.EGGS) { ProjectileBehavior(it, SpawnProjectile(EntityType.EGG)) }
-        register(Items.SNOWBALL) { ProjectileBehavior(it, SpawnProjectile(EntityType.SNOWBALL)) }
-        register(Items.ENDER_PEARL) { ProjectileBehavior(it, SpawnProjectile(EntityType.ENDER_PEARL)) }
-        register(Items.EXPERIENCE_BOTTLE) { ProjectileBehavior(it, SpawnProjectile(EntityType.EXPERIENCE_BOTTLE)) }
-        register(Items.SPLASH_POTION) { ProjectileBehavior(it, SpawnProjectile(EntityType.SPLASH_POTION)) }
-        register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile(EntityType.LINGERING_POTION)) }
-        register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
-        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile(EntityType.WIND_CHARGE), 0.03f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
-        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true) }
-        register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
-        register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
+        register(ItemTags.EGGS) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.EGG)) }
+        register(Items.SNOWBALL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SNOWBALL)) }
+        register(Items.ENDER_PEARL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.ENDER_PEARL)) }
+        register(Items.EXPERIENCE_BOTTLE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)) }
+        register(Items.SPLASH_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SPLASH_POTION)) }
+        register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.LINGERING_POTION)) }
+        register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
+        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.03f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
+        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true) }
+        register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
+        register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
 
         register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.ARMOR_STAND)) }
         register(Items.TNT) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.TNT)) }

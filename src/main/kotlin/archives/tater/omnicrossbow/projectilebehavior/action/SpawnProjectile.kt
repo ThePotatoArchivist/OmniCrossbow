@@ -14,40 +14,59 @@ import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableIt
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-@ConsistentCopyVisibility
-@JvmRecord
-data class SpawnProjectile private constructor(private val type: EntityType<*>) : ProjectileAction {
+interface SpawnProjectile<T: Projectile> : ProjectileAction {
+    fun create(level: Level): T?
+
+    fun T.setup(
+        shooter: LivingEntity,
+        weapon: ItemStack,
+        projectile: ItemStack,
+    ) {}
+
     fun createProjectile(
         level: Level,
         shooter: LivingEntity,
         weapon: ItemStack,
         projectile: ItemStack,
-    ): Projectile? = (type.create(level, EntitySpawnReason.DISPENSER) as? Projectile)?.apply {
+    ): Projectile? = create(level)?.apply {
         setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
         owner = shooter
-        (this as? ThrowableItemProjectile)?.item = projectile
-        (this as? AbstractArrow)?.apply {
-            this as AbstractArrowAccessor
-            setFiredFromWeapon(weapon.copy())
-            invokeSetPickupItemStack(projectile)
-            applyComponentsFromItemStack(projectile)
-            if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE))
-                pickup = AbstractArrow.Pickup.CREATIVE_ONLY
-        }
-        (this as? ThrownTrident)?.apply {
-            entityData[ThrownTridentAccessor.getID_LOYALTY()] = (this as ThrownTridentAccessor).invokeGetLoyaltyFromItem(projectile)
-            entityData[ThrownTridentAccessor.getID_FOIL()] = projectile.hasFoil()
-        }
+        setup(shooter, weapon, projectile)
     }
 
-    override val codec: MapCodec<out ProjectileAction> get() = CODEC
+    @ConsistentCopyVisibility
+    @JvmRecord
+    data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile> {
 
-    companion object {
-        val CODEC: MapCodec<SpawnProjectile> = EntityType.CODEC.fieldOf("entity_type")
-            .xmap(::SpawnProjectile, SpawnProjectile::type)
+        @Suppress("USELESS_IS_CHECK")
+        override fun create(level: Level): Projectile? = type.create(level, EntitySpawnReason.SPAWN_ITEM_USE) as? Projectile
 
-        fun of(type: EntityType<out Projectile>) = SpawnProjectile(type)
+        override fun Projectile.setup(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
+            (this as? ThrowableItemProjectile)?.item = projectile
+            (this as? AbstractArrow)?.apply {
+                this as AbstractArrowAccessor
+                setFiredFromWeapon(weapon.copy())
+                invokeSetPickupItemStack(projectile)
+                applyComponentsFromItemStack(projectile)
+                if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE))
+                    pickup = AbstractArrow.Pickup.CREATIVE_ONLY
+            }
+            (this as? ThrownTrident)?.apply {
+                this as ThrownTridentAccessor
+                entityData[ThrownTridentAccessor.getID_LOYALTY()] = invokeGetLoyaltyFromItem(projectile)
+                entityData[ThrownTridentAccessor.getID_FOIL()] = projectile.hasFoil()
+            }
+        }
 
-        operator fun invoke(type: EntityType<out Projectile>) = of(type)
+        override val codec: MapCodec<out ProjectileAction> get() = CODEC
+
+        companion object {
+            val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity_type")
+                .xmap(::Direct, Direct::type)
+
+            fun of(type: EntityType<out Projectile>) = Direct(type)
+
+            operator fun invoke(type: EntityType<out Projectile>) = of(type)
+        }
     }
 }
