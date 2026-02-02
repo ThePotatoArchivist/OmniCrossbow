@@ -1,7 +1,7 @@
 [
   {
     "items": [
-      "#minecraft:pickaxes"
+      "#c:tools"
     ],
     "transform": {
       "rotation": [
@@ -11,6 +11,74 @@
       ],
       "translation": [
         -0.1875,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "#c:tools/shear"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "translation": [
+        -0.125,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "#minecraft:swords"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "translation": [
+        -0.1875,
+        0.1875,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "#minecraft:eggs"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        45.0
+      ],
+      "translation": [
+        -0.125,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "minecraft:pointed_dripstone"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        135.0
+      ],
+      "translation": [
+        -0.125,
         0.125,
         0.0625
       ]

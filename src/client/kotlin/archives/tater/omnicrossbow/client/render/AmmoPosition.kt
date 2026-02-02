@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.client.render
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.datagen.ItemTransform
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
@@ -13,6 +14,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
@@ -30,9 +32,12 @@ object AmmoPosition : ResourceManagerReloadListener {
     private val JSON_PATH = PATH.withSuffix(".json")
 
     val DEFAULT_TRANSFORM = ItemTransform(
-        Vector3f(0f, 0f, 90f),
-        Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
-        Vector3f(1f, 1f, 1f)
+        translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+    )
+
+    val DEFAULT_BLOCK_TRANSFORM = ItemTransform(
+        rotation = Vector3f(0f, 0f, 45f),
+        translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
     )
 
     operator fun get(registries: HolderLookup.Provider, item: Item): ItemTransform = positions.getOrPut(registries) {
@@ -50,10 +55,12 @@ object AmmoPosition : ResourceManagerReloadListener {
         }.collect(Collectors.toMap(
             { it.first },
             { it.second },
+            { _, second -> second }
         ))
-    }[item] ?: DEFAULT_TRANSFORM
+    }[item] ?: if (item is BlockItem) DEFAULT_BLOCK_TRANSFORM else DEFAULT_TRANSFORM // temporary solution
 
     override fun onResourceManagerReload(resourceManager: ResourceManager) {
+        positions.clear()
         entries = resourceManager.getResourceStack(JSON_PATH).flatMap { resource ->
             resource.open().use { stream ->
                 JsonReader(stream.reader()).use { result ->

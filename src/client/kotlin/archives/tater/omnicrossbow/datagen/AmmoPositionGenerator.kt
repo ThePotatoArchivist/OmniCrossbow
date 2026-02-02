@@ -3,11 +3,12 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider
-import net.minecraft.client.renderer.block.model.ItemTransform
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.ItemTags
+import net.minecraft.world.item.Items
 import org.joml.Vector3f
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiConsumer
@@ -22,12 +23,36 @@ class AmmoPositionGenerator(
     ) {
         provider.accept(AmmoPosition.PATH, listOf(
             AmmoPosition.Entry(ItemTransform(
-                Vector3f(0f, 0f, 90f),
-                Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
-                Vector3f(1f, 1f, 1f)
+                rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
             )) {
-                +ItemTags.PICKAXES
-            }
+                +ConventionalItemTags.TOOLS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +ConventionalItemTags.SHEAR_TOOLS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+            )) {
+                +ItemTags.SWORDS
+            },
+
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 45f),
+                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +ItemTags.EGGS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 135f),
+                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +Items.POINTED_DRIPSTONE
+            },
         ))
     }
 

@@ -2,11 +2,13 @@ package archives.tater.omnicrossbow.datagen
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack.RegistryDependentFactory
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
+import net.minecraft.client.renderer.block.model.ItemTransform
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
 import net.minecraft.data.tags.TagAppender
 import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.TagKey
+import org.joml.Vector3f
 
 context(appender: TagAppender<E, *>)
 operator fun <E: Any> E.unaryPlus() {
@@ -27,3 +29,9 @@ fun <T: Any> dynamicRegistry(name: String, registry: ResourceKey<Registry<T>>): 
         override fun getName(): String = name
     }
 }
+
+fun ItemTransform(
+    rotation: Vector3f = Vector3f(0f, 0f, 0f),
+    translation: Vector3f = Vector3f(0f, 0f, 0f),
+    scale: Vector3f = Vector3f(1f, 1f, 1f)
+) = ItemTransform(rotation, translation, scale)
