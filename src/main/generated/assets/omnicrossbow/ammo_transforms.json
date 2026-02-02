@@ -35,7 +35,7 @@
   },
   {
     "items": [
-      "#minecraft:swords"
+      "#c:tools/melee_weapon"
     ],
     "transform": {
       "rotation": [
@@ -52,7 +52,32 @@
   },
   {
     "items": [
-      "#minecraft:eggs"
+      "#minecraft:axes"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "translation": [
+        -0.1875,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "#minecraft:eggs",
+      "minecraft:glass_bottle",
+      "minecraft:dragon_breath",
+      "#c:buckets",
+      "#c:potions",
+      "#c:drinks",
+      "#c:foods/soup",
+      "#c:dusts",
+      "#c:gunpowders"
     ],
     "transform": {
       "rotation": [
@@ -69,17 +94,46 @@
   },
   {
     "items": [
+      "#minecraft:fishes"
+    ],
+    "transform": {
+      "rotation": [
+        0.0,
+        0.0,
+        -90.0
+      ],
+      "translation": [
+        -0.125,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "minecraft:pufferfish"
+    ],
+    "transform": {
+      "translation": [
+        -0.1875,
+        0.1875,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
       "minecraft:pointed_dripstone"
     ],
     "transform": {
       "rotation": [
         0.0,
         0.0,
-        135.0
+        225.0
       ],
       "translation": [
-        -0.125,
-        0.125,
+        -0.1875,
+        0.1875,
         0.0625
       ]
     }

@@ -16,6 +16,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.CropBlock
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import org.joml.Vector3f
@@ -57,7 +58,7 @@ object AmmoPosition : ResourceManagerReloadListener {
             { it.second },
             { _, second -> second }
         ))
-    }[item] ?: if (item is BlockItem) DEFAULT_BLOCK_TRANSFORM else DEFAULT_TRANSFORM // temporary solution
+    }[item] ?: if (item is BlockItem && item.block !is CropBlock) DEFAULT_BLOCK_TRANSFORM else DEFAULT_TRANSFORM // temporary solution
 
     override fun onResourceManagerReload(resourceManager: ResourceManager) {
         positions.clear()

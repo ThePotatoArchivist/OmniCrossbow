@@ -38,7 +38,13 @@ class AmmoPositionGenerator(
                 rotation = Vector3f(0f, 0f, 90f),
                 translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
             )) {
-                +ItemTags.SWORDS
+                +ConventionalItemTags.MELEE_WEAPON_TOOLS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +ItemTags.AXES
             },
 
             AmmoPosition.Entry(ItemTransform(
@@ -46,10 +52,27 @@ class AmmoPositionGenerator(
                 translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
             )) {
                 +ItemTags.EGGS
+                +Items.GLASS_BOTTLE
+                +Items.DRAGON_BREATH
+                +ConventionalItemTags.BUCKETS
+                +ConventionalItemTags.POTIONS
+                +ConventionalItemTags.DRINKS
+                +ConventionalItemTags.SOUP_FOODS
+                +ConventionalItemTags.DUSTS
+                +ConventionalItemTags.GUNPOWDERS
             },
             AmmoPosition.Entry(ItemTransform(
-                rotation = Vector3f(0f, 0f, 135f),
+                rotation = Vector3f(0f, 0f, -90f),
                 translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +ItemTags.FISHES
+            },
+            AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM) {
+                +Items.PUFFERFISH
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 225f),
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
             )) {
                 +Items.POINTED_DRIPSTONE
             },
