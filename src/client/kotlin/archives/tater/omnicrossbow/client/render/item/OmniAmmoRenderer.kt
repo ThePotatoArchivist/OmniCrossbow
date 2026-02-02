@@ -57,18 +57,19 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
 
     override fun extractArgument(stack: ItemStack): State? =
         stack.get(DataComponents.CHARGED_PROJECTILES)?.items?.firstOrNull()?.create()?.let { projectile ->
+            val positionEntry = AmmoPosition[Minecraft.getInstance().connection!!.registryAccess(), projectile.item]
             State(
                 ItemStackRenderState().also {
                     itemModelResolver.updateForTopItem(
                         it,
                         projectile,
-                        ItemDisplayContext.FIXED,
+                        positionEntry.displayContext,
                         null,
                         null,
                         0
                     )
                 },
-                AmmoPosition[Minecraft.getInstance().connection!!.registryAccess(), projectile.item]
+                positionEntry.transform
             )
         }
 

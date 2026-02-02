@@ -16,6 +16,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.level.block.CropBlock
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
@@ -25,23 +26,23 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 
 object AmmoPosition : ResourceManagerReloadListener {
-    private val positions = WeakHashMap<HolderLookup.Provider, Map<Item, ItemTransform>>()
+    private val positions = WeakHashMap<HolderLookup.Provider, Map<Item, Entry>>()
 
     private var entries: List<Entry> = listOf()
 
     val PATH = OmniCrossbow.id("ammo_transforms")
     private val JSON_PATH = PATH.withSuffix(".json")
 
-    val DEFAULT_TRANSFORM = ItemTransform(
+    val DEFAULT_TRANSFORM = Entry(listOf(), ItemDisplayContext.FIXED, ItemTransform(
         translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
-    )
+    ))
 
-    val DEFAULT_BLOCK_TRANSFORM = ItemTransform(
+    val DEFAULT_BLOCK_TRANSFORM = Entry(listOf(), ItemDisplayContext.FIXED, ItemTransform(
         rotation = Vector3f(0f, 0f, 45f),
         translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
-    )
+    ))
 
-    operator fun get(registries: HolderLookup.Provider, item: Item): ItemTransform = positions.getOrPut(registries) {
+    operator fun get(registries: HolderLookup.Provider, item: Item): Entry = positions.getOrPut(registries) {
         val items = registries.lookupOrThrow(Registries.ITEM)
         entries.stream().flatMap { entry ->
             entry.items.stream()
@@ -52,7 +53,7 @@ object AmmoPosition : ResourceManagerReloadListener {
                         .map { it.value() }
                     }
                 ) }
-                .map { it to entry.transform }
+                .map { it to entry }
         }.collect(Collectors.toMap(
             { it.first },
             { it.second },
@@ -74,10 +75,10 @@ object AmmoPosition : ResourceManagerReloadListener {
     }
 
     @JvmRecord
-    data class Entry(val items: List<Either<Item, TagKey<Item>>>, val transform: ItemTransform) {
+    data class Entry(val items: List<Either<Item, TagKey<Item>>>, val displayContext: ItemDisplayContext, val transform: ItemTransform) {
 
-        constructor(transform: ItemTransform, init: ItemListBuilder.() -> Unit) :
-                this(buildList { ItemListBuilder(this).init() }, transform)
+        constructor(transform: ItemTransform, displayContext: ItemDisplayContext = ItemDisplayContext.FIXED, init: ItemListBuilder.() -> Unit) :
+                this(buildList { ItemListBuilder(this).init() }, displayContext, transform)
 
         class ItemListBuilder(private val values: MutableList<Either<Item, TagKey<Item>>>) {
             fun add(item: Item) { values.add(Either.left(item)) }
@@ -96,6 +97,7 @@ object AmmoPosition : ResourceManagerReloadListener {
 
             val CODEC: Codec<Entry> = RecordCodecBuilder.create { it.group(
                 Codec.either(BuiltInRegistries.ITEM.byNameCodec(), TagKey.hashedCodec(Registries.ITEM)).listOf().fieldOf("items").forGetter(Entry::items),
+                ItemDisplayContext.CODEC.optionalFieldOf("display_context", ItemDisplayContext.FIXED).forGetter(Entry::displayContext),
                 TRANSFORM_CODEC.fieldOf("transform").forGetter(Entry::transform)
             ).apply(it, ::Entry) }
         }

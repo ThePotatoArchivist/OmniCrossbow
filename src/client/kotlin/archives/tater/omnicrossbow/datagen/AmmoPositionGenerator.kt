@@ -8,6 +8,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.ItemTags
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.Items
 import org.joml.Vector3f
 import java.util.concurrent.CompletableFuture
@@ -42,6 +43,13 @@ class AmmoPositionGenerator(
             },
             AmmoPosition.Entry(ItemTransform(
                 rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(3 / 16f, -3 / 16f, 1 / 16f),
+                scale = Vector3f(2f, 2f, 1f),
+            ), ItemDisplayContext.NONE) {
+                +ItemTags.SPEARS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 90f),
                 translation = Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
             )) {
                 +ItemTags.AXES
@@ -67,7 +75,7 @@ class AmmoPositionGenerator(
             )) {
                 +ItemTags.FISHES
             },
-            AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM) {
+            AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM.transform) {
                 +Items.PUFFERFISH
             },
             AmmoPosition.Entry(ItemTransform(
