@@ -10,7 +10,9 @@ import net.minecraft.advancements.criterion.MinMaxBounds
 import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
+import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.storage.loot.Validatable
 import java.util.*
 
 inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type: DataComponentType<T>, combine: (T, Int) -> U): U? {
@@ -35,3 +37,9 @@ val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
             Either.left(it)
     }
 )
+
+/**
+ * @see net.minecraft.world.item.enchantment.EnchantmentEffectComponents.validatedListCodec
+ */
+fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<List<T>> =
+    elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))

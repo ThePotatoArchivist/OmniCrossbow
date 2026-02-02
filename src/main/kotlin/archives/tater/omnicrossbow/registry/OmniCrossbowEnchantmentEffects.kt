@@ -5,14 +5,13 @@ import archives.tater.omnicrossbow.enchantment.Ammo
 import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
+import archives.tater.omnicrossbow.util.validatedListCodec
 import com.mojang.serialization.Codec
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.enchantment.ConditionalEffect
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect
-import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 
 
@@ -26,12 +25,6 @@ object OmniCrossbowEnchantmentEffects {
     private fun <T: Any> register(path: String, codec: Codec<T>) = register(path) {
         persistent(codec)
     }
-
-    /**
-     * @see net.minecraft.world.item.enchantment.EnchantmentEffectComponents.validatedListCodec
-     */
-    private fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<MutableList<T>> =
-        elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))
 
     // First one will take priority
     @JvmField
