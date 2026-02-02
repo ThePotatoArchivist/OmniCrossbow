@@ -68,7 +68,7 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
                         0
                     )
                 },
-                AmmoPosition[projectile.item]
+                AmmoPosition[Minecraft.getInstance().connection!!.registryAccess(), projectile.item]
             )
         }
 

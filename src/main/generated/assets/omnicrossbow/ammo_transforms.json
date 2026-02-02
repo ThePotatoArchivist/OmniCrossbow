@@ -1,7 +1,7 @@
 [
   {
     "items": [
-      "minecraft:iron_pickaxe"
+      "#minecraft:pickaxes"
     ],
     "transform": {
       "rotation": [

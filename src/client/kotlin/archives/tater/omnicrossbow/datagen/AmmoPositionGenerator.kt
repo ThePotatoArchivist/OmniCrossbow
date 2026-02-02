@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemTransform
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
-import net.minecraft.world.item.Items
+import net.minecraft.tags.ItemTags
 import org.joml.Vector3f
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiConsumer
@@ -21,13 +21,13 @@ class AmmoPositionGenerator(
         registryLookup: HolderLookup.Provider
     ) {
         provider.accept(AmmoPosition.PATH, listOf(
-            AmmoPosition.Entry(listOf(
-                Items.IRON_PICKAXE
-            ), ItemTransform(
+            AmmoPosition.Entry(ItemTransform(
                 Vector3f(0f, 0f, 90f),
                 Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
                 Vector3f(1f, 1f, 1f)
-            ))
+            )) {
+                +ItemTags.PICKAXES
+            }
         ))
     }
 
