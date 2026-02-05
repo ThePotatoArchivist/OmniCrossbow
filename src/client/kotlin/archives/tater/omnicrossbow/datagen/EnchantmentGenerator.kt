@@ -100,5 +100,18 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.AMMO, listOf(Ammo.anyItem()))
         }
+
+        register(OmniCrossbowEnchantments.SHARPSHOOTING, definition(
+            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            1,
+            4,
+            dynamicCost(12, 20),
+            constantCost(50),
+            8,
+            EquipmentSlotGroup.MAINHAND
+        )) {
+            exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
+            withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_RICOCHET, AddValue(LevelBasedValue.perLevel(1f)))
+        }
     }
 }

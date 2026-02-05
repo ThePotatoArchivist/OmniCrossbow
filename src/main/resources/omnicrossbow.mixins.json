@@ -23,6 +23,7 @@
     "enchantmenteffect.loadmultiple.CrossbowItemMixin",
     "enchantmenteffect.loadmultiple.ItemMixin",
     "enchantmenteffect.loadmultiple.ProjectileWeaponItemMixin",
+    "enchantmenteffect.ricochet.AbstractArrowMixin",
     "enchantmenteffect.uncertainty.ProjectileWeaponItemMixin",
     "enchantmenteffect.velocity.ProjectileWeaponItemMixin"
   ],

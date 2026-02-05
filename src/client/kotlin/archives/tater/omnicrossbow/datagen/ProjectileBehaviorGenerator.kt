@@ -31,10 +31,12 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.enchantment.ConditionalEffect
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
 import net.minecraft.world.level.block.state.properties.DripstoneThickness
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -101,7 +103,7 @@ class ProjectileBehaviorGenerator(
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(listOf(BreakBlock()))) }
+        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(listOf(ConditionalEffect(BreakBlock(), Optional.empty())))) }
     }
 
     override fun getName(): String = "Projectile Behaviors"

@@ -12,5 +12,6 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.PUMP_CHARGE, "Pump Charge")
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.MAGAZINE, "Magazine")
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.OMNI, "Omni")
+        translationBuilder.addEnchantment(OmniCrossbowEnchantments.SHARPSHOOTING, "Sharpshooting")
     }
 }

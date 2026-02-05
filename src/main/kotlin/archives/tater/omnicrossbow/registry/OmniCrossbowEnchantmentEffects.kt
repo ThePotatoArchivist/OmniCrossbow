@@ -60,6 +60,12 @@ object OmniCrossbowEnchantmentEffects {
     @JvmField
     val AMMO = register("ammo", Ammo.CODEC.listOf())
 
+    @JvmField
+    val PROJECTILE_RICOCHET = register("projectile_ricochet", validatedListCodec(
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
+        LootContextParamSets.ENCHANTED_ITEM
+    ))
+
     fun init() {
 
     }

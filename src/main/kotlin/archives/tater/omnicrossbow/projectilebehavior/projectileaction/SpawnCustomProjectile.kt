@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level
 
 @JvmRecord
 data class SpawnCustomProjectile(
-    val impactActions: List<ImpactAction>,
+    val impactActions: ImpactAction.Series,
 ) : SpawnProjectile<CustomItemProjectile> {
     override fun createProjectile(
         level: Level,
@@ -25,7 +25,7 @@ data class SpawnCustomProjectile(
 
     companion object {
         val CODEC: MapCodec<SpawnCustomProjectile> = RecordCodecBuilder.mapCodec { it.group(
-            ImpactAction.CODEC.listOf().fieldOf("impact_actions").forGetter(SpawnCustomProjectile::impactActions)
+            ImpactAction.SERIES_CODEC.fieldOf("impact_actions").forGetter(SpawnCustomProjectile::impactActions)
         ).apply(it, ::SpawnCustomProjectile) }
     }
 }

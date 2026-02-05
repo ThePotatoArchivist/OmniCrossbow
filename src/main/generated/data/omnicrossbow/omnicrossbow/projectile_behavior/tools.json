@@ -4,7 +4,9 @@
     "type": "omnicrossbow:spawn_projectile/custom",
     "impact_actions": [
       {
-        "type": "omnicrossbow:break_block"
+        "effect": {
+          "type": "omnicrossbow:break_block"
+        }
       }
     ]
   }
