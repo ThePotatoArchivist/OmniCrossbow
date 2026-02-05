@@ -21,9 +21,15 @@ object OmniCrossbowAttachments {
     val VELOCITY_SCALE: AttachmentType<Float> = register("velocity_scale")
 
     @JvmField
-    val RICOCHET_LEVEL: AttachmentType<Int> = register("ricochet_level") {
-        persistent(Codec.INT)
-        syncWith(ByteBufCodecs.INT, AttachmentSyncPredicate.all())
+    val RICOCHET_LEVEL: AttachmentType<Byte> = register("ricochet_level") {
+        persistent(Codec.BYTE)
+        syncWith(ByteBufCodecs.BYTE, AttachmentSyncPredicate.all())
+    }
+
+    @JvmField
+    val ORIGINAL_PIERCE_COUNT: AttachmentType<Byte> = register("original_pierce_count") {
+        persistent(Codec.BYTE)
+        syncWith(ByteBufCodecs.BYTE, AttachmentSyncPredicate.all())
     }
 
     fun init() {
