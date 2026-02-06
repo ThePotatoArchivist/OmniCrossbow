@@ -31,7 +31,7 @@ fun <T: Any> dynamicRegistry(name: String, registry: ResourceKey<Registry<T>>): 
 }
 
 fun ItemTransform(
-    rotation: Vector3f = Vector3f(0f, 0f, 0f),
-    translation: Vector3f = Vector3f(0f, 0f, 0f),
-    scale: Vector3f = Vector3f(1f, 1f, 1f)
+    rotation: Vector3f = Vector3f(),
+    translation: Vector3f = Vector3f(),
+    scale: Vector3f = Vector3f(1f)
 ) = ItemTransform(rotation, translation, scale)

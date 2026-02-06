@@ -22,6 +22,8 @@ inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type:
     return null
 }
 
+val EMPTY_ITEM_PREDICATE = ItemPredicate {  }
+
 val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
     ItemPredicate.CODEC,
     RegistryCodecs.homogeneousList(Registries.ITEM),

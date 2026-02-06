@@ -11,6 +11,7 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import archives.tater.omnicrossbow.util.ItemPredicate
+import archives.tater.omnicrossbow.util.anyOf
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
@@ -18,7 +19,6 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -81,13 +81,13 @@ class ProjectileBehaviorGenerator(
 
         register("spawn_eggs", ProjectileBehavior(ItemPredicate {
             withComponents {
-                any<DataComponentType<*>>(DataComponents.ENTITY_DATA)
+                anyOf(DataComponents.ENTITY_DATA)
             }
         }, SpawnEntity.FromEgg, 0.5f))
 
         register("entity_buckets", ProjectileBehavior.of(ItemPredicate {
             withComponents {
-                any<DataComponentType<*>>(DataComponents.BUCKET_ENTITY_DATA)
+                anyOf(DataComponents.BUCKET_ENTITY_DATA)
             }
         }, SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 

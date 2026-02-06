@@ -29,6 +29,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
     override fun run(registry: BootstrapContext<Enchantment>) {
         val items = registry.lookup(Registries.ITEM)
         val enchantments = registry.lookup(Registries.ENCHANTMENT)
+        val crossbowEnchantable = items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE)
 
         fun register(key: ResourceKey<Enchantment>, definition: EnchantmentDefinition, init: Enchantment.Builder.() -> Unit) =
             enchantment(definition).apply(init).build(key.identifier()).also {
@@ -36,7 +37,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             }
 
         register(OmniCrossbowEnchantments.MULTICHAMBERED, definition(
-            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            crossbowEnchantable,
             4,
             3,
             dynamicCost(12, 20),
@@ -51,7 +52,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         }
 
         register(OmniCrossbowEnchantments.PUMP_CHARGE, definition(
-            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            crossbowEnchantable,
             1,
             1,
             constantCost(20),
@@ -72,7 +73,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         }
 
         register(OmniCrossbowEnchantments.MAGAZINE, definition(
-            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            crossbowEnchantable,
             1,
             4,
             dynamicCost(12, 20),
@@ -90,7 +91,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         }
 
         register(OmniCrossbowEnchantments.OMNI, definition(
-            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            crossbowEnchantable,
             1,
             1,
             constantCost(20),
@@ -103,7 +104,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         }
 
         register(OmniCrossbowEnchantments.SHARPSHOOTING, definition(
-            items.getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+            crossbowEnchantable,
             1,
             4,
             dynamicCost(12, 20),
