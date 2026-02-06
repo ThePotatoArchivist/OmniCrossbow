@@ -2,12 +2,11 @@
   "items": "#c:tools",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_actions": [
+    "impact_block": [
       {
-        "effect": {
-          "type": "omnicrossbow:break_block"
-        }
+        "effect": "omnicrossbow:break_block"
       }
-    ]
+    ],
+    "impact_entity": []
   }
 }

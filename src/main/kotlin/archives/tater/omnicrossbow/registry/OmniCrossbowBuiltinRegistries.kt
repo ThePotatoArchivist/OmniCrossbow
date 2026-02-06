@@ -9,8 +9,9 @@ object OmniCrossbowBuiltinRegistries {
     private fun <T: Any> register(key: ResourceKey<Registry<T>>, init: FabricRegistryBuilder<T, MappedRegistry<T>>.() -> Unit = {}): Registry<T> =
         FabricRegistryBuilder.create(key).apply(init).buildAndRegister()
 
-    val PROJECTILE_ACTION_TYPE = register(OmniCrossbowRegistries.PROJECTILE_ACTION_TYPE)
-    val IMPACT_ACTION_TYPE = register(OmniCrossbowRegistries.IMPACT_ACTION_TYPE)
+    @JvmField val PROJECTILE_ACTION_TYPE = register(OmniCrossbowRegistries.PROJECTILE_ACTION_TYPE)
+    @JvmField val BLOCK_IMPACT_ACTION = register(OmniCrossbowRegistries.BLOCK_IMPACT_ACTION)
+    @JvmField val ENTITY_IMPACT_ACTION = register(OmniCrossbowRegistries.ENTITY_IMPACT_ACTION)
 
     fun init() {
 

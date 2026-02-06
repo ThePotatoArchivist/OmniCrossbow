@@ -2,11 +2,11 @@ package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.impactaction.BreakBlock
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCustomProjectile
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
+import archives.tater.omnicrossbow.registry.OmniCrossbowImpactActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
@@ -31,12 +31,10 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
-import net.minecraft.world.item.enchantment.ConditionalEffect
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
 import net.minecraft.world.level.block.state.properties.DripstoneThickness
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -103,7 +101,9 @@ class ProjectileBehaviorGenerator(
 
         register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(listOf(ConditionalEffect(BreakBlock(), Optional.empty())))) }
+        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
+            +OmniCrossbowImpactActions.BREAK_BLOCK
+        }) }
     }
 
     override fun getName(): String = "Projectile Behaviors"

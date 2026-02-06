@@ -77,7 +77,7 @@ data class ProjectileBehavior(
             else -> null
         }?.let {
             of(ItemPredicate {}, it, 0.3f, remainder = if (item is MobBucketItem) ItemStackTemplate(Items.WATER_BUCKET) else null)
-        } ?: ProjectileBehavior(ItemPredicate {}, SpawnCustomProjectile(listOf())) // TODO generic item projectile
+        } ?: ProjectileBehavior(ItemPredicate {}, SpawnCustomProjectile()) // TODO generic item projectile
 
         @JvmStatic
         fun getBehavior(level: Level, projectile: ItemStack): ProjectileBehavior? =
