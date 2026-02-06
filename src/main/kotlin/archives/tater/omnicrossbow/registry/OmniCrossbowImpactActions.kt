@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
 import net.minecraft.core.Registry
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
@@ -32,6 +33,11 @@ object OmniCrossbowImpactActions {
         val stack = projectile.item.finishUsingItem(level, entity)
         if (entity is Player) entity.handleExtraItemsCreatedOnUse(stack)
         else entity.spawnAtLocation(level, stack)
+        true
+    }
+
+    val SMALL_EXPLOSION = registerBoth("small_explosion") { level, projectile, hit ->
+        level.explode(projectile, hit.location.x, hit.location.y, hit.location.z, 1f, true, Level.ExplosionInteraction.TNT)
         true
     }
 

@@ -106,6 +106,10 @@ class ProjectileBehaviorGenerator(
         ), 0.7f) }
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
+        register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile {
+            +OmniCrossbowImpactActions.SMALL_EXPLOSION
+        }) }
+
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
         register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
@@ -118,13 +122,12 @@ class ProjectileBehaviorGenerator(
             ).build())
         }) }
 
-
         register("consumable", ProjectileBehavior(ItemPredicate {
             withComponents {
                 hasAny(DataComponents.CONSUMABLE)
             }
         }, SpawnCustomProjectile {
-            add(OmniCrossbowImpactActions.CONSUME_ITEM)
+            +OmniCrossbowImpactActions.CONSUME_ITEM
         }))
     }
 
