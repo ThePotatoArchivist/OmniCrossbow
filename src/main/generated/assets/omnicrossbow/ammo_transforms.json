@@ -117,7 +117,9 @@
   },
   {
     "items": [
-      "#minecraft:fishes"
+      "#minecraft:fishes",
+      "#c:bones",
+      "#c:rods"
     ],
     "transform": {
       "rotation": [
@@ -128,6 +130,18 @@
       "translation": [
         -0.125,
         0.125,
+        0.0625
+      ]
+    }
+  },
+  {
+    "items": [
+      "minecraft:wind_charge"
+    ],
+    "transform": {
+      "translation": [
+        -0.0625,
+        0.0625,
         0.0625
       ]
     }

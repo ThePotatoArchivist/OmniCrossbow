@@ -70,7 +70,7 @@ class ProjectileBehaviorGenerator(
         register(Items.SPLASH_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SPLASH_POTION)) }
         register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.LINGERING_POTION)) }
         register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
-        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.03f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
+        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.5f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
         register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true) }
         register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
         register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }

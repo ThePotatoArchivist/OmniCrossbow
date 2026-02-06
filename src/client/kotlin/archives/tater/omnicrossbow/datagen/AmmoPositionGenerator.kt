@@ -17,7 +17,7 @@ import java.util.function.BiConsumer
 class AmmoPositionGenerator(
     packOutput: FabricPackOutput,
     registriesFuture: CompletableFuture<HolderLookup.Provider>,
-) : FabricCodecDataProvider<AmmoPosition.Entries>(packOutput, registriesFuture, PackOutput.Target.RESOURCE_PACK, "", AmmoPosition.ENTRIES_CODEC) {
+) : FabricCodecDataProvider<AmmoPosition.Entries>(packOutput, registriesFuture, PackOutput.Target.RESOURCE_PACK, ".", AmmoPosition.ENTRIES_CODEC) {
     override fun configure(
         provider: BiConsumer<Identifier, AmmoPosition.Entries>,
         registryLookup: HolderLookup.Provider
@@ -74,6 +74,13 @@ class AmmoPositionGenerator(
                 translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
             )) {
                 +ItemTags.FISHES
+                +ConventionalItemTags.BONES
+                +ConventionalItemTags.RODS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
+            )) {
+                +Items.WIND_CHARGE
             },
             AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM.transform) {
                 +Items.PUFFERFISH

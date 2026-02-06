@@ -5,5 +5,5 @@
     "entity_type": "minecraft:wind_charge"
   },
   "shoot_sound": "minecraft:entity.wind_charge.throw",
-  "velocity_scale": 0.03
+  "velocity_scale": 0.5
 }
