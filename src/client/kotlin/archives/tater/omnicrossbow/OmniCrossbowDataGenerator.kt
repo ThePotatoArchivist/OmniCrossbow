@@ -18,6 +18,7 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 			addProvider(dynamicRegistry("Enchantments", Registries.ENCHANTMENT))
 			addProvider(::ItemTagGenerator)
 			addProvider(::BlockTagGenerator)
+			addProvider(::EntityTagGenerator)
 			addProvider(::EnchantmentTagGenerator)
 			addProvider(::DamageTagGenerator)
 			addProvider(::LangGenerator)

@@ -13,6 +13,7 @@
     "behavior.ItemEntityAccessor",
     "behavior.MinecartItemAccessor",
     "behavior.MobBucketItemAccessor",
+    "behavior.MobInvoker",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",
     "behavior.ThrownTridentAccessor",

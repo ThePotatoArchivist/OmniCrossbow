@@ -1,12 +1,16 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
+import archives.tater.omnicrossbow.util.isIn
 import net.minecraft.core.Registry
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
@@ -36,6 +40,23 @@ object OmniCrossbowImpactActions {
         val stack = projectile.item.finishUsingItem(level, entity)
         if (entity is Player) entity.handleExtraItemsCreatedOnUse(stack)
         else entity.spawnAtLocation(level, stack)
+        true
+    }
+
+    val EQUIP = registerEntity("equip") { level, projectile, hit ->
+        // todo data driven
+        val entity = hit.entity as? LivingEntity ?: return@registerEntity false
+        if (!entity.canPickUpLoot() && !(entity isIn OmniCrossbowTags.CAN_ALWAYS_EQUIP)) return@registerEntity false
+        val stack = projectile.item
+        val slot = entity.getEquipmentSlotForItem(stack)
+        if (slot == EquipmentSlot.MAINHAND || !entity.isEquippableInSlot(stack, slot)) return@registerEntity false
+        val oldStack = entity.getItemBySlot(slot)
+        entity.spawnAtLocation(level, oldStack)
+        when (entity) {
+            is MobInvoker -> entity.invokeSetItemSlotAndDropWhenKilled(slot, stack)
+            else -> entity.setItemSlot(slot, stack)
+        }
+        projectile.item = ItemStack.EMPTY
         true
     }
 

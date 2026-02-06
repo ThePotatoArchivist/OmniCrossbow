@@ -131,6 +131,14 @@ class ProjectileBehaviorGenerator(
             +OmniCrossbowImpactActions.ITEM_PARTICLE
             +OmniCrossbowImpactActions.CONSUME_ITEM
         }))
+
+        register("equippable", ProjectileBehavior(ItemPredicate {
+            withComponents {
+                hasAny(DataComponents.EQUIPPABLE)
+            }
+        }, SpawnCustomProjectile {
+            +OmniCrossbowImpactActions.EQUIP
+        }))
     }
 
     override fun getName(): String = "Projectile Behaviors"
