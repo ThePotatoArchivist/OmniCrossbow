@@ -108,6 +108,7 @@ class ProjectileBehaviorGenerator(
 
         register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile {
             +OmniCrossbowImpactActions.SMALL_EXPLOSION
+            +OmniCrossbowImpactActions.SHRINK
         }) }
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
@@ -127,6 +128,7 @@ class ProjectileBehaviorGenerator(
                 hasAny(DataComponents.CONSUMABLE)
             }
         }, SpawnCustomProjectile {
+            +OmniCrossbowImpactActions.ITEM_PARTICLE
             +OmniCrossbowImpactActions.CONSUME_ITEM
         }))
     }

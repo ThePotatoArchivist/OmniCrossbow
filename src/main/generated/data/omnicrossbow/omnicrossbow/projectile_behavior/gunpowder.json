@@ -5,11 +5,17 @@
     "impact_block": [
       {
         "effect": "omnicrossbow:small_explosion"
+      },
+      {
+        "effect": "omnicrossbow:shrink"
       }
     ],
     "impact_entity": [
       {
         "effect": "omnicrossbow:small_explosion"
+      },
+      {
+        "effect": "omnicrossbow:shrink"
       }
     ]
   }

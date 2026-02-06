@@ -44,8 +44,8 @@ class CustomItemProjectile : ThrowableItemProjectile {
             withParameter(LootContextParams.TOOL, item)
         }
         for (effect in impactBlock)
-            if (effect.matches(context) && effect.effect.tryImpact(level, this, hitResult))
-                break
+            if (effect.matches(context))
+                effect.effect.tryImpact(level, this, hitResult)
         spawnAtLocation(level, item)
         discard()
     }
@@ -61,8 +61,8 @@ class CustomItemProjectile : ThrowableItemProjectile {
             withParameter(LootContextParams.TOOL, item)
         }
         for (effect in impactEntity)
-            if (effect.matches(context) && effect.effect.tryImpact(level, this, hitResult))
-                break
+            if (effect.matches(context))
+                effect.effect.tryImpact(level, this, hitResult)
         spawnAtLocation(level, item)
         discard()
     }

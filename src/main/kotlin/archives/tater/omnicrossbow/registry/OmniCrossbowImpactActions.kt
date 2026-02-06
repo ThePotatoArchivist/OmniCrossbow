@@ -3,8 +3,11 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
 import net.minecraft.core.Registry
+import net.minecraft.core.particles.ItemParticleOption
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
@@ -38,6 +41,16 @@ object OmniCrossbowImpactActions {
 
     val SMALL_EXPLOSION = registerBoth("small_explosion") { level, projectile, hit ->
         level.explode(projectile, hit.location.x, hit.location.y, hit.location.z, 1f, true, Level.ExplosionInteraction.TNT)
+        true
+    }
+
+    val ITEM_PARTICLE = registerBoth("item_particle") { level, projectile, hit ->
+        level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(projectile.item)), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
+        true
+    }
+
+    val SHRINK = registerBoth("shrink") { _, projectile, _ ->
+        projectile.item.shrink(1)
         true
     }
 
