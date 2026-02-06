@@ -29,7 +29,7 @@ fun ItemPredicate.Builder.withComponents(init: DataComponentMatchers.Builder.() 
     withComponents(DataComponentMatchers.Builder.components().apply(init).build())
 }
 
-fun DataComponentMatchers.Builder.anyOf(type: DataComponentType<*>) {
+fun DataComponentMatchers.Builder.hasAny(type: DataComponentType<*>) {
     any<DataComponentType<*>>(type)
 }
 

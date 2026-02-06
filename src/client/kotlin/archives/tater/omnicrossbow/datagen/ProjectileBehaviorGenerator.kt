@@ -9,7 +9,7 @@ import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEnti
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
 import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.ItemPredicate
-import archives.tater.omnicrossbow.util.anyOf
+import archives.tater.omnicrossbow.util.hasAny
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
@@ -86,13 +86,13 @@ class ProjectileBehaviorGenerator(
 
         register("spawn_eggs", ProjectileBehavior(ItemPredicate {
             withComponents {
-                anyOf(DataComponents.ENTITY_DATA)
+                hasAny(DataComponents.ENTITY_DATA)
             }
         }, SpawnEntity.FromEgg, 0.5f))
 
         register("entity_buckets", ProjectileBehavior.of(ItemPredicate {
             withComponents {
-                anyOf(DataComponents.BUCKET_ENTITY_DATA)
+                hasAny(DataComponents.BUCKET_ENTITY_DATA)
             }
         }, SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 
@@ -108,7 +108,7 @@ class ProjectileBehaviorGenerator(
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
+        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
             add(OmniCrossbowImpactActions.BREAK_BLOCK, anyOf(
                 OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
                 allOf(
@@ -117,6 +117,15 @@ class ProjectileBehaviorGenerator(
                 )
             ).build())
         }) }
+
+
+        register("consumable", ProjectileBehavior(ItemPredicate {
+            withComponents {
+                hasAny(DataComponents.CONSUMABLE)
+            }
+        }, SpawnCustomProjectile {
+            add(OmniCrossbowImpactActions.CONSUME_ITEM)
+        }))
     }
 
     override fun getName(): String = "Projectile Behaviors"

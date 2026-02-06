@@ -3,6 +3,8 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
 import net.minecraft.core.Registry
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
@@ -25,7 +27,13 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    val NONE = registerBoth("none") { _, _, _ -> false }
+    val CONSUME_ITEM = registerEntity("consume_item") { level, projectile, hit ->
+        val entity = hit.entity as? LivingEntity ?: return@registerEntity false
+        val stack = projectile.item.finishUsingItem(level, entity)
+        if (entity is Player) entity.handleExtraItemsCreatedOnUse(stack)
+        else entity.spawnAtLocation(level, stack)
+        true
+    }
 
     fun init() {}
 }
