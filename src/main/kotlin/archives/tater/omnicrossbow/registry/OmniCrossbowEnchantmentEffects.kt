@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.enchantment.Ammo
 import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
+import archives.tater.omnicrossbow.util.McUnit
 import archives.tater.omnicrossbow.util.validatedListCodec
 import com.mojang.serialization.Codec
 import net.minecraft.core.Registry
@@ -63,6 +64,12 @@ object OmniCrossbowEnchantmentEffects {
     @JvmField
     val PROJECTILE_RICOCHET = register("projectile_ricochet", validatedListCodec(
         ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
+        LootContextParamSets.ENCHANTED_ITEM
+    ))
+
+    @JvmField
+    val PROJECTILE_IGNORE_OWNER = register("ignore_owner", validatedListCodec(
+        ConditionalEffect.codec(McUnit.CODEC),
         LootContextParamSets.ENCHANTED_ITEM
     ))
 

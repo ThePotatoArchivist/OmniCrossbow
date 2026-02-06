@@ -4,6 +4,11 @@
     "translate": "enchantment.omnicrossbow.sharpshooting"
   },
   "effects": {
+    "omnicrossbow:ignore_owner": [
+      {
+        "effect": {}
+      }
+    ],
     "omnicrossbow:projectile_ricochet": [
       {
         "effect": {

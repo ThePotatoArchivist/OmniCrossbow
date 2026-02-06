@@ -6,6 +6,7 @@ import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
+import archives.tater.omnicrossbow.util.McUnit
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
@@ -112,6 +113,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_RICOCHET, AddValue(LevelBasedValue.perLevel(1f)))
+            withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_IGNORE_OWNER, McUnit.INSTANCE)
         }
     }
 }

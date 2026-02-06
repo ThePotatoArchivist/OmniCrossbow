@@ -19,3 +19,5 @@ val EMPTY_ITEM_PREDICATE = ItemPredicate {  }
 fun ItemPredicate.Builder.withComponents(init: DataComponentMatchers.Builder.() -> Unit) {
     withComponents(DataComponentMatchers.Builder.components().apply(init).build())
 }
+
+typealias McUnit = net.minecraft.util.Unit

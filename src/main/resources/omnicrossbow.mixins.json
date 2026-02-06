@@ -20,6 +20,7 @@
     "enchantmenteffect.ammo.PlayerMixin",
     "enchantmenteffect.cooldown.CrossbowItemMixin",
     "enchantmenteffect.firedcount.CrossbowItemMixin",
+    "enchantmenteffect.ignoreowner.AbstractArrowMixin",
     "enchantmenteffect.loadmultiple.CrossbowItemMixin",
     "enchantmenteffect.loadmultiple.ItemMixin",
     "enchantmenteffect.loadmultiple.ProjectileWeaponItemMixin",
