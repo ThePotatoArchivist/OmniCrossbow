@@ -24,6 +24,7 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowEnchantmentEffects.init()
 		OmniCrossbowAttachments.init()
 		OmniCrossbowComponents.init()
+		OmniCrossbowConditions.init()
 		OmniCrossbowEntities.init()
 	}
 }

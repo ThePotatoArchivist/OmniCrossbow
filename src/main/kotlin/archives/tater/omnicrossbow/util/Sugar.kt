@@ -7,6 +7,7 @@ import net.minecraft.core.TypedInstance
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
+import net.minecraft.util.context.ContextKey
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -40,5 +41,7 @@ fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootPara
         .create(Optional.empty())
 
 fun ContextKeySet(init: ContextKeySet.Builder.() -> Unit): ContextKeySet = ContextKeySet.Builder().apply(init).build()
+
+operator fun <T: Any> LootContext.get(key: ContextKey<T>): T = getParameter(key)
 
 typealias McUnit = net.minecraft.util.Unit

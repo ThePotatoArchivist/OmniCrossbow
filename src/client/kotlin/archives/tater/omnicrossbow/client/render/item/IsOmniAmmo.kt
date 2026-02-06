@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.client.render.item
 
-import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
+import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import archives.tater.omnicrossbow.util.isIn
 import com.mojang.serialization.MapCodec
 import net.minecraft.client.multiplayer.ClientLevel
@@ -20,7 +20,7 @@ object IsOmniAmmo : ConditionalItemModelProperty {
         seed: Int,
         displayContext: ItemDisplayContext
     ): Boolean = itemStack.get(DataComponents.CHARGED_PROJECTILES)?.items?.firstOrNull()
-        ?.isIn(OmniCrossbowItemTags.BUILTIN_PROJECTILES) == false
+        ?.isIn(OmniCrossbowTags.BUILTIN_PROJECTILES) == false
 
     val CODEC: MapCodec<IsOmniAmmo> = MapCodec.unit(this)
 }

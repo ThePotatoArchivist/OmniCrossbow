@@ -1,22 +1,22 @@
 package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.condition.BreakingTimeProvider
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCustomProjectile
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
-import archives.tater.omnicrossbow.registry.OmniCrossbowImpactActions
-import archives.tater.omnicrossbow.registry.OmniCrossbowItemTags
-import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
-import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
+import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.ItemPredicate
 import archives.tater.omnicrossbow.util.anyOf
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
+import net.minecraft.advancements.criterion.BlockPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
+import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
@@ -35,6 +35,12 @@ import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
 import net.minecraft.world.level.block.state.properties.DripstoneThickness
+import net.minecraft.world.level.storage.loot.IntRange
+import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
+import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
+import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
+import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
+import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -46,6 +52,7 @@ class ProjectileBehaviorGenerator(
         entries: Entries
     ) {
         val items = entries.getLookup(Registries.ITEM)
+        val blocks = entries.getLookup(Registries.BLOCK)
 
         fun register(path: String, behavior: ProjectileBehavior) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
@@ -99,10 +106,16 @@ class ProjectileBehaviorGenerator(
         ), 0.7f) }
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
-        register(OmniCrossbowItemTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
+        register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
         register(ConventionalItemTags.TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
-            +OmniCrossbowImpactActions.BREAK_BLOCK
+            add(OmniCrossbowImpactActions.BREAK_BLOCK, anyOf(
+                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
+                allOf(
+                    invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
+                    hasValue(BreakingTimeProvider, IntRange.upperBound(20))
+                )
+            ).build())
         }) }
     }
 

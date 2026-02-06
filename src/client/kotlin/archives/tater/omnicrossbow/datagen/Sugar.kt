@@ -17,7 +17,7 @@ operator fun <E: Any> E.unaryPlus() {
 
 context(appender: TagAppender<*, T>)
 operator fun <T: Any> TagKey<T>.unaryPlus() {
-    appender.addTag(this)
+    appender.forceAddTag(this)
 }
 
 fun <T: Any> dynamicRegistry(name: String, registry: ResourceKey<Registry<T>>): RegistryDependentFactory<FabricDynamicRegistryProvider> = { output, registriesFuture ->
