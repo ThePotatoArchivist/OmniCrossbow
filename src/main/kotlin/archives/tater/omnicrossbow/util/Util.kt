@@ -4,9 +4,12 @@ package archives.tater.omnicrossbow.util
 
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.advancements.criterion.MinMaxBounds
+import net.minecraft.core.Holder
+import net.minecraft.core.Registry
 import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
@@ -45,3 +48,13 @@ val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
  */
 fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<List<T>> =
     elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))
+
+fun <T> Codec<Holder<T>>.valueCodec(registry: Registry<T>): Codec<T> = xmap(
+    { it.value() },
+    { registry.wrapAsHolder(it) }
+)
+
+inline fun <reified B: A, A> Codec<B>.narrow(crossinline error: (A) -> String): Codec<A> = flatComapMap(
+    { it },
+    { if (it is B) DataResult.success(it) else DataResult.error { error(it) } }
+)

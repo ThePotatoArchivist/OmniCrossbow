@@ -11,7 +11,9 @@ object OmniCrossbowBuiltinRegistries {
 
     @JvmField val PROJECTILE_ACTION_TYPE = register(OmniCrossbowRegistries.PROJECTILE_ACTION_TYPE)
     @JvmField val BLOCK_IMPACT_ACTION = register(OmniCrossbowRegistries.BLOCK_IMPACT_ACTION)
+    @JvmField val BLOCK_IMPACT_ACTION_TYPE = register(OmniCrossbowRegistries.BLOCK_IMPACT_ACTION_TYPE)
     @JvmField val ENTITY_IMPACT_ACTION = register(OmniCrossbowRegistries.ENTITY_IMPACT_ACTION)
+    @JvmField val ENTITY_IMPACT_ACTION_TYPE = register(OmniCrossbowRegistries.ENTITY_IMPACT_ACTION_TYPE)
 
     fun init() {
 

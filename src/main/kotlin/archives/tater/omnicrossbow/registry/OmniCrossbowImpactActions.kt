@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
-import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
 import archives.tater.omnicrossbow.util.isIn
 import net.minecraft.core.Registry
 import net.minecraft.core.particles.ItemParticleOption
@@ -75,5 +75,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    fun init() {}
+    fun init() {
+        registerBoth("none", ImpactAction.None)
+    }
 }

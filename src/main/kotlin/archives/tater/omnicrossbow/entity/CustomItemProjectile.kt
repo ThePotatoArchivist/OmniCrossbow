@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.entity
 
-import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.LootContext
 import net.minecraft.server.level.ServerLevel
@@ -19,14 +19,14 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 
 class CustomItemProjectile : ThrowableItemProjectile {
-    var impactBlock: ImpactAction.Series<BlockHitResult> = listOf()
+    var impactBlock: ImpactAction<BlockHitResult> = ImpactAction.None
         private set
-    var impactEntity: ImpactAction.Series<EntityHitResult> = listOf()
+    var impactEntity: ImpactAction<EntityHitResult> = ImpactAction.None
         private set
 
     constructor(type: EntityType<out CustomItemProjectile>, level: Level) : super(type, level)
 
-    constructor(owner: LivingEntity, level: Level, stack: ItemStack, impactBlock: ImpactAction.Series<BlockHitResult>, impactEntity: ImpactAction.Series<EntityHitResult>) : super(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE, owner, level, stack) {
+    constructor(owner: LivingEntity, level: Level, stack: ItemStack, impactBlock: ImpactAction<BlockHitResult>, impactEntity: ImpactAction<EntityHitResult>) : super(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE, owner, level, stack) {
         this.impactBlock = impactBlock
         this.impactEntity = impactEntity
     }
@@ -43,9 +43,7 @@ class CustomItemProjectile : ThrowableItemProjectile {
             withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, this@CustomItemProjectile)
             withParameter(LootContextParams.TOOL, item)
         }
-        for (effect in impactBlock)
-            if (effect.matches(context))
-                effect.effect.tryImpact(level, this, hitResult)
+        impactBlock.tryImpact(level, this, hitResult, context)
         spawnAtLocation(level, item)
         discard()
     }
@@ -60,22 +58,20 @@ class CustomItemProjectile : ThrowableItemProjectile {
             withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, this@CustomItemProjectile)
             withParameter(LootContextParams.TOOL, item)
         }
-        for (effect in impactEntity)
-            if (effect.matches(context))
-                effect.effect.tryImpact(level, this, hitResult)
+        impactEntity.tryImpact(level, this, hitResult, context)
         spawnAtLocation(level, item)
         discard()
     }
 
     override fun addAdditionalSaveData(output: ValueOutput) {
         super.addAdditionalSaveData(output)
-        output.store("impact_block", ImpactAction.BLOCK_SERIES_CODEC, impactBlock)
-        output.store("impact_entity", ImpactAction.ENTITY_SERIES_CODEC, impactEntity)
+        output.store("impact_block", ImpactAction.BLOCK_CODEC, impactBlock)
+        output.store("impact_entity", ImpactAction.ENTITY_CODEC, impactEntity)
     }
 
     override fun readAdditionalSaveData(input: ValueInput) {
         super.readAdditionalSaveData(input)
-        impactBlock = input.read("impact_block", ImpactAction.BLOCK_SERIES_CODEC).orElse(listOf())
-        impactEntity = input.read("impact_block", ImpactAction.ENTITY_SERIES_CODEC).orElse(listOf())
+        impactBlock = input.read("impact_block", ImpactAction.BLOCK_CODEC).orElse(ImpactAction.None)
+        impactEntity = input.read("impact_block", ImpactAction.ENTITY_CODEC).orElse(ImpactAction.None)
     }
 }

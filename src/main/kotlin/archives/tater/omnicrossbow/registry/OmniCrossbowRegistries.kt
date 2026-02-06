@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.ImpactAction
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries
 import com.mojang.serialization.MapCodec
@@ -20,7 +20,11 @@ object OmniCrossbowRegistries {
 
     @JvmField val BLOCK_IMPACT_ACTION = of<ImpactAction<BlockHitResult>>("block_impact_action")
 
+    @JvmField val BLOCK_IMPACT_ACTION_TYPE = of<MapCodec<out ImpactAction.Inline<BlockHitResult>>>("block_impact_action_type")
+
     @JvmField val ENTITY_IMPACT_ACTION = of<ImpactAction<EntityHitResult>>("entity_impact_action")
+
+    @JvmField val ENTITY_IMPACT_ACTION_TYPE = of<MapCodec<out ImpactAction.Inline<EntityHitResult>>>("entity_impact_action_type")
 
     // Dynamic
 
