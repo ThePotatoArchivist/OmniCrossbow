@@ -48,3 +48,6 @@ fun ContextKeySet(init: ContextKeySet.Builder.() -> Unit): ContextKeySet = Conte
 operator fun <T: Any> LootContext.get(key: ContextKey<T>): T = getParameter(key)
 
 typealias McUnit = net.minecraft.util.Unit
+
+fun <T, U> ifNotNull(value: T?, transform: (T) -> U) = value?.let(transform)
+infix fun <T> T?.orElse(value: () -> T) = this ?: value()

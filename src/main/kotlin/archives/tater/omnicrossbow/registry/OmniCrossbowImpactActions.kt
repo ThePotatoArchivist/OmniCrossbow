@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
+import archives.tater.omnicrossbow.entity.createFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import com.mojang.serialization.MapCodec
@@ -81,19 +82,22 @@ object OmniCrossbowImpactActions {
     }
 
     val USE_ITEM = register("use_item") { level, projectile, hit, _ ->
-        when (hit) {
+        val result = when (hit) {
             is BlockHitResult -> {
-                val result = projectile.item.useOn(UseOnContext(level, null, InteractionHand.MAIN_HAND, projectile.item, hit))
-                (result as? InteractionResult.Success)?.heldItemTransformedTo()?.let {
-                    projectile.item = it
-                }
-                result.consumesAction()
+                val player = createFakePlayer(level, projectile)
+                level.getBlockState(hit.blockPos).useItemOn(projectile.item, level, player, InteractionHand.MAIN_HAND, hit)
+                    .takeUnless { !it.consumesAction() }
+                    ?: projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, hit))
             }
             is EntityHitResult -> {
-                false // TODO
+                hit.entity.interact(createFakePlayer(level, projectile), InteractionHand.MAIN_HAND, hit.location)
             }
-            else -> false
+            else -> return@register false
         }
+        (result as? InteractionResult.Success)?.heldItemTransformedTo()?.let {
+            projectile.item = it
+        }
+        result.consumesAction()
     }
 
     fun init() {

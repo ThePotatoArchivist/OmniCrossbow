@@ -8,6 +8,7 @@
     "behavior.AbstractArrowAccessor",
     "behavior.BoatItemAccessor",
     "behavior.CrossbowItemMixin",
+    "behavior.EntityAccessor",
     "behavior.FallingBlockEntityAccessor",
     "behavior.FallingBlockInvoker",
     "behavior.ItemEntityAccessor",
