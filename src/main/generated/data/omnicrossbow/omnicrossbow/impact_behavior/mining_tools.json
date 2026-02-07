@@ -1,5 +1,5 @@
 {
-  "items": "#c:tools/mining_tool",
+  "items": "#c:tools",
   "value": {
     "type": "omnicrossbow:conditional",
     "condition": {
@@ -31,6 +31,25 @@
                 },
                 "value": {
                   "type": "omnicrossbow:breaking_time"
+                }
+              }
+            ]
+          },
+          {
+            "condition": "minecraft:all_of",
+            "terms": [
+              {
+                "condition": "minecraft:location_check",
+                "predicate": {
+                  "block": {
+                    "blocks": "#minecraft:leaves"
+                  }
+                }
+              },
+              {
+                "condition": "minecraft:match_tool",
+                "predicate": {
+                  "items": "#c:tools/shear"
                 }
               }
             ]

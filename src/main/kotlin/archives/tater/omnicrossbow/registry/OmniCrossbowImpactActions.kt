@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
 import net.minecraft.core.particles.ItemParticleOption
@@ -17,8 +18,10 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.UseOnContext
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
+
 
 object OmniCrossbowImpactActions {
 
@@ -40,7 +43,10 @@ object OmniCrossbowImpactActions {
         }
 
     val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit, _ ->
-        level.destroyBlock(hit.blockPos, true, projectile.owner)
+        val state = level.getBlockState(hit.blockPos)
+        val blockEntity = if (state.hasBlockEntity()) level.getBlockEntity(hit.blockPos) else null
+        Block.dropResources(state, level, hit.blockPos, blockEntity, projectile.owner, projectile.item)
+        level.destroyBlock(hit.blockPos, false, projectile.owner)
         true
     }
 
@@ -108,5 +114,6 @@ object OmniCrossbowImpactActions {
         register("any_of", AnyOf.CODEC)
         register("conditional", Conditional.CODEC)
         register("loot_condition", LootCondition.CODEC)
+        AttackBlockCallback.EVENT
     }
 }
