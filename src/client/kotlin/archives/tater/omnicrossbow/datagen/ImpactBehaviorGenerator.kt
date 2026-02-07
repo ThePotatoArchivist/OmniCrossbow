@@ -22,6 +22,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.BlockTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
@@ -123,7 +124,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             of(items, ConventionalItemTags.SHEAR_TOOLS)
         }, Conditional(
             condition = OmniCrossbowImpactActions.HAIRCUT,
-            onSuccess = OmniCrossbowImpactActions.DURABILITY_DAMAGE // TODO Sound
+            onSuccess = AllOf(
+                OmniCrossbowImpactActions.DURABILITY_DAMAGE,
+                PlaySound(soundHolder(SoundEvents.SHEARS_SNIP)),
+            )
         ))
 
         register("use", ItemPredicate {}, OmniCrossbowImpactActions.USE_ITEM)

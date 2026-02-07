@@ -6,7 +6,6 @@ import archives.tater.omnicrossbow.entity.createFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -123,6 +122,6 @@ object OmniCrossbowImpactActions {
         register("any_of", AnyOf.CODEC)
         register("conditional", Conditional.CODEC)
         register("loot_condition", LootCondition.CODEC)
-        AttackBlockCallback.EVENT
+        register("play_sound", PlaySound.CODEC)
     }
 }

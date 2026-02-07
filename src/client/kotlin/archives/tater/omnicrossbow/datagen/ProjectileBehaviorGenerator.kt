@@ -21,7 +21,6 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
-import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
@@ -60,8 +59,6 @@ class ProjectileBehaviorGenerator(
         fun register(item: ItemLike, behavior: ProjectileBehavior) {
             register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, ItemPredicate { of(items, item) }, behavior)
         }
-
-        fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
 
         register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EGG)))
         register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SNOWBALL)))

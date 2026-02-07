@@ -3,6 +3,15 @@
   "value": {
     "type": "omnicrossbow:conditional",
     "condition": "omnicrossbow:haircut",
-    "on_success": "omnicrossbow:durability_damage"
+    "on_success": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        "omnicrossbow:durability_damage",
+        {
+          "type": "omnicrossbow:play_sound",
+          "sound_event": "minecraft:item.shears.snip"
+        }
+      ]
+    }
   }
 }

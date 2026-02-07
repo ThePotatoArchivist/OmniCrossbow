@@ -5,8 +5,10 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.client.renderer.block.model.ItemTransform
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.TagAppender
 import net.minecraft.resources.ResourceKey
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import org.joml.Vector3f
 
@@ -35,3 +37,5 @@ fun ItemTransform(
     translation: Vector3f = Vector3f(),
     scale: Vector3f = Vector3f(1f)
 ) = ItemTransform(rotation, translation, scale)
+
+fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
