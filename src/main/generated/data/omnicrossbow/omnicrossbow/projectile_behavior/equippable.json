@@ -6,11 +6,6 @@
   },
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_block": [],
-    "impact_entity": [
-      {
-        "effect": "omnicrossbow:equip"
-      }
-    ]
+    "impact_entity": "omnicrossbow:equip"
   }
 }

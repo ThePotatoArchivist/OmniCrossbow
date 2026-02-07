@@ -2,21 +2,25 @@
   "items": "minecraft:gunpowder",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_block": [
-      {
-        "effect": "omnicrossbow:small_explosion"
-      },
-      {
-        "effect": "omnicrossbow:shrink"
-      }
-    ],
-    "impact_entity": [
-      {
-        "effect": "omnicrossbow:small_explosion"
-      },
-      {
-        "effect": "omnicrossbow:shrink"
-      }
-    ]
+    "impact_block": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:explode",
+          "radius": 1.0
+        },
+        "omnicrossbow:shrink"
+      ]
+    },
+    "impact_entity": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:explode",
+          "radius": 1.0
+        },
+        "omnicrossbow:shrink"
+      ]
+    }
   }
 }

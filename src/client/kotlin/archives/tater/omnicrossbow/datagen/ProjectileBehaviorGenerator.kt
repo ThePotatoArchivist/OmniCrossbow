@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.condition.BreakingTimeProvider
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
+import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCustomProjectile
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
@@ -27,6 +28,7 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
+import net.minecraft.util.valueproviders.ConstantFloat
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStackTemplate
@@ -106,39 +108,42 @@ class ProjectileBehaviorGenerator(
         ), 0.7f) }
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
-        register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile {
-            +OmniCrossbowImpactActions.SMALL_EXPLOSION
-            +OmniCrossbowImpactActions.SHRINK
-        }) }
+        register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile(
+            AllOf.block(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
+            AllOf.entity(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
+        )) }
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile {
-            add(OmniCrossbowImpactActions.BREAK_BLOCK, anyOf(
-                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
-                allOf(
-                    invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
-                    hasValue(BreakingTimeProvider, IntRange.upperBound(20))
-                )
-            ).build())
-        }) }
+        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(
+            impactBlock = Conditional.block(
+                condition = LootCondition.Block(anyOf(
+                    OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
+                    allOf(
+                        invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
+                        hasValue(BreakingTimeProvider, IntRange.upperBound(20))
+                    )
+                ).build()),
+                onSuccess = OmniCrossbowImpactActions.BREAK_BLOCK,
+            )
+        )) }
 
         register("consumable", ProjectileBehavior(ItemPredicate {
             withComponents {
                 hasAny(DataComponents.CONSUMABLE)
             }
-        }, SpawnCustomProjectile {
-            +OmniCrossbowImpactActions.ITEM_PARTICLE
-            +OmniCrossbowImpactActions.CONSUME_ITEM
-        }))
+        }, SpawnCustomProjectile(
+            impactEntity = Conditional.entity(
+                condition = OmniCrossbowImpactActions.CONSUME_ITEM,
+                onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.5)
+            )
+        )))
 
         register("equippable", ProjectileBehavior(ItemPredicate {
             withComponents {
                 hasAny(DataComponents.EQUIPPABLE)
             }
-        }, SpawnCustomProjectile {
-            +OmniCrossbowImpactActions.EQUIP
-        }))
+        }, SpawnCustomProjectile(impactEntity = OmniCrossbowImpactActions.EQUIP)))
     }
 
     override fun getName(): String = "Projectile Behaviors"

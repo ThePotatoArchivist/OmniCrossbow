@@ -49,7 +49,7 @@ val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
 fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<List<T>> =
     elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))
 
-fun <T> Codec<Holder<T>>.valueCodec(registry: Registry<T>): Codec<T> = xmap(
+fun <T: Any> Codec<Holder<T>>.valueCodec(registry: Registry<T>): Codec<T> = xmap(
     { it.value() },
     { registry.wrapAsHolder(it) }
 )

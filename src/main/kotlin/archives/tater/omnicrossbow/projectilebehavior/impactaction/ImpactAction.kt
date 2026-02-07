@@ -3,48 +3,28 @@ package archives.tater.omnicrossbow.projectilebehavior.impactaction
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.registry.OmniCrossbowBuiltinRegistries
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
-import archives.tater.omnicrossbow.util.ContextKeySet
 import archives.tater.omnicrossbow.util.narrow
 import archives.tater.omnicrossbow.util.valueCodec
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import net.minecraft.resources.RegistryFileCodec
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.level.storage.loot.LootContext
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
 fun interface ImpactAction<in T: HitResult> {
-    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: T, context: LootContext): Boolean
+    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: T): Boolean
 
     interface Inline<in T: HitResult> : ImpactAction<T> {
         val codec: MapCodec<out Inline<T>>
     }
 
     data object None : ImpactAction<HitResult> {
-        override fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult, context: LootContext): Boolean = false
+        override fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult): Boolean = false
     }
 
     companion object {
-        @JvmField
-        val BLOCK_CONTEXT = ContextKeySet {
-            required(LootContextParams.BLOCK_STATE)
-            required(LootContextParams.ORIGIN)
-            optional(LootContextParams.ATTACKING_ENTITY)
-            required(LootContextParams.DIRECT_ATTACKING_ENTITY)
-            required(LootContextParams.TOOL)
-        }
-
-        @JvmField
-        val ENTITY_CONTEXT = ContextKeySet {
-            required(LootContextParams.TARGET_ENTITY)
-            required(LootContextParams.ORIGIN)
-            optional(LootContextParams.ATTACKING_ENTITY)
-            required(LootContextParams.DIRECT_ATTACKING_ENTITY)
-            required(LootContextParams.TOOL)
-        }
 
         @JvmField
         val BLOCK_INLINE_CODEC: Codec<Inline<BlockHitResult>> = OmniCrossbowBuiltinRegistries.BLOCK_IMPACT_ACTION_TYPE

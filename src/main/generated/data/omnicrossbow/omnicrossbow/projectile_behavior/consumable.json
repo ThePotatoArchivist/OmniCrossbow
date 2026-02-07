@@ -6,18 +6,17 @@
   },
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_block": [
-      {
-        "effect": "omnicrossbow:item_particle"
+    "impact_entity": {
+      "type": "omnicrossbow:conditional",
+      "condition": "omnicrossbow:consume_item",
+      "on_success": {
+        "type": "omnicrossbow:item_particle",
+        "count": 8,
+        "dx": 0.0,
+        "dy": 0.0,
+        "dz": 0.0,
+        "speed": 0.5
       }
-    ],
-    "impact_entity": [
-      {
-        "effect": "omnicrossbow:item_particle"
-      },
-      {
-        "effect": "omnicrossbow:consume_item"
-      }
-    ]
+    }
   }
 }

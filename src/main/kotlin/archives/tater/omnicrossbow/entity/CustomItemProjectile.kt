@@ -2,9 +2,7 @@ package archives.tater.omnicrossbow.entity
 
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
-import archives.tater.omnicrossbow.util.LootContext
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
@@ -14,7 +12,6 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 
@@ -36,14 +33,7 @@ class CustomItemProjectile : ThrowableItemProjectile {
     override fun onHitBlock(hitResult: BlockHitResult) {
         super.onHitBlock(hitResult)
         val level = level() as? ServerLevel ?: return
-        val context = LootContext(level, ImpactAction.BLOCK_CONTEXT) {
-            withParameter(LootContextParams.BLOCK_STATE, level.getBlockState(hitResult.blockPos))
-            withParameter(LootContextParams.ORIGIN, hitResult.location)
-            withOptionalParameter(LootContextParams.ATTACKING_ENTITY, owner?.getEntity(level, Entity::class.java))
-            withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, this@CustomItemProjectile)
-            withParameter(LootContextParams.TOOL, item)
-        }
-        impactBlock.tryImpact(level, this, hitResult, context)
+        impactBlock.tryImpact(level, this, hitResult)
         spawnAtLocation(level, item)
         discard()
     }
@@ -51,14 +41,7 @@ class CustomItemProjectile : ThrowableItemProjectile {
     override fun onHitEntity(hitResult: EntityHitResult) {
         super.onHitEntity(hitResult)
         val level = level() as? ServerLevel ?: return
-        val context = LootContext(level, ImpactAction.ENTITY_CONTEXT) {
-            withParameter(LootContextParams.TARGET_ENTITY, hitResult.entity)
-            withParameter(LootContextParams.ORIGIN, hitResult.location)
-            withOptionalParameter(LootContextParams.ATTACKING_ENTITY, owner?.getEntity(level, Entity::class.java))
-            withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, this@CustomItemProjectile)
-            withParameter(LootContextParams.TOOL, item)
-        }
-        impactEntity.tryImpact(level, this, hitResult, context)
+        impactEntity.tryImpact(level, this, hitResult)
         spawnAtLocation(level, item)
         discard()
     }

@@ -8,21 +8,21 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
-class AllOf<T: HitResult> private constructor(val actions: List<ImpactAction<T>>) : ImpactAction<T> {
+class AnyOf<T: HitResult> private constructor(val actions: List<ImpactAction<T>>) : ImpactAction<T> {
     override fun tryImpact(
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: T,
-    ): Boolean = actions.all { it.tryImpact(level, projectile, hit) }
+    ): Boolean = actions.any { it.tryImpact(level, projectile, hit) }
 
-    companion object : CompositeType<AllOf<BlockHitResult>, AllOf<EntityHitResult>>() {
-        fun <T: HitResult> createCodec(actionCodec: Codec<ImpactAction<T>>): MapCodec<AllOf<T>> =
-            actionCodec.listOf().fieldOf("actions").xmap(::AllOf, AllOf<T>::actions)
+    companion object : CompositeType<AnyOf<BlockHitResult>, AnyOf<EntityHitResult>>() {
+        fun <T: HitResult> createCodec(actionCodec: Codec<ImpactAction<T>>): MapCodec<AnyOf<T>> =
+            actionCodec.listOf().fieldOf("actions").xmap(::AnyOf, AnyOf<T>::actions)
 
         override val blockCodec = createCodec(ImpactAction.BLOCK_CODEC)
         override val entityCodec = createCodec(ImpactAction.ENTITY_CODEC)
 
-        fun block(vararg actions: ImpactAction<BlockHitResult>) = BlockInstance(AllOf(actions.toList()))
-        fun entity(vararg actions: ImpactAction<EntityHitResult>) = EntityInstance(AllOf(actions.toList()))
+        fun block(vararg actions: ImpactAction<BlockHitResult>) = BlockInstance(AnyOf(actions.toList()))
+        fun entity(vararg actions: ImpactAction<EntityHitResult>) = EntityInstance(AnyOf(actions.toList()))
     }
 }
