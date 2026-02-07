@@ -119,6 +119,13 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             onSuccess = OmniCrossbowImpactActions.EQUIP
         ))
 
+        register("shears", ItemPredicate {
+            of(items, ConventionalItemTags.SHEAR_TOOLS)
+        }, Conditional(
+            condition = OmniCrossbowImpactActions.HAIRCUT,
+            onSuccess = OmniCrossbowImpactActions.DURABILITY_DAMAGE // TODO Sound
+        ))
+
         register("use", ItemPredicate {}, OmniCrossbowImpactActions.USE_ITEM)
     }
 

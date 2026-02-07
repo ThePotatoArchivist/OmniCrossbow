@@ -26,5 +26,6 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowComponents.init()
 		OmniCrossbowConditions.init()
 		OmniCrossbowEntities.init()
+		OmniCrossbowNetworking.init()
 	}
 }

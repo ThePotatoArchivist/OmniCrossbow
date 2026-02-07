@@ -1,0 +1,8 @@
+{
+  "items": "#c:tools/shear",
+  "value": {
+    "type": "omnicrossbow:conditional",
+    "condition": "omnicrossbow:haircut",
+    "on_success": "omnicrossbow:durability_damage"
+  }
+}

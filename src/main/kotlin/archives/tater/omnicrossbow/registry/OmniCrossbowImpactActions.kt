@@ -4,13 +4,16 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
+import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.EquipmentSlot
@@ -104,6 +107,12 @@ object OmniCrossbowImpactActions {
             projectile.item = it
         }
         result.consumesAction()
+    }
+
+    val HAIRCUT = register("haircut") { _, _, hit, _ ->
+        val player = (hit as? EntityHitResult)?.entity as? ServerPlayer ?: return@register false
+        ServerPlayNetworking.send(player, HaircutPayload)
+        true
     }
 
     fun init() {

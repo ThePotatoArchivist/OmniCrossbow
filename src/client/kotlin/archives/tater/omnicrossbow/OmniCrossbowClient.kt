@@ -3,14 +3,17 @@ package archives.tater.omnicrossbow
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
+import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.PackType
+import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.item.CrossbowItem
 
 object OmniCrossbowClient : ClientModInitializer {
@@ -30,6 +33,11 @@ object OmniCrossbowClient : ClientModInitializer {
 				} else
 					model
 			}
+		}
+
+		ClientPlayNetworking.registerGlobalReceiver(HaircutPayload.TYPE) { _, context ->
+			if (context.player() == context.client().player)
+				context.client().options.setModelPart(PlayerModelPart.HAT, false)
 		}
 	}
 }
