@@ -9,10 +9,13 @@ import net.minecraft.core.Registry
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 
@@ -68,13 +71,29 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    val DURABILITY_DAMAGE = register("durability_damage") { level, projectile, hit, originalItem ->
+    val DURABILITY_DAMAGE = register("durability_damage") { level, projectile, hit, _ ->
         val stack = projectile.item
         if (!stack.isDamageableItem) return@register false
         stack.hurtAndBreak(1, level, null) {
             level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
         }
         true
+    }
+
+    val USE_ITEM = register("use_item") { level, projectile, hit, _ ->
+        when (hit) {
+            is BlockHitResult -> {
+                val result = projectile.item.useOn(UseOnContext(level, null, InteractionHand.MAIN_HAND, projectile.item, hit))
+                (result as? InteractionResult.Success)?.heldItemTransformedTo()?.let {
+                    projectile.item = it
+                }
+                result.consumesAction()
+            }
+            is EntityHitResult -> {
+                false // TODO
+            }
+            else -> false
+        }
     }
 
     fun init() {

@@ -113,6 +113,8 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             ),
             onSuccess = OmniCrossbowImpactActions.EQUIP
         ))
+
+        register("use", ItemPredicate {}, OmniCrossbowImpactActions.USE_ITEM)
     }
 
     override fun getName(): String = "Impact Behaviors"
