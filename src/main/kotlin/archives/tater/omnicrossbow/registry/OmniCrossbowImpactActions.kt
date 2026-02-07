@@ -4,9 +4,10 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
-import archives.tater.omnicrossbow.util.isIn
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.core.particles.ItemParticleOption
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
@@ -48,9 +49,7 @@ object OmniCrossbowImpactActions {
     }
 
     val EQUIP = registerEntity("equip") { level, projectile, hit, _ ->
-        // todo data driven
         val entity = hit.entity as? LivingEntity ?: return@registerEntity false
-        if (!entity.canPickUpLoot() && !(entity isIn OmniCrossbowTags.CAN_ALWAYS_EQUIP)) return@registerEntity false
         val stack = projectile.item
         val slot = entity.getEquipmentSlotForItem(stack)
         if (slot == EquipmentSlot.MAINHAND || !entity.isEquippableInSlot(stack, slot)) return@registerEntity false
@@ -66,6 +65,15 @@ object OmniCrossbowImpactActions {
 
     val SHRINK = register("shrink") { _, projectile, _, _ ->
         projectile.item.shrink(1)
+        true
+    }
+
+    val DURABILITY_DAMAGE = register("durability_damage") { level, projectile, hit, originalItem ->
+        val stack = projectile.item
+        if (!stack.isDamageableItem) return@register false
+        stack.hurtAndBreak(1, level, null) {
+            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
+        }
         true
     }
 

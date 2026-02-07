@@ -12,7 +12,7 @@ object BreakingTimeProvider : NumberProvider {
     val CODEC: MapCodec<BreakingTimeProvider> = MapCodec.unit(this)
 
     override fun getFloat(context: LootContext): Float {
-        val state = context[LootContextParams.BLOCK_STATE]
+        val state = context.getOptionalParameter(LootContextParams.BLOCK_STATE) ?: return Float.MAX_VALUE
         val blockSpeed = state.getDestroySpeed(context.level, BlockPos.containing(context[LootContextParams.ORIGIN]))
         if (blockSpeed < 0) return Float.MAX_VALUE
         val tool = context[LootContextParams.TOOL].get(DataComponents.TOOL)

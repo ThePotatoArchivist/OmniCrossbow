@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.util
 
 import net.minecraft.advancements.criterion.DataComponentMatchers
+import net.minecraft.advancements.criterion.EntityPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.HolderSet
 import net.minecraft.core.TypedInstance
@@ -32,6 +33,8 @@ fun ItemPredicate.Builder.withComponents(init: DataComponentMatchers.Builder.() 
 fun DataComponentMatchers.Builder.hasAny(type: DataComponentType<*>) {
     any<DataComponentType<*>>(type)
 }
+
+fun EntityPredicate(init: EntityPredicate.Builder.() -> Unit): EntityPredicate = EntityPredicate.Builder.entity().apply(init).build()
 
 fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootParams.Builder.() -> Unit): LootContext =
     LootParams.Builder(level)

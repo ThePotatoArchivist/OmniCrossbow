@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.condition.BreakingTimeProvider
+import archives.tater.omnicrossbow.condition.CanPickUpLoot
 import archives.tater.omnicrossbow.condition.SingletonLootCondition
 import archives.tater.omnicrossbow.util.get
 import com.mojang.serialization.MapCodec
@@ -25,12 +26,14 @@ object OmniCrossbowConditions {
         register(path, SingletonLootCondition(*keys, test = test))
 
     val TOOL_SUITABLE_FOR_BLOCK = register("tool_suitable_for_block", LootContextParams.BLOCK_STATE, LootContextParams.TOOL) {
+        val state = it.getOptionalParameter(LootContextParams.BLOCK_STATE) ?: return@register false
         it[LootContextParams.TOOL]
             .get(DataComponents.TOOL)
-            ?.isCorrectForDrops(it[LootContextParams.BLOCK_STATE]) == true
+            ?.isCorrectForDrops(state) == true
     }
 
     fun init() {
         Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)
+        register("can_pick_up_loot", CanPickUpLoot.CODEC)
     }
 }

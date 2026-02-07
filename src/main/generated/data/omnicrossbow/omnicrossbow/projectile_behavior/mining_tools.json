@@ -1,11 +1,12 @@
 {
-  "items": "#c:tools",
+  "items": "#c:tools/mining_tool",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_block": [
-      {
-        "effect": "omnicrossbow:break_block",
-        "requirements": {
+    "impact_action": {
+      "type": "omnicrossbow:conditional",
+      "condition": {
+        "type": "omnicrossbow:loot_condition",
+        "condition": {
           "condition": "minecraft:any_of",
           "terms": [
             {
@@ -38,8 +39,14 @@
             }
           ]
         }
+      },
+      "on_success": {
+        "type": "omnicrossbow:all_of",
+        "actions": [
+          "omnicrossbow:break_block",
+          "omnicrossbow:durability_damage"
+        ]
       }
-    ],
-    "impact_entity": []
+    }
   }
 }

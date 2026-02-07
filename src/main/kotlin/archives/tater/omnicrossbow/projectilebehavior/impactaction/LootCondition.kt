@@ -18,6 +18,9 @@ import net.minecraft.world.phys.HitResult
 data class LootCondition(
     val condition: LootItemCondition
 ) : ImpactAction.Inline {
+
+    constructor(condition: LootItemCondition.Builder) : this(condition.build())
+
     override fun tryImpact(
         level: ServerLevel,
         projectile: CustomItemProjectile,

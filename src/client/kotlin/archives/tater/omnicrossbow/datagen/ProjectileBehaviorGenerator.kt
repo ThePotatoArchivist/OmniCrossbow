@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.condition.BreakingTimeProvider
+import archives.tater.omnicrossbow.condition.CanPickUpLoot
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
@@ -9,6 +10,7 @@ import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCust
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
 import archives.tater.omnicrossbow.registry.*
+import archives.tater.omnicrossbow.util.EntityPredicate
 import archives.tater.omnicrossbow.util.ItemPredicate
 import archives.tater.omnicrossbow.util.hasAny
 import archives.tater.omnicrossbow.util.withComponents
@@ -16,6 +18,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.advancements.criterion.BlockPredicate
+import net.minecraft.advancements.criterion.EntityTypePredicate
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.Direction
@@ -38,10 +41,12 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
 import net.minecraft.world.level.block.state.properties.DripstoneThickness
 import net.minecraft.world.level.storage.loot.IntRange
+import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
 import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import java.util.concurrent.CompletableFuture
 
@@ -55,6 +60,7 @@ class ProjectileBehaviorGenerator(
     ) {
         val items = entries.getLookup(Registries.ITEM)
         val blocks = entries.getLookup(Registries.BLOCK)
+        val entities = entries.getLookup(Registries.ENTITY_TYPE)
 
         fun register(path: String, behavior: ProjectileBehavior) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
@@ -114,16 +120,19 @@ class ProjectileBehaviorGenerator(
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(Conditional(
+        register("mining_tools", ProjectileBehavior(ItemPredicate { of(items, ConventionalItemTags.MINING_TOOL_TOOLS) }, SpawnCustomProjectile(Conditional(
             condition = LootCondition(anyOf(
-                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
+                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK,
                 allOf(
                     invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
                     hasValue(BreakingTimeProvider, IntRange.upperBound(20))
                 )
             ).build()),
-            onSuccess = OmniCrossbowImpactActions.BREAK_BLOCK,
-        ))) }
+            onSuccess = AllOf(
+                OmniCrossbowImpactActions.BREAK_BLOCK,
+                OmniCrossbowImpactActions.DURABILITY_DAMAGE,
+            )
+        ))))
 
         register("consumable", ProjectileBehavior(ItemPredicate {
             withComponents {
@@ -138,7 +147,15 @@ class ProjectileBehaviorGenerator(
             withComponents {
                 hasAny(DataComponents.EQUIPPABLE)
             }
-        }, SpawnCustomProjectile(OmniCrossbowImpactActions.EQUIP)))
+        }, SpawnCustomProjectile(Conditional(
+            condition = LootCondition(anyOf(
+                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.TARGET_ENTITY, EntityPredicate {
+                    entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
+                }),
+                CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
+            )),
+            onSuccess = OmniCrossbowImpactActions.EQUIP
+        ))))
     }
 
     override fun getName(): String = "Projectile Behaviors"
