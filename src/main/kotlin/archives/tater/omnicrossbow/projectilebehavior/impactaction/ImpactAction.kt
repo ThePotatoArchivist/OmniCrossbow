@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.HitResult
+import java.util.stream.Stream
 
 fun interface ImpactAction {
     fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult, originalItem: ItemStack): Boolean
@@ -46,7 +47,7 @@ fun interface ImpactAction {
         @JvmField
         val ITEM_FILTERED_CODEC = ItemFiltered.createCodec(CODEC)
 
-        fun getAction(level: Level, stack: ItemStack): ImpactAction =
-            ItemFiltered.getFirst(level.registryAccess(), OmniCrossbowRegistries.IMPACT_BEHAVIOR, stack) ?: None
+        fun streamMatching(level: Level, stack: ItemStack): Stream<ImpactAction> =
+            ItemFiltered.streamMatching(level.registryAccess(), OmniCrossbowRegistries.IMPACT_BEHAVIOR, stack)
     }
 }

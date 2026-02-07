@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
+import java.util.stream.Stream
 import kotlin.jvm.optionals.getOrNull
 
 @JvmRecord
@@ -35,6 +36,13 @@ data class ItemFiltered<T>(
             .findFirst()
             .map { it.value }
             .getOrNull()
+
+        fun <T: Any> streamMatching(registries: HolderLookup.Provider, registry: ResourceKey<Registry<ItemFiltered<T>>>, key: ItemStack): Stream<T> = registries
+            .lookupOrThrow(registry)
+            .listElements()
+            .map { it.value() }
+            .filter { it.items.test(key) }
+            .map { it.value }
     }
 }
 

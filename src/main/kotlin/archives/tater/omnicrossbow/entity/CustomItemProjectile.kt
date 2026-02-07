@@ -23,7 +23,7 @@ class CustomItemProjectile : ThrowableItemProjectile {
     override fun onHitBlock(hitResult: BlockHitResult) {
         super.onHitBlock(hitResult)
         val level = level() as? ServerLevel ?: return
-        ImpactAction.getAction(level, item).tryImpact(level, this, hitResult, item.copy())
+        ImpactAction.streamMatching(level, item).anyMatch { it.tryImpact(level, this, hitResult, item.copy()) }
         spawnAtLocation(level, item)
         discard()
     }
@@ -31,7 +31,7 @@ class CustomItemProjectile : ThrowableItemProjectile {
     override fun onHitEntity(hitResult: EntityHitResult) {
         super.onHitEntity(hitResult)
         val level = level() as? ServerLevel ?: return
-        ImpactAction.getAction(level, item).tryImpact(level, this, hitResult, item.copy())
+        ImpactAction.streamMatching(level, item).anyMatch { it.tryImpact(level, this, hitResult, item.copy()) }
         spawnAtLocation(level, item)
         discard()
     }
