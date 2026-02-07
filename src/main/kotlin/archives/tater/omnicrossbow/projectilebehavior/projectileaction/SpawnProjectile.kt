@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
+import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.mixin.behavior.AbstractArrowAccessor
 import archives.tater.omnicrossbow.mixin.behavior.ThrownTridentAccessor
 import com.mojang.serialization.MapCodec
@@ -60,5 +61,14 @@ interface SpawnProjectile<T: Projectile> : ProjectileAction {
 
             operator fun invoke(type: EntityType<out Projectile>) = of(type)
         }
+    }
+
+    data object Custom : Singleton(), SpawnProjectile<CustomItemProjectile> {
+        override fun createProjectile(
+            level: Level,
+            shooter: LivingEntity,
+            weapon: ItemStack,
+            projectile: ItemStack
+        ) = CustomItemProjectile(shooter, level, projectile)
     }
 }

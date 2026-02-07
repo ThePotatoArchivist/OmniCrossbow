@@ -1,0 +1,14 @@
+{
+  "items": "minecraft:gunpowder",
+  "value": {
+    "type": "omnicrossbow:all_of",
+    "actions": [
+      {
+        "type": "omnicrossbow:explode",
+        "fire": true,
+        "radius": 1.0
+      },
+      "omnicrossbow:shrink"
+    ]
+  }
+}

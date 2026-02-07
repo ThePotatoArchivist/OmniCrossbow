@@ -1,26 +1,20 @@
 package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.OmniCrossbow
-import archives.tater.omnicrossbow.condition.BreakingTimeProvider
-import archives.tater.omnicrossbow.condition.CanPickUpLoot
+import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnCustomProjectile
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
-import archives.tater.omnicrossbow.registry.*
-import archives.tater.omnicrossbow.util.EntityPredicate
+import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
+import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
+import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import archives.tater.omnicrossbow.util.ItemPredicate
 import archives.tater.omnicrossbow.util.hasAny
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
-import net.minecraft.advancements.criterion.BlockPredicate
-import net.minecraft.advancements.criterion.EntityTypePredicate
 import net.minecraft.advancements.criterion.ItemPredicate
-import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponents
@@ -31,7 +25,6 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
-import net.minecraft.util.valueproviders.ConstantFloat
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStackTemplate
@@ -40,14 +33,6 @@ import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
 import net.minecraft.world.level.block.state.properties.DripstoneThickness
-import net.minecraft.world.level.storage.loot.IntRange
-import net.minecraft.world.level.storage.loot.LootContext
-import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
-import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
-import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
-import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
-import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
-import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -59,103 +44,66 @@ class ProjectileBehaviorGenerator(
         entries: Entries
     ) {
         val items = entries.getLookup(Registries.ITEM)
-        val blocks = entries.getLookup(Registries.BLOCK)
-        val entities = entries.getLookup(Registries.ENTITY_TYPE)
 
-        fun register(path: String, behavior: ProjectileBehavior) {
+        fun register(path: String, behavior: ItemFiltered<ProjectileBehavior>) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
         }
 
-        fun register(tag: TagKey<Item>, create: (ItemPredicate) -> ProjectileBehavior) {
-            register(tag.location.path, create(ItemPredicate { of(items, tag) }))
+        fun register(path: String, predicate: ItemPredicate, behavior: ProjectileBehavior) {
+            register(path, ItemFiltered(predicate, behavior))
         }
 
-        fun register(item: ItemLike, create: (ItemPredicate) -> ProjectileBehavior) {
-            register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, create(ItemPredicate { of(items, item) }))
+        fun register(tag: TagKey<Item>, behavior: ProjectileBehavior) {
+            register(tag.location.path, ItemPredicate { of(items, tag) }, behavior)
+        }
+
+        fun register(item: ItemLike, behavior: ProjectileBehavior) {
+            register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, ItemPredicate { of(items, item) }, behavior)
         }
 
         fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
 
-        register(ItemTags.EGGS) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.EGG)) }
-        register(Items.SNOWBALL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SNOWBALL)) }
-        register(Items.ENDER_PEARL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.ENDER_PEARL)) }
-        register(Items.EXPERIENCE_BOTTLE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)) }
-        register(Items.SPLASH_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SPLASH_POTION)) }
-        register(Items.LINGERING_POTION) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.LINGERING_POTION)) }
-        register(Items.FIRE_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)) }
-        register(Items.WIND_CHARGE) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.5f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)) }
-        register(Items.DRAGON_BREATH) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true) }
-        register(Items.WITHER_SKELETON_SKULL) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)) }
-        register(Items.TRIDENT) { ProjectileBehavior(it, SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW) }
+        register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EGG)))
+        register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SNOWBALL)))
+        register(Items.ENDER_PEARL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.ENDER_PEARL)))
+        register(Items.EXPERIENCE_BOTTLE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)))
+        register(Items.SPLASH_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SPLASH_POTION)))
+        register(Items.LINGERING_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.LINGERING_POTION)))
+        register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)))
+        register(Items.WIND_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.5f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)))
+        register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true))
+        register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)))
+        register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW))
 
-        register(Items.ARMOR_STAND) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.ARMOR_STAND)) }
-        register(Items.TNT) { ProjectileBehavior(it, SpawnEntity.Direct(EntityType.TNT)) }
-        register(ItemTags.BOATS) { ProjectileBehavior(it, SpawnEntity.Boat, 0.5f) }
+        register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
+        register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
+        register(ItemTags.BOATS, ProjectileBehavior(SpawnEntity.Boat, 0.5f))
 
-        register("spawn_eggs", ProjectileBehavior(ItemPredicate {
+        register("spawn_eggs", ItemPredicate {
             withComponents {
                 hasAny(DataComponents.ENTITY_DATA)
             }
-        }, SpawnEntity.FromEgg, 0.5f))
+        }, ProjectileBehavior(SpawnEntity.FromEgg, 0.5f))
 
-        register("entity_buckets", ProjectileBehavior.of(ItemPredicate {
+        register("entity_buckets", ItemPredicate {
             withComponents {
                 hasAny(DataComponents.BUCKET_ENTITY_DATA)
             }
-        }, SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
+        }, ProjectileBehavior.of(SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 
-        register(Items.FEATHER) { ProjectileBehavior(it, SpawnEntity.Item, velocityScale = 0.3f) }
+        register(Items.FEATHER, ProjectileBehavior(SpawnEntity.Item, velocityScale = 0.3f))
 
-        register(Items.POINTED_DRIPSTONE) { ProjectileBehavior(it, SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
+        register(Items.POINTED_DRIPSTONE, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
             .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP_MERGE),
             damagePerDistance = 6f,
             damageMax = 40,
-        ), 0.7f) }
-        register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
+        ), 0.7f))
 
-        register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile(
-            AllOf(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
-        )) }
+        register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM))
 
-        register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
+        register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 
-        register("mining_tools", ProjectileBehavior(ItemPredicate { of(items, ConventionalItemTags.MINING_TOOL_TOOLS) }, SpawnCustomProjectile(Conditional(
-            condition = LootCondition(anyOf(
-                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK,
-                allOf(
-                    invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
-                    hasValue(BreakingTimeProvider, IntRange.upperBound(20))
-                )
-            ).build()),
-            onSuccess = AllOf(
-                OmniCrossbowImpactActions.BREAK_BLOCK,
-                OmniCrossbowImpactActions.DURABILITY_DAMAGE,
-            )
-        ))))
-
-        register("consumable", ProjectileBehavior(ItemPredicate {
-            withComponents {
-                hasAny(DataComponents.CONSUMABLE)
-            }
-        }, SpawnCustomProjectile(Conditional(
-            condition = OmniCrossbowImpactActions.CONSUME_ITEM,
-            onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1)
-        ))))
-
-        register("equippable", ProjectileBehavior(ItemPredicate {
-            withComponents {
-                hasAny(DataComponents.EQUIPPABLE)
-            }
-        }, SpawnCustomProjectile(Conditional(
-            condition = LootCondition(anyOf(
-                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.TARGET_ENTITY, EntityPredicate {
-                    entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
-                }),
-                CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
-            )),
-            onSuccess = OmniCrossbowImpactActions.EQUIP
-        ))))
     }
 
     override fun getName(): String = "Projectile Behaviors"

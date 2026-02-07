@@ -1,0 +1,49 @@
+{
+  "items": "#c:tools/mining_tool",
+  "value": {
+    "type": "omnicrossbow:conditional",
+    "condition": {
+      "type": "omnicrossbow:loot_condition",
+      "condition": {
+        "condition": "minecraft:any_of",
+        "terms": [
+          {
+            "condition": "omnicrossbow:tool_suitable_for_block"
+          },
+          {
+            "condition": "minecraft:all_of",
+            "terms": [
+              {
+                "condition": "minecraft:inverted",
+                "term": {
+                  "condition": "minecraft:location_check",
+                  "predicate": {
+                    "block": {
+                      "blocks": "#omnicrossbow:has_preferred_tool"
+                    }
+                  }
+                }
+              },
+              {
+                "condition": "minecraft:value_check",
+                "range": {
+                  "max": 20.0
+                },
+                "value": {
+                  "type": "omnicrossbow:breaking_time"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "on_success": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        "omnicrossbow:break_block",
+        "omnicrossbow:durability_damage"
+      ]
+    }
+  }
+}

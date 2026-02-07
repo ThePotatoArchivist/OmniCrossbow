@@ -1,0 +1,19 @@
+{
+  "items": {
+    "predicates": {
+      "minecraft:consumable": {}
+    }
+  },
+  "value": {
+    "type": "omnicrossbow:conditional",
+    "condition": "omnicrossbow:consume_item",
+    "on_success": {
+      "type": "omnicrossbow:item_particle",
+      "count": 8,
+      "dx": 0.0,
+      "dy": 0.0,
+      "dz": 0.0,
+      "speed": 0.1
+    }
+  }
+}

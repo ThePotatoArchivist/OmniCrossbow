@@ -24,6 +24,7 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 			addProvider(::LangGenerator)
 			addProvider(::AmmoPositionGenerator)
 			addProvider(::ProjectileBehaviorGenerator)
+			addProvider(::ImpactBehaviorGenerator)
 		}
 	}
 }

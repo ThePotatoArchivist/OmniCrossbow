@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
@@ -22,9 +23,12 @@ object OmniCrossbowRegistries {
 
     // Dynamic
 
-    @JvmField val PROJECTILE_BEHAVIOR = of<ProjectileBehavior>("projectile_behavior")
+    @JvmField val PROJECTILE_BEHAVIOR = of<ItemFiltered<ProjectileBehavior>>("projectile_behavior")
+
+    @JvmField val IMPACT_BEHAVIOR = of<ItemFiltered<ImpactAction>>("impact_behavior")
 
     fun init() {
-        DynamicRegistries.register(PROJECTILE_BEHAVIOR, ProjectileBehavior.CODEC)
+        DynamicRegistries.register(PROJECTILE_BEHAVIOR, ProjectileBehavior.ITEM_FILTERED_CODEC)
+        DynamicRegistries.register(IMPACT_BEHAVIOR, ImpactAction.ITEM_FILTERED_CODEC)
     }
 }

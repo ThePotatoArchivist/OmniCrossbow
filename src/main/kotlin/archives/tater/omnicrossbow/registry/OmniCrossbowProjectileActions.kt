@@ -48,7 +48,7 @@ object OmniCrossbowProjectileActions {
 
     init {
         register("spawn_projectile", SpawnProjectile.Direct.CODEC)
-        register("spawn_projectile/custom", SpawnCustomProjectile.CODEC)
+        registerSingleton("spawn_projectile/custom", SpawnProjectile.Custom)
         register("spawn_entity", SpawnEntity.Direct.CODEC)
         register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
         registerSingleton("spawn_entity/from_egg", SpawnEntity.FromEgg)
