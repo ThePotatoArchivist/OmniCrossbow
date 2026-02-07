@@ -24,22 +24,22 @@ object OmniCrossbowImpactActions {
     private fun register(path: String, action: ImpactAction): ImpactAction =
         Registry.register(OmniCrossbowBuiltinRegistries.IMPACT_ACTION, OmniCrossbow.id(path), action)
 
-    private inline fun registerBlock(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: BlockHitResult) -> Boolean): ImpactAction =
-        register(path) { level, projectile, hit ->
-            hit is BlockHitResult && action(level, projectile, hit)
+    private inline fun registerBlock(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: BlockHitResult, originalItem: ItemStack) -> Boolean): ImpactAction =
+        register(path) { level, projectile, hit, originalItem ->
+            hit is BlockHitResult && action(level, projectile, hit, originalItem)
         }
 
-    private inline fun registerEntity(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: EntityHitResult) -> Boolean): ImpactAction =
-        register(path) { level, projectile, hit ->
-            hit is EntityHitResult && action(level, projectile, hit)
+    private inline fun registerEntity(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: EntityHitResult, originalItem: ItemStack) -> Boolean): ImpactAction =
+        register(path) { level, projectile, hit, originalItem ->
+            hit is EntityHitResult && action(level, projectile, hit, originalItem)
         }
 
-    val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit ->
+    val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit, _ ->
         level.destroyBlock(hit.blockPos, true, projectile.owner)
         true
     }
 
-    val CONSUME_ITEM = registerEntity("consume_item") { level, projectile, hit ->
+    val CONSUME_ITEM = registerEntity("consume_item") { level, projectile, hit, _ ->
         val entity = hit.entity as? LivingEntity ?: return@registerEntity false
         val stack = projectile.item.finishUsingItem(level, entity)
         if (entity is Player) entity.handleExtraItemsCreatedOnUse(stack)
@@ -47,7 +47,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    val EQUIP = registerEntity("equip") { level, projectile, hit ->
+    val EQUIP = registerEntity("equip") { level, projectile, hit, _ ->
         // todo data driven
         val entity = hit.entity as? LivingEntity ?: return@registerEntity false
         if (!entity.canPickUpLoot() && !(entity isIn OmniCrossbowTags.CAN_ALWAYS_EQUIP)) return@registerEntity false
@@ -64,7 +64,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    val SHRINK = register("shrink") { _, projectile, _ ->
+    val SHRINK = register("shrink") { _, projectile, _, _ ->
         projectile.item.shrink(1)
         true
     }

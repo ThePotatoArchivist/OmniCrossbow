@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.valueproviders.FloatProvider
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level.ExplosionInteraction
 import net.minecraft.world.phys.HitResult
 
@@ -21,6 +22,7 @@ data class Explode(
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: HitResult,
+        originalItem: ItemStack,
     ): Boolean {
         level.explode(projectile, hit.location.x, hit.location.y, hit.location.z, radius.sample(projectile.random), fire, interaction)
         return true

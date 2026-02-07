@@ -131,7 +131,7 @@ class ProjectileBehaviorGenerator(
             }
         }, SpawnCustomProjectile(Conditional(
             condition = OmniCrossbowImpactActions.CONSUME_ITEM,
-            onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.5)
+            onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1)
         ))))
 
         register("equippable", ProjectileBehavior(ItemPredicate {

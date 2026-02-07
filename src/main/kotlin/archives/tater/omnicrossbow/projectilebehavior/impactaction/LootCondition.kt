@@ -6,6 +6,7 @@ import archives.tater.omnicrossbow.util.LootContext
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
@@ -21,11 +22,12 @@ data class LootCondition(
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: HitResult,
+        originalItem: ItemStack,
     ): Boolean = condition.test(LootContext(level, CUSTOM_PROJECTILE_CONTEXT) {
         withParameter(LootContextParams.ORIGIN, hit.location)
         withOptionalParameter(LootContextParams.ATTACKING_ENTITY, projectile.owner)
         withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, projectile)
-        withParameter(LootContextParams.TOOL, projectile.item)
+        withParameter(LootContextParams.TOOL, originalItem)
         when (hit) {
             is BlockHitResult -> withParameter(LootContextParams.BLOCK_STATE, level.getBlockState(hit.blockPos))
             is EntityHitResult -> withParameter(LootContextParams.TARGET_ENTITY, hit.entity)

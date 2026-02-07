@@ -9,17 +9,23 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import net.minecraft.resources.RegistryFileCodec
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.HitResult
 
 fun interface ImpactAction {
-    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult): Boolean
+    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult, originalItem: ItemStack): Boolean
 
     interface Inline : ImpactAction {
         val codec: MapCodec<out Inline>
     }
 
     data object None : ImpactAction {
-        override fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult): Boolean = false
+        override fun tryImpact(
+            level: ServerLevel,
+            projectile: CustomItemProjectile,
+            hit: HitResult,
+            originalItem: ItemStack
+        ): Boolean = false
     }
 
     companion object {

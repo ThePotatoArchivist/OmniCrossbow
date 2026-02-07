@@ -8,6 +8,8 @@ import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.phys.HitResult
 
 @JvmRecord
@@ -24,8 +26,9 @@ data class ItemParticle(
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: HitResult,
+        originalItem: ItemStack,
     ): Boolean {
-        level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, projectile.item.item), hit.location.x, hit.location.y, hit.location.z, count, dx, dy, dz, speed)
+        level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(originalItem)), hit.location.x, hit.location.y, hit.location.z, count, dx, dy, dz, speed)
         return true
     }
 
@@ -35,9 +38,9 @@ data class ItemParticle(
         val CODEC: MapCodec<ItemParticle> = RecordCodecBuilder.mapCodec { it.group(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").forGetter(ItemParticle::count),
             NON_NEGATIVE_DOUBLE.fieldOf("dx").forGetter(ItemParticle::dx),
-            Codec.DOUBLE.fieldOf("dy").forGetter(ItemParticle::dy),
-            Codec.DOUBLE.fieldOf("dz").forGetter(ItemParticle::dz),
-            Codec.DOUBLE.fieldOf("speed").forGetter(ItemParticle::speed),
+            NON_NEGATIVE_DOUBLE.fieldOf("dy").forGetter(ItemParticle::dy),
+            NON_NEGATIVE_DOUBLE.fieldOf("dz").forGetter(ItemParticle::dz),
+            NON_NEGATIVE_DOUBLE.fieldOf("speed").forGetter(ItemParticle::speed),
         ).apply(it, ::ItemParticle) }
     }
 }
