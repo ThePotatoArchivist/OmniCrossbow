@@ -1,49 +1,38 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.util.isIn
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
-import net.minecraft.world.phys.HitResult
 
 object OmniCrossbowImpactActions {
 
-    private fun registerBlock(path: String, codec: MapCodec<out ImpactAction.Inline<BlockHitResult>>) {
-        Registry.register(OmniCrossbowBuiltinRegistries.BLOCK_IMPACT_ACTION_TYPE, OmniCrossbow.id(path), codec)
+    private fun register(path: String, codec: MapCodec<out ImpactAction.Inline>) {
+        Registry.register(OmniCrossbowBuiltinRegistries.IMPACT_ACTION_TYPE, OmniCrossbow.id(path), codec)
     }
 
-    private fun registerBlock(path: String, action: ImpactAction<BlockHitResult>): ImpactAction<BlockHitResult> =
-        Registry.register(OmniCrossbowBuiltinRegistries.BLOCK_IMPACT_ACTION, OmniCrossbow.id(path), action)
+    private fun register(path: String, action: ImpactAction): ImpactAction =
+        Registry.register(OmniCrossbowBuiltinRegistries.IMPACT_ACTION, OmniCrossbow.id(path), action)
 
-    private fun registerEntity(path: String, codec: MapCodec<out ImpactAction.Inline<EntityHitResult>>) {
-        Registry.register(OmniCrossbowBuiltinRegistries.ENTITY_IMPACT_ACTION_TYPE, OmniCrossbow.id(path), codec)
-    }
+    private inline fun registerBlock(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: BlockHitResult) -> Boolean): ImpactAction =
+        register(path) { level, projectile, hit ->
+            hit is BlockHitResult && action(level, projectile, hit)
+        }
 
-    private fun registerEntity(path: String, action: ImpactAction<EntityHitResult>): ImpactAction<EntityHitResult> =
-        Registry.register(OmniCrossbowBuiltinRegistries.ENTITY_IMPACT_ACTION, OmniCrossbow.id(path), action)
-
-    private fun registerBoth(path: String, codec: MapCodec<out ImpactAction.Inline<HitResult>>) {
-        registerBlock(path, codec)
-        registerEntity(path, codec)
-    }
-
-    private fun registerBoth(path: String, action: ImpactAction<HitResult>) = action.also {
-        registerBlock(path, it)
-        registerEntity(path, it)
-    }
-
-    private fun registerComposite(path: String, type: CompositeType<*, *>) {
-        registerBlock(path, type.blockInstanceCodec)
-        registerEntity(path, type.entityInstanceCodec)
-    }
+    private inline fun registerEntity(path: String, crossinline action: (level: ServerLevel, projectile: CustomItemProjectile, hit: EntityHitResult) -> Boolean): ImpactAction =
+        register(path) { level, projectile, hit ->
+            hit is EntityHitResult && action(level, projectile, hit)
+        }
 
     val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit ->
         level.destroyBlock(hit.blockPos, true, projectile.owner)
@@ -75,19 +64,18 @@ object OmniCrossbowImpactActions {
         true
     }
 
-    val SHRINK = registerBoth("shrink") { _, projectile, _ ->
+    val SHRINK = register("shrink") { _, projectile, _ ->
         projectile.item.shrink(1)
         true
     }
 
     fun init() {
-        registerBoth("none", ImpactAction.None)
-        registerBoth("item_particle", ItemParticle.CODEC)
-        registerBoth("explode", Explode.CODEC)
-        registerComposite("all_of", AllOf)
-        registerComposite("any_of", AnyOf)
-        registerComposite("conditional", Conditional)
-        registerBlock("loot_condition", LootCondition.BLOCK_CODEC)
-        registerEntity("loot_condition", LootCondition.ENTITY_CODEC)
+        register("none", ImpactAction.None)
+        register("item_particle", ItemParticle.CODEC)
+        register("explode", Explode.CODEC)
+        register("all_of", AllOf.CODEC)
+        register("any_of", AnyOf.CODEC)
+        register("conditional", Conditional.CODEC)
+        register("loot_condition", LootCondition.CODEC)
     }
 }

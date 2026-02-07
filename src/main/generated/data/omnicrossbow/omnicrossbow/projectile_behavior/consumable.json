@@ -6,7 +6,7 @@
   },
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_entity": {
+    "impact_action": {
       "type": "omnicrossbow:conditional",
       "condition": "omnicrossbow:consume_item",
       "on_success": {

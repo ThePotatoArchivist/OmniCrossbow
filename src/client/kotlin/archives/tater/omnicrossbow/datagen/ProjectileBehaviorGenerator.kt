@@ -109,41 +109,36 @@ class ProjectileBehaviorGenerator(
         register(Items.ECHO_SHARD) { ProjectileBehavior(it, OmniCrossbowProjectileActions.SONIC_BOOM) }
 
         register(Items.GUNPOWDER) { ProjectileBehavior(it, SpawnCustomProjectile(
-            AllOf.block(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
-            AllOf.entity(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
+            AllOf(Explode(ConstantFloat.of(1f)), OmniCrossbowImpactActions.SHRINK),
         )) }
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES) { ProjectileBehavior(it, ProjectileAction.Default) }
 
-        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(
-            impactBlock = Conditional.block(
-                condition = LootCondition.Block(anyOf(
-                    OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
-                    allOf(
-                        invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
-                        hasValue(BreakingTimeProvider, IntRange.upperBound(20))
-                    )
-                ).build()),
-                onSuccess = OmniCrossbowImpactActions.BREAK_BLOCK,
-            )
-        )) }
+        register(ConventionalItemTags.MINING_TOOL_TOOLS) { ProjectileBehavior(it, SpawnCustomProjectile(Conditional(
+            condition = LootCondition(anyOf(
+                OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK.builder,
+                allOf(
+                    invert(checkLocation(location().setBlock(BlockPredicate.Builder.block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)))),
+                    hasValue(BreakingTimeProvider, IntRange.upperBound(20))
+                )
+            ).build()),
+            onSuccess = OmniCrossbowImpactActions.BREAK_BLOCK,
+        ))) }
 
         register("consumable", ProjectileBehavior(ItemPredicate {
             withComponents {
                 hasAny(DataComponents.CONSUMABLE)
             }
-        }, SpawnCustomProjectile(
-            impactEntity = Conditional.entity(
-                condition = OmniCrossbowImpactActions.CONSUME_ITEM,
-                onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.5)
-            )
-        )))
+        }, SpawnCustomProjectile(Conditional(
+            condition = OmniCrossbowImpactActions.CONSUME_ITEM,
+            onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.5)
+        ))))
 
         register("equippable", ProjectileBehavior(ItemPredicate {
             withComponents {
                 hasAny(DataComponents.EQUIPPABLE)
             }
-        }, SpawnCustomProjectile(impactEntity = OmniCrossbowImpactActions.EQUIP)))
+        }, SpawnCustomProjectile(OmniCrossbowImpactActions.EQUIP)))
     }
 
     override fun getName(): String = "Projectile Behaviors"

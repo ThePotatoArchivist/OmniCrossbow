@@ -2,7 +2,7 @@
   "items": "#c:tools/mining_tool",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile/custom",
-    "impact_block": {
+    "impact_action": {
       "type": "omnicrossbow:conditional",
       "condition": {
         "type": "omnicrossbow:loot_condition",

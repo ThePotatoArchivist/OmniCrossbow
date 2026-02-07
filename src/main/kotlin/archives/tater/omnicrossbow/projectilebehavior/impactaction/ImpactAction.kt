@@ -9,43 +9,30 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import net.minecraft.resources.RegistryFileCodec
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
-fun interface ImpactAction<in T: HitResult> {
-    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: T): Boolean
+fun interface ImpactAction {
+    fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult): Boolean
 
-    interface Inline<in T: HitResult> : ImpactAction<T> {
-        val codec: MapCodec<out Inline<T>>
+    interface Inline : ImpactAction {
+        val codec: MapCodec<out Inline>
     }
 
-    data object None : ImpactAction<HitResult> {
+    data object None : ImpactAction {
         override fun tryImpact(level: ServerLevel, projectile: CustomItemProjectile, hit: HitResult): Boolean = false
     }
 
     companion object {
 
         @JvmField
-        val BLOCK_INLINE_CODEC: Codec<Inline<BlockHitResult>> = OmniCrossbowBuiltinRegistries.BLOCK_IMPACT_ACTION_TYPE
+        val INLINE_CODEC: Codec<Inline> = OmniCrossbowBuiltinRegistries.IMPACT_ACTION_TYPE
             .byNameCodec()
-            .dispatch(Inline<BlockHitResult>::codec) { it }
+            .dispatch(Inline::codec) { it }
 
         @JvmField
-        val ENTITY_INLINE_CODEC: Codec<Inline<EntityHitResult>> = OmniCrossbowBuiltinRegistries.ENTITY_IMPACT_ACTION_TYPE
-            .byNameCodec()
-            .dispatch(Inline<EntityHitResult>::codec) { it }
-
-        @JvmField
-        val BLOCK_CODEC: Codec<ImpactAction<BlockHitResult>> = RegistryFileCodec.create(
-            OmniCrossbowRegistries.BLOCK_IMPACT_ACTION,
-            BLOCK_INLINE_CODEC.narrow { "Cannot serialize builtin action" }
-        ).valueCodec(OmniCrossbowBuiltinRegistries.BLOCK_IMPACT_ACTION)
-
-        @JvmField
-        val ENTITY_CODEC: Codec<ImpactAction<EntityHitResult>> = RegistryFileCodec.create(
-            OmniCrossbowRegistries.ENTITY_IMPACT_ACTION,
-            ENTITY_INLINE_CODEC.narrow { "Cannot serialize builtin action" }
-        ).valueCodec(OmniCrossbowBuiltinRegistries.ENTITY_IMPACT_ACTION)
+        val CODEC: Codec<ImpactAction> = RegistryFileCodec.create(
+            OmniCrossbowRegistries.IMPACT_ACTION,
+            INLINE_CODEC.narrow { "Cannot serialize builtin action" }
+        ).valueCodec(OmniCrossbowBuiltinRegistries.IMPACT_ACTION)
     }
 }

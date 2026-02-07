@@ -7,13 +7,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.EntityHitResult
 
 @JvmRecord
 data class SpawnCustomProjectile(
-    val impactBlock: ImpactAction<BlockHitResult> = ImpactAction.None,
-    val impactEntity: ImpactAction<EntityHitResult> = ImpactAction.None,
+    val impactAction: ImpactAction = ImpactAction.None,
 ) : SpawnProjectile<CustomItemProjectile> {
 
     override fun createProjectile(
@@ -21,14 +18,13 @@ data class SpawnCustomProjectile(
         shooter: LivingEntity,
         weapon: ItemStack,
         projectile: ItemStack
-    ) = CustomItemProjectile(shooter, level, projectile, impactBlock, impactEntity)
+    ) = CustomItemProjectile(shooter, level, projectile, impactAction)
 
     override val codec: MapCodec<out ProjectileAction> get() = CODEC
 
     companion object {
         val CODEC: MapCodec<SpawnCustomProjectile> = RecordCodecBuilder.mapCodec { it.group(
-            ImpactAction.BLOCK_CODEC.optionalFieldOf("impact_block", ImpactAction.None).forGetter(SpawnCustomProjectile::impactBlock),
-            ImpactAction.ENTITY_CODEC.optionalFieldOf("impact_entity", ImpactAction.None).forGetter(SpawnCustomProjectile::impactEntity),
+            ImpactAction.CODEC.optionalFieldOf("impact_action", ImpactAction.None).forGetter(SpawnCustomProjectile::impactAction),
         ).apply(it, ::SpawnCustomProjectile) }
     }
 }

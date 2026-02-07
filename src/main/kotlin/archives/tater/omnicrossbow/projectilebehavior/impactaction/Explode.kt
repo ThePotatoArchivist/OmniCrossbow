@@ -14,8 +14,8 @@ data class Explode(
     val radius: FloatProvider,
     val fire: Boolean = false,
     val interaction: ExplosionInteraction = ExplosionInteraction.TNT
-) : ImpactAction.Inline<HitResult> {
-    override val codec: MapCodec<out ImpactAction.Inline<HitResult>> get() = CODEC
+) : ImpactAction.Inline {
+    override val codec: MapCodec<out ImpactAction.Inline> get() = CODEC
 
     override fun tryImpact(
         level: ServerLevel,

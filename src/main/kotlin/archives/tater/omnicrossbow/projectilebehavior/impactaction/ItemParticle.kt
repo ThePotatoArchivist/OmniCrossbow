@@ -17,8 +17,8 @@ data class ItemParticle(
     val dy: Double,
     val dz: Double,
     val speed: Double,
-) : ImpactAction.Inline<HitResult> {
-    override val codec: MapCodec<out ImpactAction.Inline<HitResult>> get() = CODEC
+) : ImpactAction.Inline {
+    override val codec: MapCodec<out ImpactAction.Inline> get() = CODEC
 
     override fun tryImpact(
         level: ServerLevel,
