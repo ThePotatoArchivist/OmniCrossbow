@@ -44,7 +44,7 @@ object OmniCrossbowImpactActions {
             hit is EntityHitResult && action(level, projectile, hit, originalItem)
         }
 
-    val SUCCEED = register("succeed") { _, _, _, _ -> true }
+    val PASS = register("pass") { _, _, _, _ -> true }
 
     val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit, _ ->
         val state = level.getBlockState(hit.blockPos)
@@ -116,6 +116,9 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    val IS_BLOCK = registerBlock("is_block") { _, _, _, _ -> true }
+    val IS_ENTITY = registerEntity("is_entity") { _, _, _, _ -> true }
+
     fun init() {
         register("none", ImpactAction.None)
         register("item_particle", ItemParticle.CODEC)
@@ -123,7 +126,9 @@ object OmniCrossbowImpactActions {
         register("all_of", AllOf.CODEC)
         register("any_of", AnyOf.CODEC)
         register("conditional", Conditional.CODEC)
-        register("loot_condition", LootCondition.CODEC)
+        register("block_offset", BlockOffset.CODEC)
+        register("check_loot_condition", CheckLootCondition.CODEC)
         register("play_sound", PlaySound.CODEC)
+        register("summon_entity", SummonEntity.CODEC)
     }
 }

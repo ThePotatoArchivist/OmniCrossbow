@@ -14,9 +14,7 @@ fun createFakePlayer(level: ServerLevel, projectile: CustomItemProjectile): Fake
     FakePlayer.get(level)
 }).apply {
     this as EntityAccessor
-    setPos(projectile.position())
-    xRot = projectile.xRot
-    yRotO = projectile.yRot
+    snapTo(projectile.position(), projectile.xRot, projectile.yRot)
     eyeHeight = 0f
     deltaMovement = projectile.deltaMovement
     setItemInHand(InteractionHand.MAIN_HAND, projectile.item)

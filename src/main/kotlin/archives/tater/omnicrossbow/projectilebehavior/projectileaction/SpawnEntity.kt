@@ -42,26 +42,26 @@ fun interface SpawnEntity<T: Entity> : Delegated {
             level,
             EntityType.createDefaultStackConfig(level, projectile, shooter),
             BlockPos.containing(pos),
-            EntitySpawnReason.SPAWN_ITEM_USE,
+            EntitySpawnReason.TRIGGERED,
             false,
             false
         )?.apply {
-            setPos(pos)
+            snapTo(pos, velocity.rotation().y, 90f)
             deltaMovement = velocity
             process(shooter, weapon, projectile)
         }?.let { level.addFreshEntity(it) }
     }
 
     @JvmRecord
-    data class Direct(val type: EntityType<*>) : SpawnEntity<Entity>, ProjectileAction.Inline {
+    data class Direct(val entityType: EntityType<*>) : SpawnEntity<Entity>, ProjectileAction.Inline {
 
-        override fun getType(projectile: ItemStack): EntityType<*> = type
+        override fun getType(projectile: ItemStack): EntityType<*> = entityType
 
         override val codec: MapCodec<out Direct> get() = CODEC
 
         companion object {
-            val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity_type")
-                .xmap(::Direct, Direct::type)
+            val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity")
+                .xmap(::Direct, Direct::entityType)
         }
     }
 

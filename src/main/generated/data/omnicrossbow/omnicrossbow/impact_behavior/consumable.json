@@ -10,7 +10,7 @@
     "on_success": {
       "type": "omnicrossbow:conditional",
       "condition": {
-        "type": "omnicrossbow:loot_condition",
+        "type": "omnicrossbow:check_loot_condition",
         "condition": {
           "condition": "minecraft:match_tool",
           "predicate": {
@@ -22,7 +22,7 @@
           }
         }
       },
-      "on_fail": "omnicrossbow:succeed",
+      "on_fail": "omnicrossbow:pass",
       "on_success": {
         "type": "omnicrossbow:item_particle",
         "count": 8,

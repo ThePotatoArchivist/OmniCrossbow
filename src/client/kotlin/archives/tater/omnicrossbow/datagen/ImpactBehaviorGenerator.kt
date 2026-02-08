@@ -25,8 +25,10 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.BlockTags
+import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
@@ -39,6 +41,7 @@ import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLoca
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
 import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
 import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
+import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
 import java.util.concurrent.CompletableFuture
 
 class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: CompletableFuture<HolderLookup.Provider>) :
@@ -70,8 +73,34 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
 
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
+        register(ItemTags.LIGHTNING_RODS, Conditional(
+            condition = AllOf(
+                Conditional(
+                    condition = OmniCrossbowImpactActions.IS_BLOCK,
+                    onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+                    onFail = OmniCrossbowImpactActions.PASS
+                ),
+                BlockOffset(
+                    CheckLootCondition(allOf(
+                        checkLocation(location().setCanSeeSky(true)),
+                        weather().setThundering(true)
+                    )),
+                    direction = 1
+                )
+            ),
+            onSuccess = AllOf(
+                BlockOffset(
+                    SummonEntity(EntityType.LIGHTNING_BOLT, onTarget = true),
+                    direction = 1,
+                    y = 1
+                ),
+                PlaySound(SoundEvents.TRIDENT_THUNDER)
+            ),
+            onFail = OmniCrossbowImpactActions.PASS
+        ))
+
         register("mining_tools", ItemPredicate { of(items, ConventionalItemTags.TOOLS) }, Conditional(
-            condition = LootCondition(
+            condition = CheckLootCondition(
                 anyOf(
                     OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK,
                     allOf(
@@ -101,7 +130,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         }, Conditional(
             condition = OmniCrossbowImpactActions.CONSUME_ITEM,
             onSuccess = Conditional(
-                condition = LootCondition(toolMatches(itemPredicateBuilder {
+                condition = CheckLootCondition(toolMatches(itemPredicateBuilder {
                     withComponents {
                         partial(OmniCrossbowConditions.CONSUMABLE_PREDICATE,
                             ConsumablePredicate(hasConsumeParticles = true)
@@ -109,7 +138,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                     }
                 })),
                 onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1),
-                onFail = OmniCrossbowImpactActions.SUCCEED
+                onFail = OmniCrossbowImpactActions.PASS
             )
         ))
 
@@ -118,7 +147,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 hasAny(DataComponents.EQUIPPABLE)
             }
         }, Conditional(
-            condition = LootCondition(
+            condition = CheckLootCondition(
                 anyOf(
                     LootItemEntityPropertyCondition.hasProperties(
                         LootContext.EntityTarget.TARGET_ENTITY,

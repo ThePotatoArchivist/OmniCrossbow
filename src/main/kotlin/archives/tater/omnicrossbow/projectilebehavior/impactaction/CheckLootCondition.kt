@@ -15,7 +15,7 @@ import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
 @JvmRecord
-data class LootCondition(
+data class CheckLootCondition(
     val condition: LootItemCondition
 ) : ImpactAction.Inline {
 
@@ -51,8 +51,8 @@ data class LootCondition(
             required(LootContextParams.TOOL)
         }
 
-        val CODEC: MapCodec<LootCondition> = RecordCodecBuilder.mapCodec { it.group(
-            LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(CUSTOM_PROJECTILE_CONTEXT)).fieldOf("condition").forGetter(LootCondition::condition)
-        ).apply(it, ::LootCondition) }
+        val CODEC: MapCodec<CheckLootCondition> = RecordCodecBuilder.mapCodec { it.group(
+            LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(CUSTOM_PROJECTILE_CONTEXT)).fieldOf("condition").forGetter(CheckLootCondition::condition)
+        ).apply(it, ::CheckLootCondition) }
     }
 }
