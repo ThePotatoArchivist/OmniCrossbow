@@ -15,6 +15,7 @@ import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.ProjectileUtil
 import net.minecraft.world.item.SpawnEggItem
@@ -26,22 +27,14 @@ object OmniCrossbowProjectileActions {
         Registry.register(OmniCrossbowBuiltinRegistries.PROJECTILE_ACTION_TYPE, OmniCrossbow.id(path), codec)
     }
 
-    private fun register(path: String, action: ProjectileAction): ProjectileAction =
+    private fun <T: ProjectileAction> register(path: String, action: T): T =
         Registry.register(OmniCrossbowBuiltinRegistries.PROJECTILE_ACTION, OmniCrossbow.id(path), action)
 
     private fun registerDelegated(path: String, action: Delegated) = register(path, action)
 
     private fun registerProjectile(path: String, action: SpawnProjectile<*>) = register(path, action)
 
-    private fun registerEntity(path: String, action: SpawnEntity<*>) = register(path, action)
-
-    init {
-        register("default", ProjectileAction.Default)
-        register("spawn_projectile", SpawnProjectile.Direct.CODEC)
-        register("spawn_entity", SpawnEntity.Direct.CODEC)
-        register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
-        registerEntity("spawn_entity/item", SpawnEntity.Item)
-    }
+    private fun <E: Entity> registerEntity(path: String, action: SpawnEntity<E>) = register(path, action)
 
     @JvmField
     val NONE = registerDelegated("none") { _, _, _, _, _, _ -> }
@@ -98,6 +91,10 @@ object OmniCrossbowProjectileActions {
     }
 
     fun init() {
-
+        register("default", ProjectileAction.Default)
+        register("spawn_projectile", SpawnProjectile.Direct.CODEC)
+        register("spawn_entity", SpawnEntity.Direct.CODEC)
+        register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
+        registerEntity("spawn_entity/item", SpawnEntity.Item)
     }
 }
