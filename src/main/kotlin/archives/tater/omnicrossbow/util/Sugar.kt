@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.util
 
+import com.mojang.serialization.Codec
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.EntityPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
@@ -8,6 +9,7 @@ import net.minecraft.core.TypedInstance
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
+import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.context.ContextKey
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.Item
@@ -52,3 +54,5 @@ typealias McUnit = net.minecraft.util.Unit
 
 fun <T, U> ifNotNull(value: T?, transform: (T) -> U) = value?.let(transform)
 infix fun <T> T?.orElse(value: () -> T) = this ?: value()
+
+fun <T: Any> Codec<T>.singleOrList(): Codec<List<T>> = ExtraCodecs.compactListCodec(this)

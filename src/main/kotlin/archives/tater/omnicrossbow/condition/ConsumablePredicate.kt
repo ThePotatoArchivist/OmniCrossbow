@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.condition
 
+import archives.tater.omnicrossbow.util.singleOrList
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.advancements.criterion.MinMaxBounds
@@ -47,11 +48,11 @@ data class ConsumablePredicate(
 
     companion object {
         val CODEC: Codec<ConsumablePredicate> = RecordCodecBuilder.create { it.group(
-            ItemUseAnimation.CODEC.listOf().optionalFieldOf("animation").forGetter(ConsumablePredicate::animation),
+            ItemUseAnimation.CODEC.singleOrList().optionalFieldOf("animation").forGetter(ConsumablePredicate::animation),
             MinMaxBounds.Doubles.CODEC.optionalFieldOf("consume_seconds", MinMaxBounds.Doubles.ANY).forGetter(ConsumablePredicate::consumeSeconds),
-            SoundEvent.CODEC.listOf().optionalFieldOf("sound").forGetter(ConsumablePredicate::sound),
+            SoundEvent.CODEC.singleOrList().optionalFieldOf("sound").forGetter(ConsumablePredicate::sound),
             Codec.BOOL.optionalFieldOf("has_consume_particles").forGetter(ConsumablePredicate::hasConsumeParticles),
-            BuiltInRegistries.CONSUME_EFFECT_TYPE.byNameCodec().listOf().optionalFieldOf("on_consume_effects").forGetter(ConsumablePredicate::consumeEffects)
+            BuiltInRegistries.CONSUME_EFFECT_TYPE.byNameCodec().singleOrList().optionalFieldOf("on_consume_effects").forGetter(ConsumablePredicate::consumeEffects)
         ).apply(it, ::ConsumablePredicate) }
     }
 }

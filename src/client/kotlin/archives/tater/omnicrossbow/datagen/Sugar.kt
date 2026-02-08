@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack.RegistryDependentFactory
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.client.renderer.block.model.ItemTransform
+import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -38,4 +39,4 @@ fun ItemTransform(
     scale: Vector3f = Vector3f(1f)
 ) = ItemTransform(rotation, translation, scale)
 
-fun soundHolder(soundEvent: SoundEvent) = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
+fun soundHolder(soundEvent: SoundEvent): Holder<SoundEvent> = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)

@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.client.render
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.datagen.ItemTransform
+import archives.tater.omnicrossbow.util.singleOrList
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
@@ -96,7 +97,7 @@ object AmmoPosition : ResourceManagerReloadListener {
             ).apply(it, ::ItemTransform) }
 
             val CODEC: Codec<Entry> = RecordCodecBuilder.create { it.group(
-                Codec.either(BuiltInRegistries.ITEM.byNameCodec(), TagKey.hashedCodec(Registries.ITEM)).listOf().fieldOf("items").forGetter(Entry::items),
+                Codec.either(BuiltInRegistries.ITEM.byNameCodec(), TagKey.hashedCodec(Registries.ITEM)).singleOrList().fieldOf("items").forGetter(Entry::items),
                 ItemDisplayContext.CODEC.optionalFieldOf("display_context", ItemDisplayContext.FIXED).forGetter(Entry::displayContext),
                 TRANSFORM_CODEC.fieldOf("transform").forGetter(Entry::transform)
             ).apply(it, ::Entry) }

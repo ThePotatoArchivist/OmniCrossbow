@@ -1,8 +1,6 @@
 [
   {
-    "items": [
-      "#c:tools"
-    ],
+    "items": "#c:tools",
     "transform": {
       "rotation": [
         0.0,
@@ -17,9 +15,7 @@
     }
   },
   {
-    "items": [
-      "#c:tools/shear"
-    ],
+    "items": "#c:tools/shear",
     "transform": {
       "rotation": [
         0.0,
@@ -34,9 +30,7 @@
     }
   },
   {
-    "items": [
-      "#c:tools/melee_weapon"
-    ],
+    "items": "#c:tools/melee_weapon",
     "transform": {
       "rotation": [
         0.0,
@@ -52,9 +46,7 @@
   },
   {
     "display_context": "none",
-    "items": [
-      "#minecraft:spears"
-    ],
+    "items": "#minecraft:spears",
     "transform": {
       "rotation": [
         0.0,
@@ -74,9 +66,7 @@
     }
   },
   {
-    "items": [
-      "#minecraft:axes"
-    ],
+    "items": "#minecraft:axes",
     "transform": {
       "rotation": [
         0.0,
@@ -135,9 +125,7 @@
     }
   },
   {
-    "items": [
-      "minecraft:wind_charge"
-    ],
+    "items": "minecraft:wind_charge",
     "transform": {
       "translation": [
         -0.0625,
@@ -147,9 +135,7 @@
     }
   },
   {
-    "items": [
-      "minecraft:pufferfish"
-    ],
+    "items": "minecraft:pufferfish",
     "transform": {
       "translation": [
         -0.1875,
@@ -159,9 +145,7 @@
     }
   },
   {
-    "items": [
-      "minecraft:pointed_dripstone"
-    ],
+    "items": "minecraft:pointed_dripstone",
     "transform": {
       "rotation": [
         0.0,
