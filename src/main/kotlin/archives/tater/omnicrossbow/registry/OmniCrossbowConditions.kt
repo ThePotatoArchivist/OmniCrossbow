@@ -3,11 +3,13 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.condition.BreakingTimeProvider
 import archives.tater.omnicrossbow.condition.CanPickUpLoot
+import archives.tater.omnicrossbow.condition.ConsumablePredicate
 import archives.tater.omnicrossbow.condition.SingletonLootCondition
 import archives.tater.omnicrossbow.util.get
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.component.predicates.DataComponentPredicate
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.context.ContextKey
 import net.minecraft.world.level.storage.loot.LootContext
@@ -31,6 +33,12 @@ object OmniCrossbowConditions {
             .get(DataComponents.TOOL)
             ?.isCorrectForDrops(state) == true
     }
+
+    val CONSUMABLE_PREDICATE: DataComponentPredicate.ConcreteType<ConsumablePredicate> = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_PREDICATE_TYPE,
+        OmniCrossbow.id("consumable"),
+        DataComponentPredicate.ConcreteType(ConsumablePredicate.CODEC)
+    )
 
     fun init() {
         Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)

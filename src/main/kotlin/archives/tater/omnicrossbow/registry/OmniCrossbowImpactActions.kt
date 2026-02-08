@@ -44,6 +44,8 @@ object OmniCrossbowImpactActions {
             hit is EntityHitResult && action(level, projectile, hit, originalItem)
         }
 
+    val SUCCEED = register("succeed") { _, _, _, _ -> true }
+
     val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit, _ ->
         val state = level.getBlockState(hit.blockPos)
         val blockEntity = if (state.hasBlockEntity()) level.getBlockEntity(hit.blockPos) else null

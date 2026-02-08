@@ -8,12 +8,29 @@
     "type": "omnicrossbow:conditional",
     "condition": "omnicrossbow:consume_item",
     "on_success": {
-      "type": "omnicrossbow:item_particle",
-      "count": 8,
-      "dx": 0.0,
-      "dy": 0.0,
-      "dz": 0.0,
-      "speed": 0.1
+      "type": "omnicrossbow:conditional",
+      "condition": {
+        "type": "omnicrossbow:loot_condition",
+        "condition": {
+          "condition": "minecraft:match_tool",
+          "predicate": {
+            "predicates": {
+              "omnicrossbow:consumable": {
+                "has_consume_particles": true
+              }
+            }
+          }
+        }
+      },
+      "on_fail": "omnicrossbow:succeed",
+      "on_success": {
+        "type": "omnicrossbow:item_particle",
+        "count": 8,
+        "dx": 0.0,
+        "dy": 0.0,
+        "dz": 0.0,
+        "speed": 0.1
+      }
     }
   }
 }

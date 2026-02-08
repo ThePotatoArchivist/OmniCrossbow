@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.condition.BreakingTimeProvider
 import archives.tater.omnicrossbow.condition.CanPickUpLoot
+import archives.tater.omnicrossbow.condition.ConsumablePredicate
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowConditions
@@ -99,7 +100,17 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             }
         }, Conditional(
             condition = OmniCrossbowImpactActions.CONSUME_ITEM,
-            onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1)
+            onSuccess = Conditional(
+                condition = LootCondition(toolMatches(itemPredicateBuilder {
+                    withComponents {
+                        partial(OmniCrossbowConditions.CONSUMABLE_PREDICATE,
+                            ConsumablePredicate(hasConsumeParticles = true)
+                        )
+                    }
+                })),
+                onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1),
+                onFail = OmniCrossbowImpactActions.SUCCEED
+            )
         ))
 
         register("equippable", ItemPredicate {
