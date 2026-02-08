@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.projectilebehavior
 
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
+import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
@@ -62,15 +62,15 @@ data class ProjectileBehavior(
             ProjectileBehavior(projectileAction, velocityScale, shootSound, remainder)
 
         fun getFallback(item: Item): ProjectileBehavior = when (item) {
-            is SpawnEggItem -> SpawnEntity.FromEgg
-            is MobBucketItem -> SpawnEntity.FromBucket
-            is BoatItem -> SpawnEntity.Boat
-            is MinecartItem -> SpawnEntity.Minecart
+            is SpawnEggItem -> OmniCrossbowProjectileActions.FROM_EGG
+            is MobBucketItem -> OmniCrossbowProjectileActions.FROM_BUCKET
+            is BoatItem -> OmniCrossbowProjectileActions.SPAWN_BOAT
+            is MinecartItem -> OmniCrossbowProjectileActions.SPAWN_MINECART
             is BlockItem if item.block is FallingBlock -> SpawnEntity.FallingBlock(item.block.defaultBlockState())
             else -> null
         }?.let {
             of(it, 0.3f, remainder = if (item is MobBucketItem) ItemStackTemplate(Items.WATER_BUCKET) else null)
-        } ?: ProjectileBehavior(SpawnProjectile.Custom) // TODO generic item projectile
+        } ?: ProjectileBehavior(OmniCrossbowProjectileActions.CUSTOM_ITEM_PROJECTILE) // TODO generic item projectile
 
         @JvmStatic
         fun getBehavior(level: Level, projectile: ItemStack): ProjectileBehavior =

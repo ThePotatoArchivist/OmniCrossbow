@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
-import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.mixin.behavior.AbstractArrowAccessor
 import archives.tater.omnicrossbow.mixin.behavior.ThrownTridentAccessor
 import com.mojang.serialization.MapCodec
@@ -15,7 +14,7 @@ import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableIt
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-interface SpawnProjectile<T: Projectile> : ProjectileAction {
+fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
     fun createProjectile(
         level: Level,
         shooter: LivingEntity,
@@ -25,7 +24,7 @@ interface SpawnProjectile<T: Projectile> : ProjectileAction {
 
     @ConsistentCopyVisibility
     @JvmRecord
-    data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile> {
+    data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile>, ProjectileAction.Inline {
 
         override fun createProjectile(
             level: Level,
@@ -51,7 +50,7 @@ interface SpawnProjectile<T: Projectile> : ProjectileAction {
             }
         }
 
-        override val codec: MapCodec<out ProjectileAction> get() = CODEC
+        override val codec: MapCodec<out Direct> get() = CODEC
 
         companion object {
             val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity_type")
@@ -61,14 +60,5 @@ interface SpawnProjectile<T: Projectile> : ProjectileAction {
 
             operator fun invoke(type: EntityType<out Projectile>) = of(type)
         }
-    }
-
-    data object Custom : Singleton(), SpawnProjectile<CustomItemProjectile> {
-        override fun createProjectile(
-            level: Level,
-            shooter: LivingEntity,
-            weapon: ItemStack,
-            projectile: ItemStack
-        ) = CustomItemProjectile(shooter, level, projectile)
     }
 }

@@ -4,9 +4,7 @@
       "minecraft:bucket_entity_data": {}
     }
   },
-  "projectile_action": {
-    "type": "omnicrossbow:spawn_entity/from_bucket"
-  },
+  "projectile_action": "omnicrossbow:spawn_entity/from_bucket",
   "remainder": {
     "id": "minecraft:water_bucket"
   },

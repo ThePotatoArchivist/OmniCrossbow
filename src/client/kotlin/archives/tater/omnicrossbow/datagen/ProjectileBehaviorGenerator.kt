@@ -74,19 +74,19 @@ class ProjectileBehaviorGenerator(
 
         register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
         register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
-        register(ItemTags.BOATS, ProjectileBehavior(SpawnEntity.Boat, 0.5f))
+        register(ItemTags.BOATS, ProjectileBehavior(OmniCrossbowProjectileActions.SPAWN_BOAT, 0.5f))
 
         register("spawn_eggs", ItemPredicate {
             withComponents {
                 hasAny(DataComponents.ENTITY_DATA)
             }
-        }, ProjectileBehavior(SpawnEntity.FromEgg, 0.5f))
+        }, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_EGG, 0.5f))
 
         register("entity_buckets", ItemPredicate {
             withComponents {
                 hasAny(DataComponents.BUCKET_ENTITY_DATA)
             }
-        }, ProjectileBehavior.of(SpawnEntity.FromBucket, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
+        }, ProjectileBehavior.of(OmniCrossbowProjectileActions.FROM_BUCKET, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
 
         register(Items.FEATHER, ProjectileBehavior(SpawnEntity.Item, velocityScale = 0.3f))
 

@@ -1,7 +1,5 @@
 {
   "items": "#minecraft:boats",
-  "projectile_action": {
-    "type": "omnicrossbow:spawn_entity/boat"
-  },
+  "projectile_action": "omnicrossbow:spawn_entity/boat",
   "velocity_scale": 0.5
 }

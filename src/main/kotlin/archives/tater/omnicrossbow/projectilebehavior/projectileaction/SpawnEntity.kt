@@ -1,24 +1,26 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
-import archives.tater.omnicrossbow.mixin.behavior.*
+import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
+import archives.tater.omnicrossbow.mixin.behavior.ItemEntityAccessor
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.entity.*
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntitySpawnReason
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.SpawnEggItem
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
-interface SpawnEntity<T: Entity> : Delegated {
+fun interface SpawnEntity<T: Entity> : Delegated {
 
     fun getType(projectile: ItemStack): EntityType<out T>?
 
@@ -51,11 +53,11 @@ interface SpawnEntity<T: Entity> : Delegated {
     }
 
     @JvmRecord
-    data class Direct(val type: EntityType<*>) : SpawnEntity<Entity> {
+    data class Direct(val type: EntityType<*>) : SpawnEntity<Entity>, ProjectileAction.Inline {
 
         override fun getType(projectile: ItemStack): EntityType<*> = type
 
-        override val codec: MapCodec<out ProjectileAction> get() = CODEC
+        override val codec: MapCodec<out Direct> get() = CODEC
 
         companion object {
             val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity_type")
@@ -67,7 +69,7 @@ interface SpawnEntity<T: Entity> : Delegated {
     data class FallingBlock(
         val state: BlockState,
         val hurtsEntities: Optional<HurtsEntities> = Optional.empty(),
-    ) : SpawnEntity<FallingBlockEntity> {
+    ) : SpawnEntity<FallingBlockEntity>, ProjectileAction.Inline {
 
         constructor(state: BlockState, damagePerDistance: Float, damageMax: Int)
             : this(state, Optional.of(HurtsEntities(damagePerDistance, damageMax)))
@@ -90,7 +92,7 @@ interface SpawnEntity<T: Entity> : Delegated {
             }
         }
 
-        override val codec: MapCodec<out ProjectileAction> get() = CODEC
+        override val codec: MapCodec<out FallingBlock> get() = CODEC
 
         @JvmRecord
         data class HurtsEntities(val damagePerDistance: Float, val damageMax: Int) {
@@ -108,25 +110,6 @@ interface SpawnEntity<T: Entity> : Delegated {
                 HurtsEntities.CODEC.optionalFieldOf("hurts_entities").forGetter(FallingBlock::hurtsEntities)
             ).apply(it, ::FallingBlock) }
         }
-    }
-
-    data object Boat : Singleton(), SpawnEntity<AbstractBoat> {
-        override fun getType(projectile: ItemStack): EntityType<out AbstractBoat>? =
-            (projectile.item as? BoatItemAccessor)?.entityType
-    }
-
-    data object Minecart : Singleton(), SpawnEntity<AbstractMinecart> {
-        override fun getType(projectile: ItemStack): EntityType<out AbstractMinecart>? =
-            (projectile.item as? MinecartItemAccessor)?.type
-    }
-
-    data object FromEgg : Singleton(), SpawnEntity<Entity> {
-        override fun getType(projectile: ItemStack): EntityType<*>? = SpawnEggItem.getType(projectile)
-    }
-
-    data object FromBucket : Singleton(), SpawnEntity<Mob> {
-        override fun getType(projectile: ItemStack): EntityType<out Mob>? =
-            (projectile.item as? MobBucketItemAccessor)?.type
     }
 
     data object Item : Singleton(), SpawnEntity<ItemEntity> {

@@ -1,6 +1,4 @@
 {
   "items": "#omnicrossbow:builtin_projectiles",
-  "projectile_action": {
-    "type": "omnicrossbow:default"
-  }
+  "projectile_action": "omnicrossbow:default"
 }

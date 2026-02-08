@@ -15,7 +15,9 @@ object OmniCrossbowRegistries {
 
     // Builtin
 
-    @JvmField val PROJECTILE_ACTION_TYPE = of<MapCodec<out ProjectileAction>>("projectile_action_type")
+    @JvmField val PROJECTILE_ACTION = of<ProjectileAction>("projectile_action")
+
+    @JvmField val PROJECTILE_ACTION_TYPE = of<MapCodec<out ProjectileAction.Inline>>("projectile_action_type")
 
     @JvmField val IMPACT_ACTION = of<ImpactAction>("impact_action")
 
