@@ -27,7 +27,7 @@ data class LootCondition(
         hit: HitResult,
         originalItem: ItemStack,
     ): Boolean = condition.test(LootContext(level, CUSTOM_PROJECTILE_CONTEXT) {
-        withParameter(LootContextParams.ORIGIN, hit.location)
+        withParameter(LootContextParams.ORIGIN, if (hit is BlockHitResult) hit.blockPos.center else hit.location)
         withOptionalParameter(LootContextParams.ATTACKING_ENTITY, projectile.owner)
         withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, projectile)
         withParameter(LootContextParams.TOOL, originalItem)
