@@ -103,6 +103,8 @@ class ProjectileBehaviorGenerator(
 
         register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM))
 
+        register(Items.BLAZE_ROD, ProjectileBehavior(OmniCrossbowProjectileActions.FIRE_BEAM, shootSound = soundHolder(SoundEvents.FIRECHARGE_USE)))
+
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 
     }

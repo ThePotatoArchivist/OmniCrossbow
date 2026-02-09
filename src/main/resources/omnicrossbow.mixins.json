@@ -11,6 +11,7 @@
     "behavior.EntityAccessor",
     "behavior.FallingBlockEntityAccessor",
     "behavior.FallingBlockInvoker",
+    "behavior.FireBlockInvoker",
     "behavior.ItemEntityAccessor",
     "behavior.LivingEntityInvoker",
     "behavior.MinecartItemAccessor",

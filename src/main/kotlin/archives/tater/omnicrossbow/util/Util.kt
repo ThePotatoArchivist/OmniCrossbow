@@ -14,12 +14,14 @@ import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
 import net.minecraft.util.context.ContextKeySet
-import net.minecraft.world.entity.ai.attributes.Attribute
-import net.minecraft.world.entity.ai.attributes.AttributeInstance
-import net.minecraft.world.entity.ai.attributes.AttributeModifier
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.loot.Validatable
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
 import java.util.*
+import java.util.function.Predicate
 
 inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type: DataComponentType<T>, combine: (T, Int) -> U): U? {
     if (stack.isEmpty) return null
@@ -61,3 +63,27 @@ inline fun <reified B: A, A> Codec<B>.narrow(crossinline error: (A) -> String): 
     { it },
     { if (it is B) DataResult.success(it) else DataResult.error { error(it) } }
 )
+
+fun getEntitiesPierced(
+    level: Level,
+    start: Vec3,
+    stop: Vec3,
+    margin: Double,
+    except: Entity?,
+    predicate: Predicate<Entity>?
+): List<Entity> {
+    val areaBox = AABB(start, stop).inflate(margin)
+    return level.getEntities(except, areaBox, { entity ->
+        val box = entity.boundingBox.inflate(margin + entity.pickRadius)
+        (box.contains(start) || box.clip(start, stop).isPresent) && predicate?.test(entity) != false
+    })
+}
+
+fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, except: Entity?): List<Entity> =
+    getEntitiesPierced(level, start, stop, margin, except, null)
+
+fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, predicate: Predicate<Entity>?): List<Entity> =
+    getEntitiesPierced(level, start, stop, margin, null, predicate)
+
+fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double): List<Entity> =
+    getEntitiesPierced(level, start, stop, margin, null, null)

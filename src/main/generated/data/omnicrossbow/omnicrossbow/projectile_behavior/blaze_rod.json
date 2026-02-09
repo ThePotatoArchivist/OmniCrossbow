@@ -1,0 +1,5 @@
+{
+  "items": "minecraft:blaze_rod",
+  "projectile_action": "omnicrossbow:special/fire_beam",
+  "shoot_sound": "minecraft:item.firecharge.use"
+}

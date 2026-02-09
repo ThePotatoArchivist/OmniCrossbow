@@ -63,8 +63,10 @@ object OmniCrossbowImpactActions {
             hit is EntityHitResult && action(level, projectile, hit, originalItem)
         }
 
+    @JvmField
     val PASS = register("pass") { _, _, _, _ -> true }
 
+    @JvmField
     val BREAK_BLOCK = registerBlock("break_block") { level, projectile, hit, _ ->
         val state = level.getBlockState(hit.blockPos)
         val blockEntity = if (state.hasBlockEntity()) level.getBlockEntity(hit.blockPos) else null
@@ -73,6 +75,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    @JvmField
     val CONSUME_ITEM = registerEntity("consume_item") { level, projectile, hit, _ ->
         val entity = hit.entity as? LivingEntity ?: return@registerEntity false
         val stack = projectile.item.finishUsingItem(level, entity)
@@ -81,6 +84,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    @JvmField
     val EQUIP = registerEntity("equip") { level, projectile, hit, _ ->
         val entity = hit.entity as? LivingEntity ?: return@registerEntity false
         val stack = projectile.item
@@ -96,11 +100,13 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    @JvmField
     val SHRINK = register("shrink") { _, projectile, _, _ ->
         projectile.item.shrink(1)
         true
     }
 
+    @JvmField
     val DURABILITY_DAMAGE = register("durability_damage") { level, projectile, hit, _ ->
         val stack = projectile.item
         if (!stack.isDamageableItem) return@register false
@@ -110,6 +116,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    @JvmField
     val USE_ITEM = register("use_item") { level, projectile, hit, _ ->
         val player = createFakePlayer(level, projectile)
         val result = when (hit) {
@@ -128,6 +135,7 @@ object OmniCrossbowImpactActions {
         result.consumesAction()
     }
 
+    @JvmField
     val USE_BUCKET = register("use_bucket") { level, projectile, hit, _ ->
         val simHit = when (hit) {
             is BlockHitResult -> hit.withPosition(hit.blockPos.relative(hit.direction))
@@ -154,15 +162,19 @@ object OmniCrossbowImpactActions {
         }.consumesAction()
     }
 
+    @JvmField
     val HAIRCUT = register("haircut") { _, _, hit, _ ->
         val player = (hit as? EntityHitResult)?.entity as? ServerPlayer ?: return@register false
         ServerPlayNetworking.send(player, HaircutPayload)
         true
     }
 
+    @JvmField
     val IS_BLOCK = registerBlock("is_block") { _, _, _, _ -> true }
+    @JvmField
     val IS_ENTITY = registerEntity("is_entity") { _, _, _, _ -> true }
 
+    @JvmField
     val FIREWORK_EXPLOSION = register("firework_explosion") { level, projectile, _, _ ->
         if (DataComponents.FIREWORK_EXPLOSION !in projectile.item) return@register false
 
@@ -193,6 +205,7 @@ object OmniCrossbowImpactActions {
         true
     }
 
+    @JvmField
     val DYE = registerBlock("dye") { level, projectile, hit, _ ->
         if (DataComponents.DYE !in projectile.item) return@registerBlock false
 
