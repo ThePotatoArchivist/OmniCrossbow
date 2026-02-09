@@ -17,7 +17,7 @@ data class AnyOf(val actions: List<ImpactAction>) : ImpactAction.Inline {
         projectile: CustomItemProjectile,
         hit: HitResult,
         originalItem: ItemStack,
-    ): Boolean = actions.all { it.tryImpact(level, projectile, hit, originalItem) }
+    ): Boolean = actions.any { it.tryImpact(level, projectile, hit, originalItem) }
 
     override val codec: MapCodec<out ImpactAction.Inline> get() = CODEC
 

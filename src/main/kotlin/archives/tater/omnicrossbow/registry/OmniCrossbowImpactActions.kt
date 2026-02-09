@@ -204,5 +204,6 @@ object OmniCrossbowImpactActions {
         register("check_loot_condition", CheckLootCondition.CODEC)
         register("play_sound", PlaySound.CODEC)
         register("summon_entity", SummonEntity.CODEC)
+        register("damage", Damage.CODEC)
     }
 }

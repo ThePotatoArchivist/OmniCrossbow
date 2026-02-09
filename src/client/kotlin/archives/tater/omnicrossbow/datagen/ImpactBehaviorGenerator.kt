@@ -186,7 +186,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register("use", ItemPredicate {}, OmniCrossbowImpactActions.USE_ITEM)
+        register("use", ItemPredicate {}, AnyOf(
+            OmniCrossbowImpactActions.USE_ITEM,
+            Damage()
+        ))
     }
 
     override fun getName(): String = "Impact Behaviors"

@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.entity
 
 import archives.tater.omnicrossbow.mixin.behavior.EntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.LivingEntityInvoker
 import archives.tater.omnicrossbow.util.ifNotNull
 import archives.tater.omnicrossbow.util.orElse
 import net.fabricmc.fabric.api.entity.FakePlayer
@@ -14,8 +15,11 @@ fun createFakePlayer(level: ServerLevel, projectile: CustomItemProjectile): Fake
     FakePlayer.get(level)
 }).apply {
     this as EntityAccessor
+    this as LivingEntityInvoker
     snapTo(projectile.position(), projectile.xRot, projectile.yRot)
     eyeHeight = 0f
     deltaMovement = projectile.deltaMovement
     setItemInHand(InteractionHand.MAIN_HAND, projectile.item)
+    invokeCollectEquipmentChanges()
+    setAttackStrengthTicker(Int.MAX_VALUE)
 }

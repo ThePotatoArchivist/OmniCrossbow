@@ -1,4 +1,12 @@
 {
   "items": {},
-  "value": "omnicrossbow:use_item"
+  "value": {
+    "type": "omnicrossbow:any_of",
+    "actions": [
+      "omnicrossbow:use_item",
+      {
+        "type": "omnicrossbow:damage"
+      }
+    ]
+  }
 }

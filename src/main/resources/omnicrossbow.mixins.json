@@ -12,6 +12,7 @@
     "behavior.FallingBlockEntityAccessor",
     "behavior.FallingBlockInvoker",
     "behavior.ItemEntityAccessor",
+    "behavior.LivingEntityInvoker",
     "behavior.MinecartItemAccessor",
     "behavior.MobBucketItemAccessor",
     "behavior.MobInvoker",
