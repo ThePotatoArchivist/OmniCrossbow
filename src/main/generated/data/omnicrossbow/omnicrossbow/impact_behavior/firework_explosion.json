@@ -1,0 +1,12 @@
+{
+  "items": {
+    "predicates": {
+      "minecraft:firework_explosion": {}
+    }
+  },
+  "value": {
+    "type": "omnicrossbow:conditional",
+    "condition": "omnicrossbow:firework_explosion",
+    "on_success": "omnicrossbow:shrink"
+  }
+}

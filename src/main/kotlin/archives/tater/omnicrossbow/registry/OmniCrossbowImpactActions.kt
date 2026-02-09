@@ -7,6 +7,7 @@ import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
+import archives.tater.omnicrossbow.util.contains
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -129,9 +130,9 @@ object OmniCrossbowImpactActions {
     val IS_ENTITY = registerEntity("is_entity") { _, _, _, _ -> true }
 
     val FIREWORK_EXPLOSION = register("firework_explosion") { level, projectile, _, _ ->
-        level.chunkSource.sendToTrackingPlayersAndSelf(projectile, ClientboundCustomPayloadPacket(FireworksPayload(projectile.id)))
+        if (DataComponents.FIREWORK_EXPLOSION !in projectile.item) return@register false
 
-        val explosion = projectile.item[DataComponents.FIREWORK_EXPLOSION] ?: return@register false
+        level.chunkSource.sendToTrackingPlayersAndSelf(projectile, ClientboundCustomPayloadPacket(FireworksPayload(projectile.id)))
 
         projectile.gameEvent(GameEvent.EXPLODE, projectile.owner)
 
@@ -154,8 +155,6 @@ object OmniCrossbowImpactActions {
                 }
             }
         }
-
-        explosion
 
         true
     }

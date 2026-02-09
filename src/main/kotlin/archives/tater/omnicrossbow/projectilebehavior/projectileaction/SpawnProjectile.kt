@@ -40,7 +40,7 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
                 setFiredFromWeapon(weapon.copy())
                 invokeSetPickupItemStack(projectile)
                 applyComponentsFromItemStack(projectile)
-                if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE))
+                if (DataComponents.INTANGIBLE_PROJECTILE in projectile)
                     pickup = AbstractArrow.Pickup.CREATIVE_ONLY
             }
             (this as? ThrownTrident)?.apply {

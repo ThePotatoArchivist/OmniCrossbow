@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
 import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
 import archives.tater.omnicrossbow.mixin.behavior.ItemEntityAccessor
+import archives.tater.omnicrossbow.util.contains
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -84,7 +85,7 @@ fun interface SpawnEntity<T: Entity> : Delegated {
             yo = position().y
             zo = position().z
             startPos = blockPosition()
-            if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE))
+            if (DataComponents.INTANGIBLE_PROJECTILE in projectile)
                 disableDrop()
             (state.block as? FallingBlockInvoker)?.invokeFalling(this)
             hurtsEntities.ifPresent {
@@ -118,7 +119,7 @@ fun interface SpawnEntity<T: Entity> : Delegated {
         override fun ItemEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
             this as ItemEntityAccessor
             item = projectile.copy()
-            if (projectile.has(DataComponents.INTANGIBLE_PROJECTILE)) {
+            if (DataComponents.INTANGIBLE_PROJECTILE in projectile) {
                 setNeverPickUp()
                 age = 6000 - 10 * 20
             } else

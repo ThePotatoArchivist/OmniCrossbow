@@ -6,6 +6,7 @@ import net.minecraft.advancements.criterion.EntityPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.HolderSet
 import net.minecraft.core.TypedInstance
+import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
@@ -56,3 +57,5 @@ fun <T, U> ifNotNull(value: T?, transform: (T) -> U) = value?.let(transform)
 infix fun <T> T?.orElse(value: () -> T) = this ?: value()
 
 fun <T: Any> Codec<T>.singleOrList(): Codec<List<T>> = ExtraCodecs.compactListCodec(this)
+
+operator fun DataComponentHolder.contains(type: DataComponentType<*>) = has(type)
