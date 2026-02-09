@@ -55,7 +55,7 @@ object OmniCrossbowProjectileActions {
     }
 
     @JvmField
-    val FROM_EGG = registerEntity("spawn_entity/from_egg") {
+    val FROM_ENTITY_DATA = registerEntity("spawn_entity/from_entity_data") {
         SpawnEggItem.getType(it)
     }
 

@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -59,6 +60,14 @@ class ProjectileBehaviorGenerator(
             register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, ItemPredicate { of(items, item) }, behavior)
         }
 
+        fun register(componentType: DataComponentType<*>, behavior: ProjectileBehavior) {
+            register(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType)!!.path, ItemPredicate {
+                withComponents {
+                    hasAny(componentType)
+                }
+            }, behavior)
+        }
+
         register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EGG)))
         register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SNOWBALL)))
         register(Items.ENDER_PEARL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.ENDER_PEARL)))
@@ -75,11 +84,7 @@ class ProjectileBehaviorGenerator(
         register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
         register(ItemTags.BOATS, ProjectileBehavior(OmniCrossbowProjectileActions.SPAWN_BOAT, 0.5f))
 
-        register("spawn_eggs", ItemPredicate {
-            withComponents {
-                hasAny(DataComponents.ENTITY_DATA)
-            }
-        }, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_EGG, 0.5f))
+        register(DataComponents.ENTITY_DATA, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_ENTITY_DATA, 0.5f))
 
         register("entity_buckets", ItemPredicate {
             withComponents {

@@ -35,7 +35,7 @@ data class Ammo(
         fun supportedProjectiles(weapon: ItemStack, held: Boolean) = Predicate<ItemStack> { stack ->
             weapon.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().any { (enchantment, _) ->
                 enchantment.value().getEffects(OmniCrossbowEnchantmentEffects.AMMO).any {
-                    (held || !it.held) && it.matches(stack)
+                    (held || !it.held) && stack != weapon && it.matches(stack)
                 }
             }
         }

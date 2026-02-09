@@ -84,6 +84,8 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
 
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
+        register(Items.MILK_BUCKET, OmniCrossbowImpactActions.CONSUME_ITEM)
+
         register(ItemTags.LIGHTNING_RODS, Conditional(
             condition = AllOf(
                 Conditional(
@@ -110,7 +112,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             onFail = OmniCrossbowImpactActions.PASS
         ))
 
-        register(ConventionalItemTags.BUCKETS, OmniCrossbowImpactActions.USE_BUCKET)
+        register(ConventionalItemTags.BUCKETS, AnyOf(
+            OmniCrossbowImpactActions.USE_ITEM,
+            OmniCrossbowImpactActions.USE_BUCKET,
+        ))
 
         register(DataComponents.FIREWORK_EXPLOSION, Conditional(
             condition = OmniCrossbowImpactActions.FIREWORK_EXPLOSION,

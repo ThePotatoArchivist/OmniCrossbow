@@ -1,4 +1,10 @@
 {
   "items": "#c:buckets",
-  "value": "omnicrossbow:use_bucket"
+  "value": {
+    "type": "omnicrossbow:any_of",
+    "actions": [
+      "omnicrossbow:use_item",
+      "omnicrossbow:use_bucket"
+    ]
+  }
 }
