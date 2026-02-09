@@ -150,7 +150,13 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register(DataComponents.CONSUMABLE, Conditional(
-            condition = OmniCrossbowImpactActions.CONSUME_ITEM,
+            condition = Conditional(
+                condition = OmniCrossbowImpactActions.IS_ENTITY,
+                AnyOf(
+                    OmniCrossbowImpactActions.USE_ITEM,
+                    OmniCrossbowImpactActions.CONSUME_ITEM,
+                ),
+            ),
             onSuccess = Conditional(
                 condition = CheckLootCondition(toolMatches(itemPredicateBuilder {
                     withComponents {

@@ -6,7 +6,17 @@
   },
   "value": {
     "type": "omnicrossbow:conditional",
-    "condition": "omnicrossbow:consume_item",
+    "condition": {
+      "type": "omnicrossbow:conditional",
+      "condition": "omnicrossbow:is_entity",
+      "on_success": {
+        "type": "omnicrossbow:any_of",
+        "actions": [
+          "omnicrossbow:use_item",
+          "omnicrossbow:consume_item"
+        ]
+      }
+    },
     "on_success": {
       "type": "omnicrossbow:conditional",
       "condition": {
