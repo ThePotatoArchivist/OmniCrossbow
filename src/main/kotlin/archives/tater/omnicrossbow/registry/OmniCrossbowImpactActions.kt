@@ -4,25 +4,34 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
+import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.UseOnContext
+import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
+import net.minecraft.world.phys.Vec3
+import kotlin.math.sqrt
 
 
 object OmniCrossbowImpactActions {
@@ -118,6 +127,38 @@ object OmniCrossbowImpactActions {
 
     val IS_BLOCK = registerBlock("is_block") { _, _, _, _ -> true }
     val IS_ENTITY = registerEntity("is_entity") { _, _, _, _ -> true }
+
+    val FIREWORK_EXPLOSION = register("firework_explosion") { level, projectile, _, _ ->
+        level.chunkSource.sendToTrackingPlayersAndSelf(projectile, ClientboundCustomPayloadPacket(FireworksPayload(projectile.id)))
+
+        val explosion = projectile.item[DataComponents.FIREWORK_EXPLOSION] ?: return@register false
+
+        projectile.gameEvent(GameEvent.EXPLODE, projectile.owner)
+
+        val damageAmount = 7f
+        val radius = 5.0
+
+        for (target in level.getEntitiesOfClass(LivingEntity::class.java, projectile.boundingBox.inflate(radius))) {
+            if (!(projectile.distanceToSqr(target) > radius * radius)) {
+                if ((0..1).any {
+                    level.clip(ClipContext(
+                        projectile.position(),
+                        Vec3(target.x, target.getY(0.5 * it), target.z),
+                        ClipContext.Block.COLLIDER,
+                        ClipContext.Fluid.NONE,
+                        projectile
+                    )).type == HitResult.Type.MISS
+                }) {
+                    val damage = damageAmount * sqrt((radius - projectile.distanceTo(target)) / radius).toFloat()
+                    target.hurtServer(level, level.damageSources().source(DamageTypes.FIREWORKS, projectile, projectile.owner), damage)
+                }
+            }
+        }
+
+        explosion
+
+        true
+    }
 
     fun init() {
         register("none", ImpactAction.None)

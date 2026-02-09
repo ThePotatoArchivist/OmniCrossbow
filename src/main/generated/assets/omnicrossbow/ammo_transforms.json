@@ -125,7 +125,10 @@
     }
   },
   {
-    "items": "minecraft:wind_charge",
+    "items": [
+      "minecraft:wind_charge",
+      "minecraft:firework_star"
+    ],
     "transform": {
       "translation": [
         -0.0625,

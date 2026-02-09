@@ -19,6 +19,7 @@ import net.minecraft.advancements.criterion.EntityTypePredicate
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -71,6 +72,14 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             register(BuiltInRegistries.ITEM.getKey(item.asItem()).path, ItemPredicate { of(items, item) }, behavior)
         }
 
+        fun register(componentType: DataComponentType<*>, behavior: ImpactAction) {
+            register(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType)!!.path, ItemPredicate {
+                withComponents {
+                    hasAny(componentType)
+                }
+            }, behavior)
+        }
+
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
         register(ItemTags.LIGHTNING_RODS, Conditional(
@@ -99,7 +108,12 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             onFail = OmniCrossbowImpactActions.PASS
         ))
 
-        register("mining_tools", ItemPredicate { of(items, ConventionalItemTags.TOOLS) }, Conditional(
+        register(DataComponents.FIREWORK_EXPLOSION, Conditional(
+            condition = OmniCrossbowImpactActions.FIREWORK_EXPLOSION,
+            onSuccess = OmniCrossbowImpactActions.SHRINK
+        ))
+
+        register(DataComponents.TOOL, Conditional(
             condition = CheckLootCondition(
                 anyOf(
                     OmniCrossbowConditions.TOOL_SUITABLE_FOR_BLOCK,
@@ -123,11 +137,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register("consumable", ItemPredicate {
-            withComponents {
-                hasAny(DataComponents.CONSUMABLE)
-            }
-        }, Conditional(
+        register(DataComponents.CONSUMABLE, Conditional(
             condition = OmniCrossbowImpactActions.CONSUME_ITEM,
             onSuccess = Conditional(
                 condition = CheckLootCondition(toolMatches(itemPredicateBuilder {
@@ -142,11 +152,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register("equippable", ItemPredicate {
-            withComponents {
-                hasAny(DataComponents.EQUIPPABLE)
-            }
-        }, Conditional(
+        register(DataComponents.EQUIPPABLE, Conditional(
             condition = CheckLootCondition(
                 anyOf(
                     LootItemEntityPropertyCondition.hasProperties(

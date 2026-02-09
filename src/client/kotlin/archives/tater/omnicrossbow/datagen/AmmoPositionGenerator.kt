@@ -81,6 +81,7 @@ class AmmoPositionGenerator(
                 translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
             )) {
                 +Items.WIND_CHARGE
+                +Items.FIREWORK_STAR
             },
             AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM.transform) {
                 +Items.PUFFERFISH
