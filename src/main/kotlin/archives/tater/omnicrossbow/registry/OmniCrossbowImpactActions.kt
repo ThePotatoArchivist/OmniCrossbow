@@ -8,6 +8,8 @@ import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.util.contains
+import archives.tater.omnicrossbow.util.get
+import archives.tater.omnicrossbow.util.set
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -23,8 +25,11 @@ import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.UseOnContext
+import net.minecraft.world.item.crafting.CraftingInput
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.gameevent.GameEvent
@@ -32,6 +37,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sqrt
 
 
@@ -106,7 +112,7 @@ object OmniCrossbowImpactActions {
             is BlockHitResult -> {
                 val player = createFakePlayer(level, projectile)
                 level.getBlockState(hit.blockPos).useItemOn(projectile.item, level, player, InteractionHand.MAIN_HAND, hit)
-                    .takeUnless { !it.consumesAction() }
+                    .takeIf { it.consumesAction() }
                     ?: projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, hit))
             }
             is EntityHitResult -> {
@@ -155,6 +161,34 @@ object OmniCrossbowImpactActions {
                 }
             }
         }
+
+        true
+    }
+
+    val DYE = registerBlock("dye") { level, projectile, hit, _ ->
+        if (DataComponents.DYE !in projectile.item) return@registerBlock false
+
+        val state = level[hit.blockPos]
+        val blockItem = state.block.asItem().defaultInstance.takeUnless { it.isEmpty } ?: return@registerBlock false
+
+        fun attemptDyeCraft(input: CraftingInput) =
+            level.recipeAccess().getRecipeFor(
+                RecipeType.CRAFTING,
+                input,
+                level
+            ).getOrNull()?.value?.assemble(input)
+
+        val result = attemptDyeCraft(CraftingInput.of(2, 1, listOf(blockItem, projectile.item)))?.takeIf { it.count == 1 }
+            ?: attemptDyeCraft(CraftingInput.of(3, 3, buildList {
+                repeat(4) { add(blockItem) }
+                add(projectile.item)
+                repeat(4) { add(blockItem) }
+            }))?.takeIf { it.count == 8 }
+            ?: return@registerBlock false
+
+        val block = (result.item as? BlockItem)?.block ?: return@registerBlock false
+
+        level[hit.blockPos] = block.withPropertiesOf(state)
 
         true
     }

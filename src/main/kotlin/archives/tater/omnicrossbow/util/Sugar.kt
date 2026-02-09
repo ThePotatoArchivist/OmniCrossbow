@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.EntityPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
+import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderSet
 import net.minecraft.core.TypedInstance
 import net.minecraft.core.component.DataComponentHolder
@@ -15,6 +16,9 @@ import net.minecraft.util.context.ContextKey
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.phys.Vec3
@@ -59,3 +63,6 @@ infix fun <T> T?.orElse(value: () -> T) = this ?: value()
 fun <T: Any> Codec<T>.singleOrList(): Codec<List<T>> = ExtraCodecs.compactListCodec(this)
 
 operator fun DataComponentHolder.contains(type: DataComponentType<*>) = has(type)
+
+operator fun BlockGetter.get(pos: BlockPos): BlockState = getBlockState(pos)
+operator fun Level.set(pos: BlockPos, state: BlockState) = setBlockAndUpdate(pos, state)

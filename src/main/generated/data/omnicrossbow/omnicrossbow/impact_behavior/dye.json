@@ -1,0 +1,25 @@
+{
+  "items": {
+    "predicates": {
+      "minecraft:dye": {}
+    }
+  },
+  "value": {
+    "type": "omnicrossbow:conditional",
+    "condition": "omnicrossbow:dye",
+    "on_success": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:item_particle",
+          "count": 8,
+          "dx": 0.0,
+          "dy": 0.0,
+          "dz": 0.0,
+          "speed": 0.1
+        },
+        "omnicrossbow:shrink"
+      ]
+    }
+  }
+}

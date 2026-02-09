@@ -56,6 +56,8 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         val blocks = entries.getLookup(Registries.BLOCK)
         val entities = entries.getLookup(Registries.ENTITY_TYPE)
 
+        val itemParticle = ItemParticle(8, 0.0, 0.0, 0.0, 0.1)
+
         fun register(path: String, behavior: ItemFiltered<ImpactAction>) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.IMPACT_BEHAVIOR, OmniCrossbow.id(path)), behavior)
         }
@@ -113,6 +115,14 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             onSuccess = OmniCrossbowImpactActions.SHRINK
         ))
 
+        register(DataComponents.DYE, Conditional(
+            condition = OmniCrossbowImpactActions.DYE,
+            onSuccess = AllOf(
+                itemParticle,
+                OmniCrossbowImpactActions.SHRINK
+            )
+        ))
+
         register(DataComponents.TOOL, Conditional(
             condition = CheckLootCondition(
                 anyOf(
@@ -147,7 +157,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                         )
                     }
                 })),
-                onSuccess = ItemParticle(8, 0.0, 0.0, 0.0, 0.1),
+                onSuccess = itemParticle,
                 onFail = OmniCrossbowImpactActions.PASS
             )
         ))
