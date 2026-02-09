@@ -4,12 +4,15 @@ import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
 import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
 import archives.tater.omnicrossbow.mixin.behavior.ItemEntityAccessor
 import archives.tater.omnicrossbow.util.contains
+import com.mojang.logging.LogUtils
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.ProblemReporter
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
@@ -17,7 +20,10 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.TagValueInput
+import net.minecraft.world.level.storage.TagValueOutput
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
@@ -80,6 +86,15 @@ fun interface SpawnEntity<T: Entity> : Delegated {
         override fun FallingBlockEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
             this as FallingBlockEntityAccessor
             blockState = state
+            if (state.hasBlockEntity()) (state.block as? EntityBlock)?.newBlockEntity(BlockPos.ZERO, state)?.let { blockEntity ->
+                blockData = ProblemReporter.ScopedCollector(LogUtils.getLogger()).use { problemReporter ->
+                    blockEntity.loadCustomOnly(TagValueInput.create(problemReporter, shooter.registryAccess(), projectile[DataComponents.BLOCK_ENTITY_DATA]?.copyTagWithoutId() ?: CompoundTag()))
+                    blockEntity.applyComponentsFromItemStack(projectile)
+                    TagValueOutput.createWithContext(problemReporter, shooter.registryAccess())
+                        .also { blockEntity.saveWithId(it) }
+                        .buildResult()
+                }
+            }
             blocksBuilding = true
             xo = position().x
             yo = position().y

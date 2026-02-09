@@ -224,7 +224,12 @@ object OmniCrossbowImpactActions {
                 level.setBlock(otherPos, block.withPropertiesOf(otherState), Block.UPDATE_CLIENTS or Block.UPDATE_IMMEDIATE or Block.UPDATE_KNOWN_SHAPE)
         }
 
+        val blockEntity = if (state.hasBlockEntity()) level.getBlockEntity(hit.blockPos) else null
+
         level[hit.blockPos] = block.withPropertiesOf(state)
+
+        if (blockEntity != null)
+            level.setBlockEntity(blockEntity)
 
         true
     }
