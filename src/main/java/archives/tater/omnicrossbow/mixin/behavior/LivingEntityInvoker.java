@@ -4,6 +4,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,4 +19,7 @@ public interface LivingEntityInvoker {
 
     @Accessor
     void setAttackStrengthTicker(int attackStrengthTicker);
+
+    @Invoker
+    float invokeGetKnockback(final Entity target, final DamageSource damageSource);
 }

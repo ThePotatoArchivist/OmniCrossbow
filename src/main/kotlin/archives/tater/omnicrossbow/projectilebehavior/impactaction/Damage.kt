@@ -2,16 +2,27 @@ package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
+import archives.tater.omnicrossbow.mixin.behavior.LivingEntityInvoker
+import archives.tater.omnicrossbow.mixin.behavior.PlayerInvoker
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
+
 @JvmRecord
 data class Damage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline {
+
+    /**
+     * @see Player.attack
+     */
     override fun tryImpact(
         level: ServerLevel,
         projectile: CustomItemProjectile,
@@ -20,7 +31,37 @@ data class Damage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline {
     ): Boolean {
         val entity = (hit as? EntityHitResult)?.entity ?: return false
 
-        val player = createFakePlayer(level, projectile).attack(entity)
+        val fakePlayer = createFakePlayer(level, projectile)
+        fakePlayer as PlayerInvoker
+        fakePlayer as LivingEntityInvoker
+
+        val owner = projectile.owner as? LivingEntity ?: fakePlayer
+        val instance = fakePlayer.getAttribute(Attributes.ATTACK_DAMAGE) ?: return false
+        instance.baseValue = baseAttackDamage.toDouble()
+
+        val baseDamage = instance.value.toFloat()
+        val attackingItemStack = projectile.item
+        val damageSource = attackingItemStack.getDamageSource(owner) { level.damageSources().run { if (owner is Player) playerAttack(owner) else mobAttack(owner) } }
+        val attackStrengthScale = 1f
+        val magicBoost = attackStrengthScale * EnchantmentHelper.modifyDamage(level, attackingItemStack, entity, damageSource, baseDamage) - baseDamage
+
+        if (baseDamage <= 0f && magicBoost <= 0f) return false
+
+        val totalDamage = baseDamage + attackingItemStack.item.getAttackDamageBonus(entity, baseDamage, damageSource) + magicBoost
+
+        val oldMovement = entity.deltaMovement
+        if (!entity.hurtServer(level, damageSource, totalDamage)) return false
+
+        fakePlayer.causeExtraKnockback(
+            entity,
+            fakePlayer.invokeGetKnockback(entity, damageSource),
+            oldMovement
+        )
+
+        (owner as? PlayerInvoker ?: fakePlayer).invokeItemAttackInteraction(entity, attackingItemStack, damageSource, true)
+
+//        fakePlayer.postPiercingAttack()
+
         return true
     }
 
