@@ -26,7 +26,6 @@ import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
@@ -86,7 +85,7 @@ class ProjectileBehaviorGenerator(
             withComponents {
                 hasAny(DataComponents.BUCKET_ENTITY_DATA)
             }
-        }, ProjectileBehavior.of(OmniCrossbowProjectileActions.FROM_BUCKET, 0.5f, remainder = ItemStackTemplate(Items.WATER_BUCKET)))
+        }, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_BUCKET, 0.5f, remainder = true))
 
         register(Items.FEATHER, ProjectileBehavior(SpawnEntity.Item, velocityScale = 0.3f))
 

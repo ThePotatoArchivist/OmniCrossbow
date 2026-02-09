@@ -5,8 +5,6 @@
     }
   },
   "projectile_action": "omnicrossbow:spawn_entity/from_bucket",
-  "remainder": {
-    "id": "minecraft:water_bucket"
-  },
+  "remainder": true,
   "velocity_scale": 0.5
 }

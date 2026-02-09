@@ -37,7 +37,10 @@ data class ProjectileBehavior(
     ) : this(projectileAction, velocityScale, Optional.ofNullable(shootSound), Either.right(remainder))
 
     fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
-        { if (it) projectile.craftingRemainder?.create() else null },
+        { if (it) when (val item = projectile.item) {
+            is MobBucketItem -> item.content.bucket.defaultInstance
+            else -> projectile.craftingRemainder?.create()
+        } else null },
         { it.create() }
     )
 

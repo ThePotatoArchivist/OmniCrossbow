@@ -110,6 +110,8 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             onFail = OmniCrossbowImpactActions.PASS
         ))
 
+        register(ConventionalItemTags.BUCKETS, OmniCrossbowImpactActions.USE_BUCKET)
+
         register(DataComponents.FIREWORK_EXPLOSION, Conditional(
             condition = OmniCrossbowImpactActions.FIREWORK_EXPLOSION,
             onSuccess = OmniCrossbowImpactActions.SHRINK

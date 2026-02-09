@@ -12,6 +12,7 @@ import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.set
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
+import net.minecraft.core.Direction
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.ItemParticleOption
@@ -108,22 +109,47 @@ object OmniCrossbowImpactActions {
     }
 
     val USE_ITEM = register("use_item") { level, projectile, hit, _ ->
+        val player = createFakePlayer(level, projectile)
         val result = when (hit) {
             is BlockHitResult -> {
-                val player = createFakePlayer(level, projectile)
                 level.getBlockState(hit.blockPos).useItemOn(projectile.item, level, player, InteractionHand.MAIN_HAND, hit)
                     .takeIf { it.consumesAction() }
                     ?: projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, hit))
             }
             is EntityHitResult -> {
-                hit.entity.interact(createFakePlayer(level, projectile), InteractionHand.MAIN_HAND, hit.location)
+                hit.entity.interact(player, InteractionHand.MAIN_HAND, hit.location)
             }
             else -> return@register false
         }
-        (result as? InteractionResult.Success)?.heldItemTransformedTo()?.let {
-            projectile.item = it
-        }
+        if (result is InteractionResult.Success)
+            projectile.item = result.heldItemTransformedTo()?:  player.mainHandItem
         result.consumesAction()
+    }
+
+    val USE_BUCKET = register("use_bucket") { level, projectile, hit, _ ->
+        val simHit = when (hit) {
+            is BlockHitResult -> hit.withPosition(hit.blockPos.relative(hit.direction))
+            is EntityHitResult -> BlockHitResult(hit.location, Direction.DOWN, hit.entity.blockPosition(), false)
+            else -> return@register false
+        }
+        val direction = simHit.direction.opposite
+        val pos = simHit.blockPos
+
+        val player = createFakePlayer(level, projectile, pos.center, when (direction) {
+            Direction.UP -> -90f
+            Direction.DOWN -> 90f
+            else -> 0f
+        }, when (direction) {
+            Direction.UP, Direction.DOWN -> 0f
+            else -> Direction.getYRot(direction)
+        })
+
+        (projectile.item.use(level, player, InteractionHand.MAIN_HAND).takeIf { it.consumesAction() }
+            ?: projectile.item.useOn(UseOnContext(level, player, InteractionHand.MAIN_HAND, projectile.item, simHit))
+        ).also { result ->
+            if (result is InteractionResult.Success)
+                projectile.item = result.heldItemTransformedTo() ?: player.mainHandItem
+        }.consumesAction()
     }
 
     val HAIRCUT = register("haircut") { _, _, hit, _ ->

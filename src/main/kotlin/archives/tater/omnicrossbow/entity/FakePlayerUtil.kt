@@ -8,15 +8,22 @@ import net.fabricmc.fabric.api.entity.FakePlayer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.phys.Vec3
 
-fun createFakePlayer(level: ServerLevel, projectile: CustomItemProjectile): FakePlayer = (ifNotNull(projectile.owner as? Player) {
+fun createFakePlayer(
+    level: ServerLevel,
+    projectile: CustomItemProjectile,
+    pos: Vec3 = projectile.position(),
+    xRot: Float = projectile.xRot,
+    yRot: Float = projectile.yRot,
+): FakePlayer = (ifNotNull(projectile.owner as? Player) {
     FakePlayer.get(level, it.gameProfile)
 } orElse {
     FakePlayer.get(level)
 }).apply {
     this as EntityAccessor
     this as LivingEntityInvoker
-    snapTo(projectile.position(), projectile.xRot, projectile.yRot)
+    snapTo(pos, yRot, xRot)
     eyeHeight = 0f
     deltaMovement = projectile.deltaMovement
     setItemInHand(InteractionHand.MAIN_HAND, projectile.item)
