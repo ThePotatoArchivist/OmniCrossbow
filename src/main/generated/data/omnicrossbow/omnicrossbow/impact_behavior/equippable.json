@@ -9,18 +9,34 @@
     "condition": {
       "type": "omnicrossbow:check_loot_condition",
       "condition": {
-        "condition": "minecraft:any_of",
+        "condition": "minecraft:all_of",
         "terms": [
           {
-            "condition": "minecraft:entity_properties",
-            "entity": "target_entity",
-            "predicate": {
-              "type": "#omnicrossbow:can_always_equip"
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "predicates": {
+                  "minecraft:intangible_projectile": {}
+                }
+              }
             }
           },
           {
-            "condition": "omnicrossbow:can_pick_up_loot",
-            "entity": "target_entity"
+            "condition": "minecraft:any_of",
+            "terms": [
+              {
+                "condition": "minecraft:entity_properties",
+                "entity": "target_entity",
+                "predicate": {
+                  "type": "#omnicrossbow:can_always_equip"
+                }
+              },
+              {
+                "condition": "omnicrossbow:can_pick_up_loot",
+                "entity": "target_entity"
+              }
+            ]
           }
         ]
       }

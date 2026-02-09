@@ -3,57 +3,72 @@
   "value": {
     "type": "omnicrossbow:conditional",
     "condition": {
-      "type": "omnicrossbow:all_of",
-      "actions": [
-        {
-          "type": "omnicrossbow:conditional",
-          "condition": "omnicrossbow:is_block",
-          "on_fail": "omnicrossbow:pass",
-          "on_success": "omnicrossbow:use_item"
-        },
-        {
-          "type": "omnicrossbow:block_offset",
-          "action": {
-            "type": "omnicrossbow:check_loot_condition",
-            "condition": {
-              "condition": "minecraft:all_of",
-              "terms": [
-                {
-                  "condition": "minecraft:location_check",
-                  "predicate": {
-                    "can_see_sky": true
-                  }
-                },
-                {
-                  "condition": "minecraft:weather_check",
-                  "thundering": true
+      "type": "omnicrossbow:conditional",
+      "condition": "omnicrossbow:is_block",
+      "on_fail": "omnicrossbow:pass",
+      "on_success": {
+        "type": "omnicrossbow:conditional",
+        "condition": {
+          "type": "omnicrossbow:check_loot_condition",
+          "condition": {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "predicates": {
+                  "minecraft:intangible_projectile": {}
                 }
-              ]
+              }
             }
-          },
-          "direction": 1
-        }
-      ]
-    },
-    "on_fail": "omnicrossbow:pass",
-    "on_success": {
-      "type": "omnicrossbow:all_of",
-      "actions": [
-        {
-          "type": "omnicrossbow:block_offset",
-          "action": {
-            "type": "omnicrossbow:summon_entity",
-            "entity": "minecraft:lightning_bolt",
-            "on_target": true
-          },
-          "direction": 1,
-          "y": 1
+          }
         },
-        {
-          "type": "omnicrossbow:play_sound",
-          "sound_event": "minecraft:item.trident.thunder"
-        }
-      ]
+        "on_success": "omnicrossbow:use_item"
+      }
+    },
+    "on_success": {
+      "type": "omnicrossbow:conditional",
+      "condition": {
+        "type": "omnicrossbow:block_offset",
+        "action": {
+          "type": "omnicrossbow:check_loot_condition",
+          "condition": {
+            "condition": "minecraft:all_of",
+            "terms": [
+              {
+                "condition": "minecraft:location_check",
+                "predicate": {
+                  "can_see_sky": true
+                }
+              },
+              {
+                "condition": "minecraft:weather_check",
+                "thundering": true
+              }
+            ]
+          }
+        },
+        "direction": 1
+      },
+      "on_fail": "omnicrossbow:pass",
+      "on_success": {
+        "type": "omnicrossbow:all_of",
+        "actions": [
+          {
+            "type": "omnicrossbow:block_offset",
+            "action": {
+              "type": "omnicrossbow:summon_entity",
+              "entity": "minecraft:lightning_bolt",
+              "on_target": true
+            },
+            "direction": 1,
+            "y": 1
+          },
+          {
+            "type": "omnicrossbow:play_sound",
+            "sound_event": "minecraft:item.trident.thunder"
+          }
+        ]
+      }
     }
   }
 }

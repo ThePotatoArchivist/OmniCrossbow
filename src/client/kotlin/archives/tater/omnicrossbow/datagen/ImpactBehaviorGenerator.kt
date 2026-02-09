@@ -82,34 +82,50 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             }, behavior)
         }
 
+        val lootNotIntangible = invert(toolMatches(itemPredicateBuilder {
+            withComponents {
+                hasAny(DataComponents.INTANGIBLE_PROJECTILE)
+            }
+        }))
+
+        val notIntangible = CheckLootCondition(lootNotIntangible)
+
+        fun ifNotIntangible(action: ImpactAction) = Conditional(
+                condition = notIntangible,
+                onSuccess = action
+            )
+
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
         register(Items.MILK_BUCKET, OmniCrossbowImpactActions.CONSUME_ITEM)
 
         register(ItemTags.LIGHTNING_RODS, Conditional(
-            condition = AllOf(
-                Conditional(
-                    condition = OmniCrossbowImpactActions.IS_BLOCK,
+            condition = Conditional(
+                condition = OmniCrossbowImpactActions.IS_BLOCK,
+                onSuccess = Conditional(
+                    condition = notIntangible,
                     onSuccess = OmniCrossbowImpactActions.USE_ITEM,
-                    onFail = OmniCrossbowImpactActions.PASS
                 ),
-                BlockOffset(
+                onFail = OmniCrossbowImpactActions.PASS
+            ),
+            onSuccess = Conditional(
+                condition = BlockOffset(
                     CheckLootCondition(allOf(
                         checkLocation(location().setCanSeeSky(true)),
                         weather().setThundering(true)
                     )),
                     direction = 1
-                )
-            ),
-            onSuccess = AllOf(
-                BlockOffset(
-                    SummonEntity(EntityType.LIGHTNING_BOLT, onTarget = true),
-                    direction = 1,
-                    y = 1
                 ),
-                PlaySound(SoundEvents.TRIDENT_THUNDER)
-            ),
-            onFail = OmniCrossbowImpactActions.PASS
+                onSuccess = AllOf(
+                    BlockOffset(
+                        SummonEntity(EntityType.LIGHTNING_BOLT, onTarget = true),
+                        direction = 1,
+                        y = 1
+                    ),
+                    PlaySound(SoundEvents.TRIDENT_THUNDER)
+                ),
+                onFail = OmniCrossbowImpactActions.PASS
+            )
         ))
 
         register(ConventionalItemTags.BUCKETS, AnyOf(
@@ -176,16 +192,18 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register(DataComponents.EQUIPPABLE, Conditional(
-            condition = CheckLootCondition(
+            condition = CheckLootCondition(allOf(
+                lootNotIntangible,
                 anyOf(
                     LootItemEntityPropertyCondition.hasProperties(
                         LootContext.EntityTarget.TARGET_ENTITY,
                         EntityPredicate {
                             entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
-                        }),
+                        }
+                    ),
                     CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
                 )
-            ),
+            )),
             onSuccess = OmniCrossbowImpactActions.EQUIP
         ))
 
@@ -202,7 +220,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(DataComponents.KINETIC_WEAPON, KineticDamage())
 
         register("use", ItemPredicate {}, AnyOf(
-            OmniCrossbowImpactActions.USE_ITEM,
+            ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
             Damage()
         ))
     }
