@@ -186,6 +186,8 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
+        register(DataComponents.KINETIC_WEAPON, KineticDamage())
+
         register("use", ItemPredicate {}, AnyOf(
             OmniCrossbowImpactActions.USE_ITEM,
             Damage()

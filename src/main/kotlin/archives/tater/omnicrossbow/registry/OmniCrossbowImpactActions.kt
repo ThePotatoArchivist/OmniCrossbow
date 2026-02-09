@@ -205,5 +205,6 @@ object OmniCrossbowImpactActions {
         register("play_sound", PlaySound.CODEC)
         register("summon_entity", SummonEntity.CODEC)
         register("damage", Damage.CODEC)
+        register("kinetic_damage", KineticDamage.CODEC)
     }
 }
