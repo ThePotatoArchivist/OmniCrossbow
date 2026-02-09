@@ -42,8 +42,7 @@ data class Damage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline {
         val baseDamage = instance.value.toFloat()
         val attackingItemStack = projectile.item
         val damageSource = attackingItemStack.getDamageSource(owner) { level.damageSources().run { if (owner is Player) playerAttack(owner) else mobAttack(owner) } }
-        val attackStrengthScale = 1f
-        val magicBoost = attackStrengthScale * EnchantmentHelper.modifyDamage(level, attackingItemStack, entity, damageSource, baseDamage) - baseDamage
+        val magicBoost = EnchantmentHelper.modifyDamage(level, attackingItemStack, entity, damageSource, baseDamage) - baseDamage
 
         if (baseDamage <= 0f && magicBoost <= 0f) return false
 

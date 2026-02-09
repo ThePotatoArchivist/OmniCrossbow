@@ -1,0 +1,10 @@
+{
+  "items": {
+    "predicates": {
+      "minecraft:kinetic_weapon": {}
+    }
+  },
+  "value": {
+    "type": "omnicrossbow:kinetic_damage"
+  }
+}
