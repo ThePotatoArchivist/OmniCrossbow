@@ -91,24 +91,23 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         val notIntangible = CheckLootCondition(lootNotIntangible)
 
         fun ifNotIntangible(action: ImpactAction) = Conditional(
-                condition = notIntangible,
-                onSuccess = action
-            )
+            condition = notIntangible,
+            onSuccess = action
+        )
 
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
         register(Items.MILK_BUCKET, OmniCrossbowImpactActions.CONSUME_ITEM)
 
-        register(ItemTags.LIGHTNING_RODS, Conditional(
-            condition = Conditional(
-                condition = OmniCrossbowImpactActions.IS_BLOCK,
-                onSuccess = Conditional(
-                    condition = notIntangible,
-                    onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+        register(ItemTags.LIGHTNING_RODS, SideEffect(
+            main = AnyOf(
+                OmniCrossbowImpactActions.IS_ENTITY,
+                AllOf(
+                    notIntangible,
+                    OmniCrossbowImpactActions.USE_ITEM,
                 ),
-                onFail = OmniCrossbowImpactActions.PASS
             ),
-            onSuccess = Conditional(
+            secondary = Conditional(
                 condition = BlockOffset(
                     CheckLootCondition(allOf(
                         checkLocation(location().setCanSeeSky(true)),
@@ -123,8 +122,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                         y = 1
                     ),
                     PlaySound(SoundEvents.TRIDENT_THUNDER)
-                ),
-                onFail = OmniCrossbowImpactActions.PASS
+                )
             )
         ))
 
@@ -133,15 +131,16 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             OmniCrossbowImpactActions.USE_BUCKET,
         ))
 
-        register(DataComponents.FIREWORK_EXPLOSION, Conditional(
-            condition = OmniCrossbowImpactActions.FIREWORK_EXPLOSION,
-            onSuccess = OmniCrossbowImpactActions.SHRINK
+        register(DataComponents.FIREWORK_EXPLOSION, SideEffect(
+            main = OmniCrossbowImpactActions.FIREWORK_EXPLOSION,
+            secondary = OmniCrossbowImpactActions.SHRINK
         ))
 
-        register(DataComponents.DYE, Conditional(
-            condition = OmniCrossbowImpactActions.DYE,
-            onSuccess = AllOf(
+        register(DataComponents.DYE, SideEffect(
+            main = OmniCrossbowImpactActions.DYE,
+            secondary = AllOf(
                 itemParticle,
+                PlaySound(soundHolder(SoundEvents.DYE_USE)),
                 OmniCrossbowImpactActions.SHRINK
             )
         ))
@@ -170,15 +169,15 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register(DataComponents.CONSUMABLE, Conditional(
-            condition = Conditional(
+        register(DataComponents.CONSUMABLE, SideEffect(
+            main = Conditional(
                 condition = OmniCrossbowImpactActions.IS_ENTITY,
                 AnyOf(
                     OmniCrossbowImpactActions.USE_ITEM,
                     OmniCrossbowImpactActions.CONSUME_ITEM,
                 ),
             ),
-            onSuccess = Conditional(
+            secondary = Conditional(
                 condition = CheckLootCondition(toolMatches(itemPredicateBuilder {
                     withComponents {
                         partial(OmniCrossbowConditions.CONSUMABLE_PREDICATE,
@@ -187,7 +186,6 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                     }
                 })),
                 onSuccess = itemParticle,
-                onFail = OmniCrossbowImpactActions.PASS
             )
         ))
 
@@ -217,7 +215,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register(DataComponents.KINETIC_WEAPON, KineticDamage())
+        register(DataComponents.KINETIC_WEAPON, SideEffect(
+            main = KineticDamage(),
+            secondary = OmniCrossbowImpactActions.DURABILITY_DAMAGE
+        ))
 
         register("use", ItemPredicate {}, AnyOf(
             ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),

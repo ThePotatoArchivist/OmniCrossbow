@@ -5,8 +5,8 @@
     }
   },
   "value": {
-    "type": "omnicrossbow:conditional",
-    "condition": {
+    "type": "omnicrossbow:side_effect",
+    "main": {
       "type": "omnicrossbow:conditional",
       "condition": "omnicrossbow:is_entity",
       "on_success": {
@@ -17,7 +17,7 @@
         ]
       }
     },
-    "on_success": {
+    "secondary": {
       "type": "omnicrossbow:conditional",
       "condition": {
         "type": "omnicrossbow:check_loot_condition",
@@ -32,7 +32,6 @@
           }
         }
       },
-      "on_fail": "omnicrossbow:pass",
       "on_success": {
         "type": "omnicrossbow:item_particle",
         "count": 8,

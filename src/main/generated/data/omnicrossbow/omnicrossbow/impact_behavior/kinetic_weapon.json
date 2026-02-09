@@ -5,6 +5,10 @@
     }
   },
   "value": {
-    "type": "omnicrossbow:kinetic_damage"
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:kinetic_damage"
+    },
+    "secondary": "omnicrossbow:durability_damage"
   }
 }

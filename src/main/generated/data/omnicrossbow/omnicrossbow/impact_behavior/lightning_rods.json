@@ -1,31 +1,34 @@
 {
   "items": "#minecraft:lightning_rods",
   "value": {
-    "type": "omnicrossbow:conditional",
-    "condition": {
-      "type": "omnicrossbow:conditional",
-      "condition": "omnicrossbow:is_block",
-      "on_fail": "omnicrossbow:pass",
-      "on_success": {
-        "type": "omnicrossbow:conditional",
-        "condition": {
-          "type": "omnicrossbow:check_loot_condition",
-          "condition": {
-            "condition": "minecraft:inverted",
-            "term": {
-              "condition": "minecraft:match_tool",
-              "predicate": {
-                "predicates": {
-                  "minecraft:intangible_projectile": {}
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:any_of",
+      "actions": [
+        "omnicrossbow:is_entity",
+        {
+          "type": "omnicrossbow:all_of",
+          "actions": [
+            {
+              "type": "omnicrossbow:check_loot_condition",
+              "condition": {
+                "condition": "minecraft:inverted",
+                "term": {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "predicates": {
+                      "minecraft:intangible_projectile": {}
+                    }
+                  }
                 }
               }
-            }
-          }
-        },
-        "on_success": "omnicrossbow:use_item"
-      }
+            },
+            "omnicrossbow:use_item"
+          ]
+        }
+      ]
     },
-    "on_success": {
+    "secondary": {
       "type": "omnicrossbow:conditional",
       "condition": {
         "type": "omnicrossbow:block_offset",
@@ -49,7 +52,6 @@
         },
         "direction": 1
       },
-      "on_fail": "omnicrossbow:pass",
       "on_success": {
         "type": "omnicrossbow:all_of",
         "actions": [

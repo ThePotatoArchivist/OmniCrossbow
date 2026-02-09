@@ -5,9 +5,9 @@
     }
   },
   "value": {
-    "type": "omnicrossbow:conditional",
-    "condition": "omnicrossbow:dye",
-    "on_success": {
+    "type": "omnicrossbow:side_effect",
+    "main": "omnicrossbow:dye",
+    "secondary": {
       "type": "omnicrossbow:all_of",
       "actions": [
         {
@@ -17,6 +17,10 @@
           "dy": 0.0,
           "dz": 0.0,
           "speed": 0.1
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "sound_event": "minecraft:item.dye.use"
         },
         "omnicrossbow:shrink"
       ]

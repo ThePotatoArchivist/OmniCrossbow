@@ -5,8 +5,8 @@
     }
   },
   "value": {
-    "type": "omnicrossbow:conditional",
-    "condition": "omnicrossbow:firework_explosion",
-    "on_success": "omnicrossbow:shrink"
+    "type": "omnicrossbow:side_effect",
+    "main": "omnicrossbow:firework_explosion",
+    "secondary": "omnicrossbow:shrink"
   }
 }

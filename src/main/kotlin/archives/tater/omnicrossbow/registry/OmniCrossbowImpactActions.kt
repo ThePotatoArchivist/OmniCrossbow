@@ -254,6 +254,7 @@ object OmniCrossbowImpactActions {
         register("all_of", AllOf.CODEC)
         register("any_of", AnyOf.CODEC)
         register("conditional", Conditional.CODEC)
+        register("side_effect", SideEffect.CODEC)
         register("block_offset", BlockOffset.CODEC)
         register("check_loot_condition", CheckLootCondition.CODEC)
         register("play_sound", PlaySound.CODEC)
