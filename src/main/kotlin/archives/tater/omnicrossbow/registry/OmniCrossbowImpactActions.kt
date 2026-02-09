@@ -9,6 +9,7 @@ import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
 import archives.tater.omnicrossbow.util.contains
 import archives.tater.omnicrossbow.util.get
+import archives.tater.omnicrossbow.util.isOf
 import archives.tater.omnicrossbow.util.set
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
@@ -32,6 +33,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.ClipContext
+import net.minecraft.world.level.block.BedBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.BlockHitResult
@@ -213,6 +215,14 @@ object OmniCrossbowImpactActions {
             ?: return@registerBlock false
 
         val block = (result.item as? BlockItem)?.block ?: return@registerBlock false
+
+        // Fixes bed bug
+        if (block is BedBlock) {
+            val otherPos = hit.blockPos.relative(BedBlock.getConnectedDirection(state))
+            val otherState = level[otherPos]
+            if (otherState isOf state.block)
+                level.setBlock(otherPos, block.withPropertiesOf(otherState), Block.UPDATE_CLIENTS or Block.UPDATE_IMMEDIATE or Block.UPDATE_KNOWN_SHAPE)
+        }
 
         level[hit.blockPos] = block.withPropertiesOf(state)
 
