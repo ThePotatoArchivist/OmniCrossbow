@@ -29,11 +29,6 @@ data class ItemFiltered<T>(
             valueCodec.forGetter(ItemFiltered<T>::value)
         ).apply(it, ::ItemFiltered) }
 
-        fun <T> createCodec(valueCodec: Codec<T>): Codec<ItemFiltered<T>> = RecordCodecBuilder.create { it.group(
-            ITEM_PREDICATE_SHORT_CODEC.fieldOf("items").forGetter(ItemFiltered<T>::items),
-            valueCodec.fieldOf("value").forGetter(ItemFiltered<T>::value)
-        ).apply(it, ::ItemFiltered) }
-
         val ITEM_PREDICATE_COMPARATOR: Comparator<ItemPredicate> =
             comparingInt<ItemPredicate> { predicate -> predicate.items.getOrNull()?.takeIf { it is HolderSet.Direct }?.size() ?: Int.MAX_VALUE }
             .thenComparingInt { if (it.items.isPresent) 0 else 1 }

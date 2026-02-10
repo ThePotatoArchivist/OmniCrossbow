@@ -1,10 +1,5 @@
 {
-  "items": {
-    "predicates": {
-      "minecraft:consumable": {}
-    }
-  },
-  "value": {
+  "action": {
     "type": "omnicrossbow:side_effect",
     "main": {
       "type": "omnicrossbow:conditional",
@@ -40,6 +35,11 @@
         "dz": 0.0,
         "speed": 0.1
       }
+    }
+  },
+  "items": {
+    "predicates": {
+      "minecraft:consumable": {}
     }
   }
 }

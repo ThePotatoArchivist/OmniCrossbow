@@ -1,10 +1,5 @@
 {
-  "items": {
-    "predicates": {
-      "minecraft:tool": {}
-    }
-  },
-  "value": {
+  "action": {
     "type": "omnicrossbow:conditional",
     "condition": {
       "type": "omnicrossbow:check_loot_condition",
@@ -67,6 +62,11 @@
         "omnicrossbow:break_block",
         "omnicrossbow:durability_damage"
       ]
+    }
+  },
+  "items": {
+    "predicates": {
+      "minecraft:tool": {}
     }
   }
 }

@@ -1,4 +1,4 @@
 {
-  "items": "minecraft:milk_bucket",
-  "value": "omnicrossbow:consume_item"
+  "action": "omnicrossbow:consume_item",
+  "items": "minecraft:milk_bucket"
 }

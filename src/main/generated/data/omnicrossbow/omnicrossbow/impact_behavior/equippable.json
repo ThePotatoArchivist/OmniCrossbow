@@ -1,10 +1,5 @@
 {
-  "items": {
-    "predicates": {
-      "minecraft:equippable": {}
-    }
-  },
-  "value": {
+  "action": {
     "type": "omnicrossbow:conditional",
     "condition": {
       "type": "omnicrossbow:check_loot_condition",
@@ -42,5 +37,10 @@
       }
     },
     "on_success": "omnicrossbow:equip"
+  },
+  "items": {
+    "predicates": {
+      "minecraft:equippable": {}
+    }
   }
 }

@@ -34,7 +34,6 @@ public class ProjectileWeaponItemMixin {
     )
     private Projectile modifyProjectile(ProjectileWeaponItem instance, Level level, LivingEntity shooter, ItemStack weapon, ItemStack projectile, boolean isCrit, Operation<Projectile> original, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
         var behavior = ProjectileBehavior.getBehavior(level, projectile);
-        if (behavior == null) return original.call(instance, level, shooter, weapon, projectile, isCrit);
 
         projectileBehavior.set(behavior);
 
@@ -54,10 +53,7 @@ public class ProjectileWeaponItemMixin {
         var behavior = projectileBehavior.get();
         if (behavior == null) return original.call(projectile, serverLevel, itemStack, shootFunction);
 
-        projectile.setAttached(OmniCrossbowAttachments.VELOCITY_SCALE, behavior.velocityScale());
-        behavior.shootSound().ifPresent(sound ->
-                projectile.setAttached(OmniCrossbowAttachments.SHOOT_SOUND, sound)
-        );
+        projectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
         if (!projectileItem.has(DataComponents.INTANGIBLE_PROJECTILE)) {
             var remainder = behavior.getRemainder(projectileItem);
             if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);

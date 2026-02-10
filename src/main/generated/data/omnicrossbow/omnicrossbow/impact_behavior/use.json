@@ -1,6 +1,5 @@
 {
-  "items": {},
-  "value": {
+  "action": {
     "type": "omnicrossbow:any_of",
     "actions": [
       {
@@ -25,5 +24,6 @@
         "type": "omnicrossbow:damage"
       }
     ]
-  }
+  },
+  "items": {}
 }

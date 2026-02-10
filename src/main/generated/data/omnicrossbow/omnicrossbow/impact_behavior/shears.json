@@ -1,6 +1,5 @@
 {
-  "items": "#c:tools/shear",
-  "value": {
+  "action": {
     "type": "omnicrossbow:conditional",
     "condition": "omnicrossbow:haircut",
     "on_success": {
@@ -13,5 +12,6 @@
         }
       ]
     }
-  }
+  },
+  "items": "#c:tools/shear"
 }

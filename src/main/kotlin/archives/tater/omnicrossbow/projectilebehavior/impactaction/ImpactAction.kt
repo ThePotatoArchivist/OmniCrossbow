@@ -45,7 +45,7 @@ fun interface ImpactAction {
         ).valueCodec(OmniCrossbowBuiltinRegistries.IMPACT_ACTION)
 
         @JvmField
-        val ITEM_FILTERED_CODEC = ItemFiltered.createCodec(CODEC)
+        val ITEM_FILTERED_CODEC = ItemFiltered.createCodec(CODEC.fieldOf("action"))
 
         fun streamMatching(level: Level, stack: ItemStack): Stream<ImpactAction> =
             ItemFiltered.streamMatching(level.registryAccess(), OmniCrossbowRegistries.IMPACT_BEHAVIOR, stack)

@@ -1,6 +1,5 @@
 {
-  "items": "#minecraft:lightning_rods",
-  "value": {
+  "action": {
     "type": "omnicrossbow:side_effect",
     "main": {
       "type": "omnicrossbow:any_of",
@@ -72,5 +71,6 @@
         ]
       }
     }
-  }
+  },
+  "items": "#minecraft:lightning_rods"
 }

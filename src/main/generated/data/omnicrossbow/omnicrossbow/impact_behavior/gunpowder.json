@@ -1,6 +1,5 @@
 {
-  "items": "minecraft:gunpowder",
-  "value": {
+  "action": {
     "type": "omnicrossbow:all_of",
     "actions": [
       {
@@ -10,5 +9,6 @@
       },
       "omnicrossbow:shrink"
     ]
-  }
+  },
+  "items": "minecraft:gunpowder"
 }

@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.mixin.behavior;
 
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -8,19 +9,30 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.objectweb.asm.Opcodes;
 
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 
+@SuppressWarnings("UnstableApiUsage")
 @Mixin(CrossbowItem.class)
 public class CrossbowItemMixin {
-    @SuppressWarnings("UnstableApiUsage")
     @ModifyExpressionValue(
             method = "shootProjectile",
             at = @At(value = "FIELD", target = "Lnet/minecraft/sounds/SoundEvents;CROSSBOW_SHOOT:Lnet/minecraft/sounds/SoundEvent;", opcode = Opcodes.GETSTATIC)
     )
     private SoundEvent replaceShootSound(SoundEvent original, @Local(argsOnly = true) Projectile projectile) {
-        var sound = projectile.getAttached(OmniCrossbowAttachments.SHOOT_SOUND);
-        return sound == null ? original : sound.value();
+        return projectile.getAttachedOrElse(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, ProjectileBehavior.DEFAULT)
+                .shootSound()
+                .map(Holder::value)
+                .orElse(original);
+    }
+
+    @ModifyExpressionValue(
+            method = "shootProjectile",
+            at = @At(value = "INVOKE", target = "Ljava/lang/Math;sqrt(D)D")
+    )
+    private double ignoreGravityAiming(double original, @Local(argsOnly = true) Projectile projectile) {
+        return projectile.getAttachedOrElse(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, ProjectileBehavior.DEFAULT).ignoreGravityAiming() ? 0.0 : original;
     }
 }

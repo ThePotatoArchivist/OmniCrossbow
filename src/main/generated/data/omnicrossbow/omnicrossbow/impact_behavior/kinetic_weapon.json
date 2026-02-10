@@ -1,14 +1,14 @@
 {
-  "items": {
-    "predicates": {
-      "minecraft:kinetic_weapon": {}
-    }
-  },
-  "value": {
+  "action": {
     "type": "omnicrossbow:side_effect",
     "main": {
       "type": "omnicrossbow:kinetic_damage"
     },
     "secondary": "omnicrossbow:durability_damage"
+  },
+  "items": {
+    "predicates": {
+      "minecraft:kinetic_weapon": {}
+    }
   }
 }

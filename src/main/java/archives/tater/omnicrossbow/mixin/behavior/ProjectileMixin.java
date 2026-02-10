@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.mixin.behavior;
 
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +26,6 @@ public abstract class ProjectileMixin extends Entity {
             name = "pow"
     )
     private float scaleVelocity(float velocity) {
-        return velocity * getAttachedOrElse(OmniCrossbowAttachments.VELOCITY_SCALE, 1f);
+        return velocity * getAttachedOrElse(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, ProjectileBehavior.DEFAULT).velocityScale();
     }
 }

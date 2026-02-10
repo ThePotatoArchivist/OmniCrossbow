@@ -1,6 +1,5 @@
 {
-  "items": "minecraft:cobweb",
-  "value": {
+  "action": {
     "type": "omnicrossbow:any_of",
     "actions": [
       {
@@ -37,5 +36,6 @@
       },
       "omnicrossbow:use_item/on_entity_base"
     ]
-  }
+  },
+  "items": "minecraft:cobweb"
 }

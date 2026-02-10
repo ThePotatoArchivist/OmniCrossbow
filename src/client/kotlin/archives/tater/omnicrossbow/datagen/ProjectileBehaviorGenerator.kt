@@ -79,10 +79,10 @@ class ProjectileBehaviorGenerator(
         register(Items.EXPERIENCE_BOTTLE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)))
         register(Items.SPLASH_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SPLASH_POTION)))
         register(Items.LINGERING_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.LINGERING_POTION)))
-        register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)))
-        register(Items.WIND_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.5f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW)))
-        register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), remainder = true))
-        register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT)))
+        register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), ignoreGravityAiming = true))
+        register(Items.WIND_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WIND_CHARGE), 0.5f, shootSound = soundHolder(SoundEvents.WIND_CHARGE_THROW), ignoreGravityAiming = true))
+        register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), ignoreGravityAiming = true, remainder = true))
+        register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, shootSound = soundHolder(SoundEvents.WITHER_SHOOT), ignoreGravityAiming = true))
         register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW))
 
         register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
@@ -106,7 +106,7 @@ class ProjectileBehaviorGenerator(
             damageMax = 40,
         ), 0.7f))
 
-        register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM))
+        register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM, ignoreGravityAiming = true))
 
         register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(
             distance = 15.0,
@@ -119,7 +119,7 @@ class ProjectileBehaviorGenerator(
             beamParticleRandomness = 1.0,
             destroyParticle = ParticleConfig(ParticleTypes.LARGE_SMOKE, 16, 0.25, 0.25, 0.25),
             hitWaterParticle = ParticleConfig(ParticleTypes.CLOUD, 8),
-        ), shootSound = soundHolder(SoundEvents.FIRECHARGE_USE)))
+        ), shootSound = soundHolder(SoundEvents.FIRECHARGE_USE), ignoreGravityAiming = true))
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 
