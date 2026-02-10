@@ -10,6 +10,7 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Holder
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.FallingBlock
@@ -19,6 +20,7 @@ import java.util.*
 data class ProjectileBehavior(
     val projectileAction: ProjectileAction,
     val velocityScale: Float,
+    val cooldownTicks: Int,
     val shootSound: Optional<Holder<SoundEvent>>,
     val ignoreGravityAiming: Boolean,
     val remainder: Either<Boolean, ItemStackTemplate>,
@@ -26,18 +28,20 @@ data class ProjectileBehavior(
     constructor(
         projectileAction: ProjectileAction,
         velocityScale: Float = 1f,
+        cooldownTicks: Int = 0,
         shootSound: Holder<SoundEvent>? = null,
         ignoreGravityAiming: Boolean = false,
         remainder: Boolean = false,
-    ) : this(projectileAction, velocityScale, Optional.ofNullable(shootSound), ignoreGravityAiming, Either.left(remainder))
+    ) : this(projectileAction, velocityScale, cooldownTicks, Optional.ofNullable(shootSound), ignoreGravityAiming, Either.left(remainder))
 
     private constructor(
         projectileAction: ProjectileAction,
         velocityScale: Float = 1f,
+        cooldownTicks: Int = 0,
         shootSound: Holder<SoundEvent>? = null,
         ignoreGravityAiming: Boolean = false,
         remainder: ItemStackTemplate
-    ) : this(projectileAction, velocityScale, Optional.ofNullable(shootSound), ignoreGravityAiming, Either.right(remainder))
+    ) : this(projectileAction, velocityScale, cooldownTicks, Optional.ofNullable(shootSound), ignoreGravityAiming, Either.right(remainder))
 
     fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
         { if (it) when (val item = projectile.item) {
@@ -51,7 +55,8 @@ data class ProjectileBehavior(
         @JvmField
         val CODEC: MapCodec<ProjectileBehavior> = RecordCodecBuilder.mapCodec { it.group(
             ProjectileAction.CODEC.fieldOf("projectile_action").forGetter(ProjectileBehavior::projectileAction),
-            Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("velocity_scale", 1f).forGetter(ProjectileBehavior::velocityScale),
+            ExtraCodecs.NON_NEGATIVE_FLOAT.optionalFieldOf("velocity_scale", 1f).forGetter(ProjectileBehavior::velocityScale),
+            ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("cooldown_ticks", 0).forGetter(ProjectileBehavior::cooldownTicks),
             SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound),
             Codec.BOOL.optionalFieldOf("ignore_gravity_aiming", false).forGetter(ProjectileBehavior::ignoreGravityAiming),
             Codec.either(Codec.BOOL, ItemStackTemplate.CODEC).optionalFieldOf("remainder", Either.left(false)).forGetter(ProjectileBehavior::remainder)
@@ -66,13 +71,14 @@ data class ProjectileBehavior(
         fun of(
             projectileAction: ProjectileAction,
             velocityScale: Float = 1f,
+            cooldownTicks: Int = 1,
             shootSound: Holder<SoundEvent>? = null,
             ignoreGravityAiming: Boolean = false,
             remainder: ItemStackTemplate? = null
         ) = if (remainder == null)
-            ProjectileBehavior(projectileAction, velocityScale, shootSound, ignoreGravityAiming)
+            ProjectileBehavior(projectileAction, velocityScale, cooldownTicks, shootSound, ignoreGravityAiming)
         else
-            ProjectileBehavior(projectileAction, velocityScale, shootSound, ignoreGravityAiming, remainder)
+            ProjectileBehavior(projectileAction, velocityScale, cooldownTicks, shootSound, ignoreGravityAiming, remainder)
 
         fun getFallback(item: Item): ProjectileBehavior = when (item) {
             is SpawnEggItem -> OmniCrossbowProjectileActions.FROM_ENTITY_DATA

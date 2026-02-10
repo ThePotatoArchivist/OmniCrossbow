@@ -10,13 +10,18 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -24,7 +29,10 @@ import net.minecraft.world.level.Level;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
+
+import static java.lang.Math.max;
 
 @Mixin(ProjectileWeaponItem.class)
 public class ProjectileWeaponItemMixin {
@@ -49,7 +57,7 @@ public class ProjectileWeaponItemMixin {
             method = "shoot",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectile(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/world/entity/projectile/Projectile;")
     )
-    private <T extends Projectile> T modifyProjectileShoot(T projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<T> shootFunction, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Local(name = "projectile") ItemStack projectileItem, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
+    private <T extends Projectile> T modifyProjectileShoot(T projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<T> shootFunction, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Local(name = "projectile") ItemStack projectileItem, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior, @Share("cooldown") LocalIntRef cooldown) {
         var behavior = projectileBehavior.get();
         if (behavior == null) return original.call(projectile, serverLevel, itemStack, shootFunction);
 
@@ -58,6 +66,7 @@ public class ProjectileWeaponItemMixin {
             var remainder = behavior.getRemainder(projectileItem);
             if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);
         }
+        cooldown.set(max(cooldown.get(), behavior.cooldownTicks()));
 
         if (!(behavior.projectileAction() instanceof Delegated delegated)) return original.call(projectile, serverLevel, itemStack, shootFunction);
 
@@ -65,5 +74,14 @@ public class ProjectileWeaponItemMixin {
         delegated.shoot(projectile.position(), projectile.getDeltaMovement(), serverLevel, shooter, weapon, projectileItem);
 
         return projectile;
+    }
+
+    @Inject(
+            method = "shoot",
+            at = @At("TAIL")
+    )
+    private void setCooldown(ServerLevel level, LivingEntity shooter, InteractionHand hand, ItemStack weapon, List<ItemStack> projectiles, float power, float uncertainty, boolean isCrit, @Nullable LivingEntity targetOverride, CallbackInfo ci, @Share("cooldown") LocalIntRef cooldown) {
+        if (cooldown.get() > 0 && shooter.onGround() && shooter instanceof Player player && !player.hasInfiniteMaterials())
+            player.getCooldowns().addCooldown(weapon, cooldown.get());
     }
 }
