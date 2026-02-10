@@ -137,13 +137,15 @@ object OmniCrossbowImpactActions {
 
     @JvmField
     val USE_BUCKET = register("use_bucket") { level, projectile, hit, _ ->
-        val simHit = when (hit) {
-            is BlockHitResult -> hit.withPosition(hit.blockPos.relative(hit.direction))
-            is EntityHitResult -> BlockHitResult(hit.location, Direction.DOWN, hit.entity.blockPosition(), false)
+        val pos = when (hit) {
+            is BlockHitResult -> hit.blockPos.relative(hit.direction)
+            is EntityHitResult -> hit.entity.blockPosition()
             else -> return@register false
         }
-        val direction = simHit.direction.opposite
-        val pos = simHit.blockPos
+        val direction = when (hit) {
+            is BlockHitResult -> hit.direction.opposite
+            else -> Direction.DOWN
+        }
 
         val player = createFakePlayer(level, projectile, pos.center, when (direction) {
             Direction.UP -> -90f
@@ -154,9 +156,7 @@ object OmniCrossbowImpactActions {
             else -> Direction.getYRot(direction)
         })
 
-        (projectile.item.use(level, player, InteractionHand.MAIN_HAND).takeIf { it.consumesAction() }
-            ?: projectile.item.useOn(UseOnContext(level, player, InteractionHand.MAIN_HAND, projectile.item, simHit))
-        ).also { result ->
+        projectile.item.use(level, player, InteractionHand.MAIN_HAND).also { result ->
             if (result is InteractionResult.Success)
                 projectile.item = result.heldItemTransformedTo() ?: player.mainHandItem
         }.consumesAction()

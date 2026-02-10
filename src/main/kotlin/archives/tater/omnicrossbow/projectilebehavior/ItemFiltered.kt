@@ -44,8 +44,8 @@ data class ItemFiltered<T>(
             .lookupOrThrow(registry)
             .listElements()
             .map { it.value() }
-            .sorted()
             .filter { it.items.test(key) }
+            .sorted()
             .map { it.value }
 
         fun <T: Any> getFirst(registries: HolderLookup.Provider, registry: ResourceKey<Registry<ItemFiltered<T>>>, key: ItemStack): T? =
