@@ -1,0 +1,18 @@
+{
+  "action": {
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:conditional",
+      "condition": "omnicrossbow:is_block",
+      "on_fail": {
+        "type": "omnicrossbow:damage"
+      },
+      "on_success": "omnicrossbow:use_item"
+    },
+    "secondary": {
+      "type": "omnicrossbow:play_sound",
+      "sound_event": "minecraft:block.bell.use"
+    }
+  },
+  "items": "minecraft:bell"
+}

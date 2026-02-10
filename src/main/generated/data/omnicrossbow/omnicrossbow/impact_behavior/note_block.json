@@ -1,0 +1,64 @@
+{
+  "action": {
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:conditional",
+      "condition": "omnicrossbow:is_block",
+      "on_fail": {
+        "type": "omnicrossbow:damage"
+      },
+      "on_success": "omnicrossbow:use_item"
+    },
+    "secondary": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:play_sound",
+          "pitch": {
+            "type": "minecraft:uniform",
+            "max_exclusive": 1.0,
+            "min_inclusive": 0.5
+          },
+          "sound_event": "minecraft:block.note_block.harp"
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "pitch": {
+            "type": "minecraft:uniform",
+            "max_exclusive": 1.0,
+            "min_inclusive": 0.5
+          },
+          "sound_event": "minecraft:block.note_block.harp"
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "pitch": {
+            "type": "minecraft:uniform",
+            "max_exclusive": 1.0,
+            "min_inclusive": 0.5
+          },
+          "sound_event": "minecraft:block.note_block.harp"
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "pitch": {
+            "type": "minecraft:uniform",
+            "max_exclusive": 1.0,
+            "min_inclusive": 0.5
+          },
+          "sound_event": "minecraft:block.note_block.harp"
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "pitch": {
+            "type": "minecraft:uniform",
+            "max_exclusive": 1.0,
+            "min_inclusive": 0.5
+          },
+          "sound_event": "minecraft:block.note_block.harp"
+        }
+      ]
+    }
+  },
+  "items": "minecraft:note_block"
+}

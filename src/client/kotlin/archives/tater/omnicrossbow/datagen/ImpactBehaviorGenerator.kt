@@ -29,6 +29,7 @@ import net.minecraft.tags.BlockTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
+import net.minecraft.util.valueproviders.UniformFloat
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
@@ -130,6 +131,26 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 PlaySound(soundHolder(SoundEvents.GLOW_INK_SAC_USE)),
                 OmniCrossbowImpactActions.SHRINK,
             )
+        ))
+
+        register(Items.NOTE_BLOCK, SideEffect(
+            main = Conditional(
+                condition = OmniCrossbowImpactActions.IS_BLOCK,
+                onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+                onFail = Damage()
+            ),
+            secondary = AllOf(List(5) {
+                PlaySound(SoundEvents.NOTE_BLOCK_HARP, pitch = UniformFloat.of(0.5f, 1f))
+            })
+        ))
+
+        register(Items.BELL, SideEffect(
+            main = Conditional(
+                condition = OmniCrossbowImpactActions.IS_BLOCK,
+                onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+                onFail = Damage()
+            ),
+            secondary = PlaySound(soundHolder(SoundEvents.BELL_BLOCK))
         ))
 
         register(ItemTags.LIGHTNING_RODS, SideEffect(
