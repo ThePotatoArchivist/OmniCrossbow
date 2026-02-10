@@ -1,0 +1,41 @@
+{
+  "items": "minecraft:cobweb",
+  "value": {
+    "type": "omnicrossbow:any_of",
+    "actions": [
+      {
+        "type": "omnicrossbow:conditional",
+        "condition": {
+          "type": "omnicrossbow:all_of",
+          "actions": [
+            "omnicrossbow:is_entity",
+            {
+              "type": "omnicrossbow:check_loot_condition",
+              "condition": {
+                "condition": "omnicrossbow:replaceable_at_origin"
+              }
+            }
+          ]
+        },
+        "on_success": {
+          "type": "omnicrossbow:side_effect",
+          "main": {
+            "type": "omnicrossbow:set_block",
+            "block": "minecraft:cobweb"
+          },
+          "secondary": {
+            "type": "omnicrossbow:all_of",
+            "actions": [
+              "omnicrossbow:shrink",
+              {
+                "type": "omnicrossbow:play_sound",
+                "sound_event": "minecraft:block.cobweb.place"
+              }
+            ]
+          }
+        }
+      },
+      "omnicrossbow:use_item/on_entity_base"
+    ]
+  }
+}

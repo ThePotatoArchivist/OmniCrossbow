@@ -136,6 +136,15 @@ object OmniCrossbowImpactActions {
     }
 
     @JvmField
+    val USE_ITEM_ON_ENTITY_BASE = registerEntity("use_item/on_entity_base") { level, projectile, hit, originalItem ->
+        val player = createFakePlayer(level, projectile)
+        projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, BlockHitResult(hit.location, Direction.DOWN, hit.entity.blockPosition(), false))).also {
+            if (it is InteractionResult.Success)
+                projectile.item = it.heldItemTransformedTo()?:  player.mainHandItem
+        }.consumesAction()
+    }
+
+    @JvmField
     val USE_BUCKET = register("use_bucket") { level, projectile, hit, _ ->
         val pos = when (hit) {
             is BlockHitResult -> hit.blockPos.relative(hit.direction)
@@ -261,5 +270,6 @@ object OmniCrossbowImpactActions {
         register("summon_entity", SummonEntity.CODEC)
         register("damage", Damage.CODEC)
         register("kinetic_damage", KineticDamage.CODEC)
+        register("set_block", SetBlock.CODEC)
     }
 }

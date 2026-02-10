@@ -33,6 +33,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.Blocks.COBWEB
 import net.minecraft.world.level.storage.loot.IntRange
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
@@ -98,6 +99,25 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
         register(Items.MILK_BUCKET, OmniCrossbowImpactActions.CONSUME_ITEM)
+
+        register(Items.POWDER_SNOW_BUCKET, OmniCrossbowImpactActions.USE_ITEM_ON_ENTITY_BASE)
+
+        register(Items.COBWEB, AnyOf(
+            Conditional(
+                condition = AllOf(
+                    OmniCrossbowImpactActions.IS_ENTITY,
+                    CheckLootCondition(condition = OmniCrossbowConditions.REPLACEABLE_AT_ORIGIN),
+                ),
+                onSuccess = SideEffect(
+                    main = SetBlock(COBWEB.defaultBlockState()),
+                    secondary = AllOf(
+                        OmniCrossbowImpactActions.SHRINK,
+                        PlaySound(soundHolder(SoundEvents.COBWEB_PLACE))
+                    )
+                ),
+            ),
+            OmniCrossbowImpactActions.USE_ITEM_ON_ENTITY_BASE,
+        ))
 
         register(ItemTags.LIGHTNING_RODS, SideEffect(
             main = AnyOf(

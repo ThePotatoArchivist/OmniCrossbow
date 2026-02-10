@@ -19,7 +19,7 @@ data class CheckLootCondition(
     val condition: LootItemCondition
 ) : ImpactAction.Inline {
 
-    constructor(condition: LootItemCondition.Builder) : this(condition.build())
+    constructor(builder: LootItemCondition.Builder) : this(builder.build())
 
     override fun tryImpact(
         level: ServerLevel,

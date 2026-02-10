@@ -122,7 +122,7 @@ fun interface SpawnEntity<T: Entity> : Delegated {
 
         companion object {
             val CODEC: MapCodec<FallingBlock> = RecordCodecBuilder.mapCodec { it.group(
-                BlockState.CODEC.fieldOf("state").forGetter(FallingBlock::state),
+                BlockState.CODEC.fieldOf("block").forGetter(FallingBlock::state),
                 HurtsEntities.CODEC.optionalFieldOf("hurts_entities").forGetter(FallingBlock::hurtsEntities)
             ).apply(it, ::FallingBlock) }
         }

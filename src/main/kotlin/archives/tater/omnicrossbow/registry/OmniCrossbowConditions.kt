@@ -7,6 +7,7 @@ import archives.tater.omnicrossbow.condition.ConsumablePredicate
 import archives.tater.omnicrossbow.condition.SingletonLootCondition
 import archives.tater.omnicrossbow.util.get
 import com.mojang.serialization.MapCodec
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.component.predicates.DataComponentPredicate
@@ -32,6 +33,10 @@ object OmniCrossbowConditions {
         it[LootContextParams.TOOL]
             .get(DataComponents.TOOL)
             ?.isCorrectForDrops(state) == true
+    }
+
+    val REPLACEABLE_AT_ORIGIN = register("replaceable_at_origin", LootContextParams.BLOCK_STATE, LootContextParams.ORIGIN) {
+        it.level[BlockPos.containing(it[LootContextParams.ORIGIN])].canBeReplaced()
     }
 
     val CONSUMABLE_PREDICATE: DataComponentPredicate.ConcreteType<ConsumablePredicate> = Registry.register(

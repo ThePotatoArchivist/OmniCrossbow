@@ -25,6 +25,7 @@ import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -63,13 +64,21 @@ val PARTICLE_OPTIONS_SHORT_CODEC: Codec<ParticleOptions> = Codec.either(
     BuiltInRegistries.PARTICLE_TYPE.byNameCodec(),
     ParticleTypes.CODEC
 ).comapFlatMap(
-    { it.map(
+    { either -> either.map(
         { if (it is SimpleParticleType) DataResult.success(it) else DataResult.error { "$it is not a simple particle type" } },
         { DataResult.success(it) }
     ) },
     {
         if (it is SimpleParticleType) Either.left(it) else Either.right(it)
     }
+)
+
+val BLOCK_STATE_SHORT_CODEC: Codec<BlockState> = Codec.either(
+    BuiltInRegistries.BLOCK.byNameCodec(),
+    BlockState.CODEC
+).xmap(
+    { either -> either.map({ it.defaultBlockState() }, { it }) },
+    { if (it == it.block.defaultBlockState()) Either.left(it.block) else Either.right(it) }
 )
 
 /**
