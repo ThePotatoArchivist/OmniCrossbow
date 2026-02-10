@@ -3,7 +3,6 @@ package archives.tater.omnicrossbow
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
-import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
@@ -21,6 +20,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
 
 object OmniCrossbowClient : ClientModInitializer {
@@ -48,27 +48,27 @@ object OmniCrossbowClient : ClientModInitializer {
 		}
 
 		ClientPlayNetworking.registerGlobalReceiver(FireworksPayload.TYPE) { (id), context ->
-			val projectile = context.player().level().getEntity(id) as? CustomItemProjectile ?: return@registerGlobalReceiver
+			val projectile = context.player().level().getEntity(id) as? ThrowableItemProjectile ?: return@registerGlobalReceiver
 			val explosion = projectile.item[DataComponents.FIREWORK_EXPLOSION] ?: return@registerGlobalReceiver
 			val movement = projectile.deltaMovement
 			context.player().level().createFireworks(projectile.x, projectile.y, projectile.z, movement.x, movement.y, movement.z, listOf(explosion))
 		}
 
-		ClientPlayNetworking.registerGlobalReceiver(ParticleBeamPayload.TYPE) { payload, context ->
-			val difference = payload.end - payload.start
+		ClientPlayNetworking.registerGlobalReceiver(ParticleBeamPayload.TYPE) { (particle, start, end, step, randomness, countPerPos, dx, dy, dz, speed), context ->
+			val difference = end - start
 			val direction = difference.normalize()
 			val random = context.player().random
-			repeat((difference.length() / payload.step).toInt()) {
-				val particlePos = payload.start + direction * ((it + random.nextDouble()) * payload.step)
-				repeat(payload.countPerPos) {
+			repeat((difference.length() / step).toInt()) {
+				val particlePos = start + direction * ((it + randomness * random.nextDouble()) * step)
+				repeat(countPerPos) {
 					context.player().level().addParticle(
-						payload.particle,
-						particlePos.x + random.nextGaussian() * payload.dx,
-						particlePos.y + random.nextGaussian() * payload.dy,
-						particlePos.z + random.nextGaussian() * payload.dz,
-						random.nextGaussian() * payload.speed,
-						random.nextGaussian() * payload.speed,
-						random.nextGaussian() * payload.speed
+                        particle,
+						particlePos.x + random.nextGaussian() * dx,
+						particlePos.y + random.nextGaussian() * dy,
+						particlePos.z + random.nextGaussian() * dz,
+						random.nextGaussian() * speed,
+						random.nextGaussian() * speed,
+						random.nextGaussian() * speed
 					)
 				}
 			}
