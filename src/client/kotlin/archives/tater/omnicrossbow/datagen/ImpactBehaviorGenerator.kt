@@ -29,6 +29,8 @@ import net.minecraft.tags.BlockTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -117,6 +119,17 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 ),
             ),
             OmniCrossbowImpactActions.USE_ITEM_ON_ENTITY_BASE,
+        ))
+
+        register("glow", ItemPredicate {
+            of(items, Items.GLOWSTONE_DUST, Items.GLOW_INK_SAC, Items.GLOW_BERRIES)
+        }, SideEffect(
+            main = ApplyEffects(MobEffectInstance(MobEffects.GLOWING, 10 * 20)),
+            secondary = AllOf(
+                itemParticle,
+                PlaySound(soundHolder(SoundEvents.GLOW_INK_SAC_USE)),
+                OmniCrossbowImpactActions.SHRINK,
+            )
         ))
 
         register(ItemTags.LIGHTNING_RODS, SideEffect(
