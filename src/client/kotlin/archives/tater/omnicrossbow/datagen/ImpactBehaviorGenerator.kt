@@ -153,6 +153,18 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             secondary = PlaySound(soundHolder(SoundEvents.BELL_BLOCK))
         ))
 
+        register(Items.AMETHYST_SHARD, SideEffect(
+            main = AnyOf(
+                OmniCrossbowImpactActions.IS_BLOCK,
+                Damage(8f)
+            ),
+            secondary = AllOf(
+                PlaySound(soundHolder(SoundEvents.AMETHYST_BLOCK_BREAK)),
+                itemParticle,
+                OmniCrossbowImpactActions.SHRINK
+            )
+        ))
+
         register(ItemTags.LIGHTNING_RODS, SideEffect(
             main = AnyOf(
                 OmniCrossbowImpactActions.IS_ENTITY,

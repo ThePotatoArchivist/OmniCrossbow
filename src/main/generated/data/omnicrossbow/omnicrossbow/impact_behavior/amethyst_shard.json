@@ -1,0 +1,34 @@
+{
+  "action": {
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:any_of",
+      "actions": [
+        "omnicrossbow:is_block",
+        {
+          "type": "omnicrossbow:damage",
+          "base_attack_damage": 8.0
+        }
+      ]
+    },
+    "secondary": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:play_sound",
+          "sound_event": "minecraft:block.amethyst_block.break"
+        },
+        {
+          "type": "omnicrossbow:item_particle",
+          "count": 8,
+          "dx": 0.0,
+          "dy": 0.0,
+          "dz": 0.0,
+          "speed": 0.1
+        },
+        "omnicrossbow:shrink"
+      ]
+    }
+  },
+  "items": "minecraft:amethyst_shard"
+}
