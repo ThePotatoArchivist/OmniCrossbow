@@ -12,6 +12,10 @@ import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.component.DataComponentType
+import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.core.particles.SimpleParticleType
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
@@ -45,6 +49,19 @@ val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
             Either.right(it.items.get())
         else
             Either.left(it)
+    }
+)
+
+val PARTICLE_OPTIONS_SHORT_CODEC: Codec<ParticleOptions> = Codec.either(
+    BuiltInRegistries.PARTICLE_TYPE.byNameCodec(),
+    ParticleTypes.CODEC
+).comapFlatMap(
+    { it.map(
+        { if (it is SimpleParticleType) DataResult.success(it) else DataResult.error { "$it is not a simple particle type" } },
+        { DataResult.success(it) }
+    ) },
+    {
+        if (it is SimpleParticleType) Either.left(it) else Either.right(it)
     }
 )
 

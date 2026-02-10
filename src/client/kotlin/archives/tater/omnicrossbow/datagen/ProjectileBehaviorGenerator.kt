@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.FireBeam
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
@@ -19,12 +20,14 @@ import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
+import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -43,6 +46,7 @@ class ProjectileBehaviorGenerator(
         entries: Entries
     ) {
         val items = entries.getLookup(Registries.ITEM)
+        val damageTypes = entries.getLookup(Registries.DAMAGE_TYPE)
 
         fun register(path: String, behavior: ItemFiltered<ProjectileBehavior>) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
@@ -103,7 +107,16 @@ class ProjectileBehaviorGenerator(
 
         register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM))
 
-        register(Items.BLAZE_ROD, ProjectileBehavior(OmniCrossbowProjectileActions.FIRE_BEAM, shootSound = soundHolder(SoundEvents.FIRECHARGE_USE)))
+        register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(
+            distance = 15.0,
+            margin = 0.2,
+            damage = 8f,
+            damageType = damageTypes.getOrThrow(DamageTypes.IN_FIRE),
+            fireTicks = 8 * 20,
+            beamParticle = ParticleTypes.FLAME,
+            destroyParticle = ParticleTypes.LARGE_SMOKE,
+            hitWaterParticle = ParticleTypes.CLOUD,
+        ), shootSound = soundHolder(SoundEvents.FIRECHARGE_USE)))
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 

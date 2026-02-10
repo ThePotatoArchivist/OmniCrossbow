@@ -1,5 +1,15 @@
 {
   "items": "minecraft:blaze_rod",
-  "projectile_action": "omnicrossbow:special/fire_beam",
+  "projectile_action": {
+    "type": "omnicrossbow:fire_beam",
+    "beam_particle": "minecraft:flame",
+    "damage": 8.0,
+    "damage_type": "minecraft:in_fire",
+    "destroy_particle": "minecraft:large_smoke",
+    "distance": 15.0,
+    "fire_ticks": 160,
+    "hit_water_particle": "minecraft:cloud",
+    "margin": 0.2
+  },
   "shoot_sound": "minecraft:item.firecharge.use"
 }
