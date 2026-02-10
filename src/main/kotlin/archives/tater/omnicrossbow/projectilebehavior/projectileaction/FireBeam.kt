@@ -1,13 +1,12 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
 import archives.tater.omnicrossbow.mixin.behavior.FireBlockInvoker
+import archives.tater.omnicrossbow.network.ParticleBeamPayload
 import archives.tater.omnicrossbow.util.*
-import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
-import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.FluidTags
@@ -29,9 +28,11 @@ data class FireBeam(
     val damage: Float,
     val damageType: Holder<DamageType>,
     val fireTicks: Int,
-    val beamParticle: ParticleOptions = ParticleTypes.FLAME,
-    val destroyParticle: ParticleOptions = ParticleTypes.LARGE_SMOKE,
-    val hitWaterParticle: ParticleOptions = ParticleTypes.CLOUD,
+    val beamParticle: ParticleConfig = ParticleConfig(ParticleTypes.FLAME, 4, 0.01),
+    val beamParticleStep: Double = 0.25,
+    val beamParticleRandomness: Double = 1.0,
+    val destroyParticle: ParticleConfig = ParticleConfig(ParticleTypes.LARGE_SMOKE, 16, 0.25, 0.25, 0.25),
+    val hitWaterParticle: ParticleConfig = ParticleConfig(ParticleTypes.CLOUD, 8),
 ) : Delegated, ProjectileAction.Inline {
     override fun shoot(
         pos: Vec3,
@@ -61,7 +62,7 @@ data class FireBeam(
             val state = level[blockPos]
             if (!state.fluidState.isEmpty) {
                 if (state.fluidState isIn FluidTags.WATER)
-                    level.sendParticles(hitWaterParticle, current.x, current.y + 0.1, current.z, 8, 0.0, 0.0, 0.0, 0.0)
+                    level.sendParticles(hitWaterParticle, current.x, current.y + 0.1, current.z)
                 break
             }
             if ((Blocks.FIRE as FireBlockInvoker).invokeGetBurnOdds(state) > 0f) {
@@ -81,35 +82,36 @@ data class FireBeam(
                 blockPos.x + 0.5,
                 blockPos.y + 0.5,
                 blockPos.z + 0.5,
-                16,
-                0.25,
-                0.25,
-                0.25,
-                0.0
             )
         }
         for (entity in getEntitiesPierced(level, pos, current, margin, shooter)) {
             entity.hurtServer(level, DamageSource(damageType, shooter), damage)
             entity.remainingFireTicks += fireTicks
         }
-        repeat((current - pos).length().toInt() * 4) {
-            val particlePos = pos + direction * (it / 4.0)
-            level.sendParticles(beamParticle, particlePos.x, particlePos.y, particlePos.z, 4, 0.0, 0.0, 0.0, 0.01)
-        }
+        level.sendParticleBeam(ParticleBeamPayload(
+            beamParticle,
+            pos,
+            current,
+            step = beamParticleStep,
+            randomness = beamParticleRandomness,
+        ))
     }
 
     override val codec: MapCodec<out FireBeam> get() = CODEC
     
     companion object {
+
         val CODEC: MapCodec<FireBeam> = RecordCodecBuilder.mapCodec { it.group(
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("distance").forGetter(FireBeam::distance),
-            Codec.doubleRange(0.0, Double.MAX_VALUE).fieldOf("margin").forGetter(FireBeam::margin),
+            NON_NEGATIVE_DOUBLE.fieldOf("distance").forGetter(FireBeam::distance),
+            NON_NEGATIVE_DOUBLE.fieldOf("margin").forGetter(FireBeam::margin),
             ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("damage").forGetter(FireBeam::damage),
             DamageType.CODEC.fieldOf("damage_type").forGetter(FireBeam::damageType),
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("fire_ticks").forGetter(FireBeam::fireTicks),
-            PARTICLE_OPTIONS_SHORT_CODEC.fieldOf("beam_particle").forGetter(FireBeam::beamParticle),
-            PARTICLE_OPTIONS_SHORT_CODEC.fieldOf("destroy_particle").forGetter(FireBeam::destroyParticle),
-            PARTICLE_OPTIONS_SHORT_CODEC.fieldOf("hit_water_particle").forGetter(FireBeam::hitWaterParticle),
+            ParticleConfig.CODEC.fieldOf("beam_particle").forGetter(FireBeam::beamParticle),
+            NON_NEGATIVE_DOUBLE.fieldOf("beam_particle_step").forGetter(FireBeam::beamParticleStep),
+            NON_NEGATIVE_DOUBLE.fieldOf("beam_particle_randomness").forGetter(FireBeam::beamParticleRandomness),
+            ParticleConfig.CODEC.fieldOf("destroy_particle").forGetter(FireBeam::destroyParticle),
+            ParticleConfig.CODEC.fieldOf("hit_water_particle").forGetter(FireBeam::hitWaterParticle),
         ).apply(it, ::FireBeam) }
     }
 }

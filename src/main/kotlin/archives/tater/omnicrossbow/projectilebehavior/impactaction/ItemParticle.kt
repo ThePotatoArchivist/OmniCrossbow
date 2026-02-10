@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import com.mojang.serialization.Codec
+import archives.tater.omnicrossbow.util.NON_NEGATIVE_DOUBLE
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.particles.ItemParticleOption
@@ -33,8 +33,6 @@ data class ItemParticle(
     }
 
     companion object {
-        private val NON_NEGATIVE_DOUBLE: Codec<Double> = Codec.doubleRange(0.0, Double.MAX_VALUE)
-
         val CODEC: MapCodec<ItemParticle> = RecordCodecBuilder.mapCodec { it.group(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").forGetter(ItemParticle::count),
             NON_NEGATIVE_DOUBLE.fieldOf("dx").forGetter(ItemParticle::dx),

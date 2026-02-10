@@ -2,13 +2,36 @@
   "items": "minecraft:blaze_rod",
   "projectile_action": {
     "type": "omnicrossbow:fire_beam",
-    "beam_particle": "minecraft:flame",
+    "beam_particle": {
+      "count": 4,
+      "dx": 0.0,
+      "dy": 0.0,
+      "dz": 0.0,
+      "particle": "minecraft:flame",
+      "speed": 0.01
+    },
+    "beam_particle_randomness": 1.0,
+    "beam_particle_step": 0.25,
     "damage": 8.0,
     "damage_type": "minecraft:in_fire",
-    "destroy_particle": "minecraft:large_smoke",
+    "destroy_particle": {
+      "count": 16,
+      "dx": 0.25,
+      "dy": 0.25,
+      "dz": 0.25,
+      "particle": "minecraft:large_smoke",
+      "speed": 0.0
+    },
     "distance": 15.0,
     "fire_ticks": 160,
-    "hit_water_particle": "minecraft:cloud",
+    "hit_water_particle": {
+      "count": 8,
+      "dx": 0.0,
+      "dy": 0.0,
+      "dz": 0.0,
+      "particle": "minecraft:cloud",
+      "speed": 0.0
+    },
     "margin": 0.2
   },
   "shoot_sound": "minecraft:item.firecharge.use"

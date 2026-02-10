@@ -2,9 +2,11 @@
 
 package archives.tater.omnicrossbow.util
 
+import archives.tater.omnicrossbow.network.ParticleBeamPayload
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.advancements.criterion.MinMaxBounds
@@ -17,6 +19,8 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
@@ -26,6 +30,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import java.util.function.Predicate
+import kotlin.reflect.KProperty1
 
 inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type: DataComponentType<T>, combine: (T, Int) -> U): U? {
     if (stack.isEmpty) return null
@@ -35,6 +40,8 @@ inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type:
 }
 
 val EMPTY_ITEM_PREDICATE = ItemPredicate {  }
+
+val NON_NEGATIVE_DOUBLE: Codec<Double> = Codec.doubleRange(0.0, Double.MAX_VALUE)
 
 val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
     ItemPredicate.CODEC,
@@ -104,3 +111,14 @@ fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, pr
 
 fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double): List<Entity> =
     getEntitiesPierced(level, start, stop, margin, null, null)
+
+fun ServerLevel.sendParticleBeam(payload: ParticleBeamPayload) {
+    val packet = ClientboundCustomPayloadPacket(payload)
+
+    for (player in players())
+        sendParticles(player, false, payload.start.x, payload.start.y, payload.start.z, packet)
+}
+
+fun camelCaseToSnakeCase(str: String) = str.replace(Regex("[a-z][A-Z]"), "$1_$2").lowercase()
+
+fun <T, V> Codec<V>.fieldOf(property: KProperty1<T, V>): RecordCodecBuilder<T, V> = fieldOf(camelCaseToSnakeCase(property.name)).forGetter(property)

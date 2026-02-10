@@ -11,6 +11,7 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import archives.tater.omnicrossbow.util.ItemPredicate
+import archives.tater.omnicrossbow.util.ParticleConfig
 import archives.tater.omnicrossbow.util.hasAny
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
@@ -113,9 +114,11 @@ class ProjectileBehaviorGenerator(
             damage = 8f,
             damageType = damageTypes.getOrThrow(DamageTypes.IN_FIRE),
             fireTicks = 8 * 20,
-            beamParticle = ParticleTypes.FLAME,
-            destroyParticle = ParticleTypes.LARGE_SMOKE,
-            hitWaterParticle = ParticleTypes.CLOUD,
+            beamParticle = ParticleConfig(ParticleTypes.FLAME, 4, speed = 0.01),
+            beamParticleStep = 0.25,
+            beamParticleRandomness = 1.0,
+            destroyParticle = ParticleConfig(ParticleTypes.LARGE_SMOKE, 16, 0.25, 0.25, 0.25),
+            hitWaterParticle = ParticleConfig(ParticleTypes.CLOUD, 8),
         ), shootSound = soundHolder(SoundEvents.FIRECHARGE_USE)))
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
