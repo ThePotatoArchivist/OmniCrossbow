@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.HitResult
 
 @JvmRecord
-data class AnyOf(override val actions: List<ImpactAction>) : Multiple {
+data class SelectRandom(override val actions: List<ImpactAction>) : Multiple {
 
     constructor(vararg actions: ImpactAction) : this(actions.toList())
 
@@ -15,12 +15,12 @@ data class AnyOf(override val actions: List<ImpactAction>) : Multiple {
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: HitResult,
-        originalItem: ItemStack,
-    ): Boolean = actions.any { it.tryImpact(level, projectile, hit, originalItem) }
+        originalItem: ItemStack
+    ): Boolean = actions[projectile.random.nextInt(actions.size)].tryImpact(level, projectile, hit, originalItem)
 
-    override val codec: MapCodec<out AnyOf> get() = CODEC
+    override val codec: MapCodec<out ImpactAction.Inline> get() = CODEC
 
     companion object {
-        val CODEC = Multiple.createCodec(::AnyOf)
+        val CODEC = Multiple.createCodec(::SelectRandom)
     }
 }

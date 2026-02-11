@@ -258,14 +258,20 @@ object OmniCrossbowImpactActions {
 
     fun init() {
         register("none", ImpactAction.None)
-        register("item_particle", ItemParticle.CODEC)
-        register("explode", Explode.CODEC)
+
         register("all_of", AllOf.CODEC)
         register("any_of", AnyOf.CODEC)
         register("conditional", Conditional.CODEC)
         register("side_effect", SideEffect.CODEC)
+        register("select_random", SelectRandom.CODEC)
+        register("repeat", Repeat.CODEC)
+
         register("block_offset", BlockOffset.CODEC)
         register("check_loot_condition", CheckLootCondition.CODEC)
+
+        register("item_particle", ItemParticle.CODEC)
+        register("show_particle", ShowParticle.CODEC)
+        register("explode", Explode.CODEC)
         register("play_sound", PlaySound.CODEC)
         register("summon_entity", SummonEntity.CODEC)
         register("damage", Damage.CODEC)

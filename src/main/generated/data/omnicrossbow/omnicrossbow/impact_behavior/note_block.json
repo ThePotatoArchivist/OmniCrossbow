@@ -13,49 +13,217 @@
       "type": "omnicrossbow:all_of",
       "actions": [
         {
-          "type": "omnicrossbow:play_sound",
-          "pitch": {
-            "type": "minecraft:uniform",
-            "max_exclusive": 1.0,
-            "min_inclusive": 0.5
+          "type": "omnicrossbow:repeat",
+          "action": {
+            "type": "omnicrossbow:select_random",
+            "actions": [
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.25,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.2648658,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.2806155,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.29730177,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.31498027,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.33370996,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.35355338,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.37457678,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.39685026,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.4204482,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.44544935,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.47193715,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.5,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.5297316,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.561231,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.59460354,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.62996054,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.6674199,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.70710677,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.74915355,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.7937005,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.8408964,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.8908987,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 0.9438743,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.0,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.0594631,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.122462,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.1892071,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.2599211,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.3348398,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.4142135,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.4983071,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.587401,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.6817929,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.7817974,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 1.8877486,
+                "sound_event": "minecraft:block.note_block.harp"
+              },
+              {
+                "type": "omnicrossbow:play_sound",
+                "pitch": 2.0,
+                "sound_event": "minecraft:block.note_block.harp"
+              }
+            ]
           },
-          "sound_event": "minecraft:block.note_block.harp"
+          "times": 5
         },
         {
-          "type": "omnicrossbow:play_sound",
-          "pitch": {
-            "type": "minecraft:uniform",
-            "max_exclusive": 1.0,
-            "min_inclusive": 0.5
+          "type": "omnicrossbow:block_offset",
+          "action": {
+            "type": "omnicrossbow:show_particle",
+            "anchor": "block",
+            "count": 5,
+            "dx": 0.5,
+            "dy": 0.25,
+            "dz": 0.5,
+            "offset": [
+              0.0,
+              0.5,
+              0.0
+            ],
+            "particle": "minecraft:note",
+            "speed": 1.0
           },
-          "sound_event": "minecraft:block.note_block.harp"
-        },
-        {
-          "type": "omnicrossbow:play_sound",
-          "pitch": {
-            "type": "minecraft:uniform",
-            "max_exclusive": 1.0,
-            "min_inclusive": 0.5
-          },
-          "sound_event": "minecraft:block.note_block.harp"
-        },
-        {
-          "type": "omnicrossbow:play_sound",
-          "pitch": {
-            "type": "minecraft:uniform",
-            "max_exclusive": 1.0,
-            "min_inclusive": 0.5
-          },
-          "sound_event": "minecraft:block.note_block.harp"
-        },
-        {
-          "type": "omnicrossbow:play_sound",
-          "pitch": {
-            "type": "minecraft:uniform",
-            "max_exclusive": 1.0,
-            "min_inclusive": 0.5
-          },
-          "sound_event": "minecraft:block.note_block.harp"
+          "direction": 1
         }
       ]
     }

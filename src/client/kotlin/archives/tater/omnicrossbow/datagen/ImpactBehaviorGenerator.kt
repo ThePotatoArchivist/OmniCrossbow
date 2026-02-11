@@ -21,6 +21,7 @@ import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
@@ -29,7 +30,7 @@ import net.minecraft.tags.BlockTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
-import net.minecraft.util.valueproviders.UniformFloat
+import net.minecraft.util.valueproviders.ConstantInt
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
@@ -37,6 +38,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks.COBWEB
+import net.minecraft.world.level.block.NoteBlock
 import net.minecraft.world.level.storage.loot.IntRange
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
@@ -47,6 +49,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyC
 import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
 import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
+import net.minecraft.world.phys.Vec3
 import java.util.concurrent.CompletableFuture
 
 class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: CompletableFuture<HolderLookup.Provider>) :
@@ -139,9 +142,15 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 onSuccess = OmniCrossbowImpactActions.USE_ITEM,
                 onFail = Damage()
             ),
-            secondary = AllOf(List(5) {
-                PlaySound(SoundEvents.NOTE_BLOCK_HARP, pitch = UniformFloat.of(0.5f, 1f))
-            })
+            secondary = AllOf(
+                Repeat(ConstantInt.of(5), SelectRandom((-12..24).map {
+                    PlaySound(SoundEvents.NOTE_BLOCK_HARP, pitch = ConstantFloat.of(NoteBlock.getPitchFromNote(it)))
+                })),
+                BlockOffset(
+                    ShowParticle(ParticleConfig(ParticleTypes.NOTE, 5, 0.5, 0.25, 0.5, 1.0), ShowParticle.Anchor.BLOCK, Vec3(0.0, 0.5, 0.0)),
+                    direction = 1
+                )
+            )
         ))
 
         register(Items.BELL, SideEffect(

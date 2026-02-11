@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.util
 
 import com.mojang.serialization.Codec
+import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.server.level.ServerLevel
@@ -16,7 +17,7 @@ data class ParticleConfig(
     val speed: Double = 0.0,
 ) {
     companion object {
-        val CODEC: Codec<ParticleConfig> = RecordCodecBuilder.create { it.group(
+        val MAP_CODEC: MapCodec<ParticleConfig> = RecordCodecBuilder.mapCodec { it.group(
             PARTICLE_OPTIONS_SHORT_CODEC.fieldOf(ParticleConfig::particle),
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf(ParticleConfig::count),
             NON_NEGATIVE_DOUBLE.fieldOf(ParticleConfig::dx),
@@ -24,6 +25,8 @@ data class ParticleConfig(
             NON_NEGATIVE_DOUBLE.fieldOf(ParticleConfig::dz),
             NON_NEGATIVE_DOUBLE.fieldOf(ParticleConfig::speed),
         ).apply(it, ::ParticleConfig) }
+
+        val CODEC: Codec<ParticleConfig> = MAP_CODEC.codec()
     }
 }
 
