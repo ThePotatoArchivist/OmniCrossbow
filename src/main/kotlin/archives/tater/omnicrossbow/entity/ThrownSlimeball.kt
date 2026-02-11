@@ -1,6 +1,8 @@
 package archives.tater.omnicrossbow.entity
 
 import archives.tater.omnicrossbow.network.addMovementClient
+import archives.tater.omnicrossbow.util.contains
+import net.minecraft.core.component.DataComponents
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.EntityEvent
 import net.minecraft.world.entity.EntityType
@@ -26,6 +28,7 @@ class ThrownSlimeball(type: EntityType<out ThrownSlimeball>, level: Level) : Bou
     }
 
     override fun onStopBounce(hitResult: BlockHitResult) {
+        if (DataComponents.INTANGIBLE_PROJECTILE in item) return
         val pos = hitResult.location
         val itemEntity = ItemEntity(level(), pos.x, pos.y, pos.z, item)
         itemEntity.setDefaultPickUpDelay()

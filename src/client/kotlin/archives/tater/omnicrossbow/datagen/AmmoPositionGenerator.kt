@@ -83,6 +83,14 @@ class AmmoPositionGenerator(
                 +Items.WIND_CHARGE
                 +Items.FIREWORK_STAR
             },
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f)
+            )) {
+                +Items.SNOWBALL
+                +Items.SLIME_BALL
+                +Items.MAGMA_CREAM
+                +Items.FIRE_CHARGE
+            },
             AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM.transform) {
                 +Items.PUFFERFISH
             },

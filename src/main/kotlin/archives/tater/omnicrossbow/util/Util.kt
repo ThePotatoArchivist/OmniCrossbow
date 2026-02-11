@@ -21,6 +21,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.RandomSource
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ItemStack
@@ -131,3 +132,6 @@ fun ServerLevel.sendParticleBeam(payload: ParticleBeamPayload) {
 fun camelCaseToSnakeCase(str: String) = str.replace(Regex("[a-z][A-Z]"), "$1_$2").lowercase()
 
 fun <T, V> Codec<V>.fieldOf(property: KProperty1<T, V>): RecordCodecBuilder<T, V> = fieldOf(camelCaseToSnakeCase(property.name)).forGetter(property)
+
+fun weightedRound(value: Float, random: RandomSource) = value.toInt() + if (random.nextFloat() < value.mod(1f)) 1 else 0
+fun weightedRound(value: Double, random: RandomSource) = weightedRound(value.toFloat(), random)

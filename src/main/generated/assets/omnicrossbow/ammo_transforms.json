@@ -138,6 +138,21 @@
     }
   },
   {
+    "items": [
+      "minecraft:snowball",
+      "minecraft:slime_ball",
+      "minecraft:magma_cream",
+      "minecraft:fire_charge"
+    ],
+    "transform": {
+      "translation": [
+        -0.125,
+        0.125,
+        0.0625
+      ]
+    }
+  },
+  {
     "items": "minecraft:pufferfish",
     "transform": {
       "translation": [

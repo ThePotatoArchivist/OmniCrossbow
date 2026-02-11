@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity
 
+import archives.tater.omnicrossbow.util.weightedRound
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.damagesource.DamageTypes
@@ -19,10 +20,17 @@ class ThrownMagmaCream(type: EntityType<out ThrownMagmaCream>, level: Level) : B
     override fun tick() {
         super.tick()
         if (level().isClientSide) {
-            if (random.nextFloat() < 0.2f)
-                level().addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0)
-            if (random.nextFloat() < 0.2f)
-                level().addParticle(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0)
+            val movement = deltaMovement
+            val count = weightedRound(movement.length(), random)
+            repeat(count) {
+                level().addParticle(
+                    ParticleTypes.FLAME,
+                    x - movement.x * it / count,
+                    getY(0.5) - movement.y * it / count,
+                    z - movement.z * it / count,
+                    0.0, 0.0, 0.0
+                )
+            }
         }
     }
 

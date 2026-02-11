@@ -11,6 +11,7 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
     FabricTagsProvider.EntityTypeTagsProvider(output, registryLookupFuture) {
     override fun addTags(registries: HolderLookup.Provider) {
         with (valueLookupBuilder(OmniCrossbowTags.CAN_ALWAYS_EQUIP)) {
+            +EntityType.PLAYER
             +EntityType.ZOMBIE
             +EntityType.HUSK
             +EntityType.DROWNED

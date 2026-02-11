@@ -75,7 +75,6 @@ class ProjectileBehaviorGenerator(
         }
 
         register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EGG)))
-        register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SNOWBALL)))
         register(Items.ENDER_PEARL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.ENDER_PEARL)))
         register(Items.EXPERIENCE_BOTTLE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)))
         register(Items.SPLASH_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SPLASH_POTION)))
@@ -90,6 +89,7 @@ class ProjectileBehaviorGenerator(
         register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
         register(ItemTags.BOATS, ProjectileBehavior(OmniCrossbowProjectileActions.SPAWN_BOAT, 0.5f))
 
+        register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.FREEZING_SNOWBALL)))
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
 

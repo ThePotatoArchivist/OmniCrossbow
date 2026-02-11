@@ -1,10 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
-import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import archives.tater.omnicrossbow.entity.DelegateProjectile
-import archives.tater.omnicrossbow.entity.ThrownMagmaCream
-import archives.tater.omnicrossbow.entity.ThrownSlimeball
+import archives.tater.omnicrossbow.entity.*
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -58,6 +55,9 @@ object OmniCrossbowEntities {
 
     @JvmField
     val MAGMA_CREAM = registerProjectile("magma_cream", ::ThrownMagmaCream)
+
+    @JvmField
+    val FREEZING_SNOWBALL = registerProjectile("freezing_snowball", ::FreezingSnowball)
 
     fun init() {
 
