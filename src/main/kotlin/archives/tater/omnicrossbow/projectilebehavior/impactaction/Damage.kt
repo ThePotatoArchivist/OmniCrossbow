@@ -2,8 +2,8 @@ package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
-import archives.tater.omnicrossbow.mixin.behavior.LivingEntityInvoker
-import archives.tater.omnicrossbow.mixin.behavior.PlayerInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.LivingEntityInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.PlayerInvoker
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel

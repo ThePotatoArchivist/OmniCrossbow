@@ -2,9 +2,9 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import archives.tater.omnicrossbow.mixin.behavior.BoatItemAccessor
-import archives.tater.omnicrossbow.mixin.behavior.MinecartItemAccessor
-import archives.tater.omnicrossbow.mixin.behavior.MobBucketItemAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.BoatItemAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.MobBucketItemAccessor
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry

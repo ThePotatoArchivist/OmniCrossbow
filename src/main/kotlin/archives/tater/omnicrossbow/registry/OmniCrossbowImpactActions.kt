@@ -3,7 +3,7 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.createFakePlayer
-import archives.tater.omnicrossbow.mixin.behavior.MobInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.MobInvoker
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*

@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
-import archives.tater.omnicrossbow.mixin.behavior.AbstractArrowAccessor
-import archives.tater.omnicrossbow.mixin.behavior.ThrownTridentAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.AbstractArrowAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.ThrownTridentAccessor
 import archives.tater.omnicrossbow.util.contains
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.component.DataComponents

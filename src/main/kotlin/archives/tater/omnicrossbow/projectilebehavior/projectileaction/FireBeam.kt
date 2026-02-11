@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
-import archives.tater.omnicrossbow.mixin.behavior.FireBlockInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.FireBlockInvoker
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
 import archives.tater.omnicrossbow.util.*
 import com.mojang.serialization.Codec

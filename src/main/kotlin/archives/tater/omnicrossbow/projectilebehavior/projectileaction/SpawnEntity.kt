@@ -1,8 +1,8 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
-import archives.tater.omnicrossbow.mixin.behavior.FallingBlockEntityAccessor
-import archives.tater.omnicrossbow.mixin.behavior.FallingBlockInvoker
-import archives.tater.omnicrossbow.mixin.behavior.ItemEntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.FallingBlockEntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.FallingBlockInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.ItemEntityAccessor
 import archives.tater.omnicrossbow.util.contains
 import com.mojang.logging.LogUtils
 import com.mojang.serialization.Codec

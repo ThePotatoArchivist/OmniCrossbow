@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.entity
 
-import archives.tater.omnicrossbow.mixin.behavior.EntityAccessor
-import archives.tater.omnicrossbow.mixin.behavior.LivingEntityInvoker
+import archives.tater.omnicrossbow.mixin.behavior.access.EntityAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.LivingEntityInvoker
 import archives.tater.omnicrossbow.util.ifNotNull
 import archives.tater.omnicrossbow.util.orElse
 import net.fabricmc.fabric.api.entity.FakePlayer

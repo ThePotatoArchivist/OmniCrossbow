@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin.behavior;
+package archives.tater.omnicrossbow.mixin.behavior.access;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

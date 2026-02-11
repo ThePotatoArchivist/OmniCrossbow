@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.entity
 
-import archives.tater.omnicrossbow.mixin.behavior.ProjectileAccessor
+import archives.tater.omnicrossbow.mixin.behavior.access.ProjectileAccessor
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
