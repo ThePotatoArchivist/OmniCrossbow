@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 import archives.tater.omnicrossbow.mixin.behavior.FireBlockInvoker
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
 import archives.tater.omnicrossbow.util.*
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
@@ -109,7 +110,7 @@ data class FireBeam(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("fire_ticks").forGetter(FireBeam::fireTicks),
             ParticleConfig.CODEC.fieldOf("beam_particle").forGetter(FireBeam::beamParticle),
             NON_NEGATIVE_DOUBLE.fieldOf("beam_particle_step").forGetter(FireBeam::beamParticleStep),
-            NON_NEGATIVE_DOUBLE.fieldOf("beam_particle_randomness").forGetter(FireBeam::beamParticleRandomness),
+            Codec.doubleRange(0.0, 1.0).fieldOf("beam_particle_randomness").forGetter(FireBeam::beamParticleRandomness),
             ParticleConfig.CODEC.fieldOf("destroy_particle").forGetter(FireBeam::destroyParticle),
             ParticleConfig.CODEC.fieldOf("hit_water_particle").forGetter(FireBeam::hitWaterParticle),
         ).apply(it, ::FireBeam) }

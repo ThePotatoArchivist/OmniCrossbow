@@ -132,6 +132,7 @@ fun ServerLevel.sendParticleBeam(payload: ParticleBeamPayload) {
 fun camelCaseToSnakeCase(str: String) = str.replace(Regex("[a-z][A-Z]"), "$1_$2").lowercase()
 
 fun <T, V> Codec<V>.fieldOf(property: KProperty1<T, V>): RecordCodecBuilder<T, V> = fieldOf(camelCaseToSnakeCase(property.name)).forGetter(property)
+fun <T, V> Codec<V>.optionalFieldOf(property: KProperty1<T, V>, default: V): RecordCodecBuilder<T, V> = optionalFieldOf(camelCaseToSnakeCase(property.name), default).forGetter(property)
 
 fun weightedRound(value: Float, random: RandomSource) = value.toInt() + if (random.nextFloat() < value.mod(1f)) 1 else 0
 fun weightedRound(value: Double, random: RandomSource) = weightedRound(value.toFloat(), random)

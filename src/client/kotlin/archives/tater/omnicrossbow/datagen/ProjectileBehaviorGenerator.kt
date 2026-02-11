@@ -3,10 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.FireBeam
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
@@ -93,6 +90,16 @@ class ProjectileBehaviorGenerator(
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
 
+        register(Items.BREEZE_ROD, ProjectileBehavior(Pierce(
+            16.0,
+            2.0,
+            ParticleConfig(ParticleTypes.GUST_EMITTER_SMALL),
+            2.0,
+            collideWithBlocks = true,
+            cheatOnGroundKnockback = -0.5,
+            knockback = 5.0,
+        ), shootSound = SoundEvents.BREEZE_WIND_CHARGE_BURST, ignoreGravityAiming = true))
+
         register(DataComponents.ENTITY_DATA, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_ENTITY_DATA, 0.5f))
 
         register("entity_buckets", ItemPredicate {
@@ -110,7 +117,17 @@ class ProjectileBehaviorGenerator(
             damageMax = 40,
         ), velocityScale = 0.7f))
 
-        register(Items.ECHO_SHARD, ProjectileBehavior(OmniCrossbowProjectileActions.SONIC_BOOM, cooldownTicks = 6 * 20, ignoreGravityAiming = true))
+        register(Items.ECHO_SHARD, ProjectileBehavior(Pierce(
+            15.0,
+            1.0,
+            ParticleConfig(ParticleTypes.SONIC_BOOM),
+            1.0,
+            particleRandomness = 0.0,
+            collideWithBlocks = false,
+            knockback = 2.5,
+            damage = 10f,
+            damageType = damageTypes.getOrThrow(DamageTypes.SONIC_BOOM)
+        ), cooldownTicks = 6 * 20, shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM), ignoreGravityAiming = true))
 
         register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(
             distance = 15.0,

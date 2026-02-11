@@ -6,18 +6,10 @@ import archives.tater.omnicrossbow.mixin.behavior.BoatItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.MinecartItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.MobBucketItemAccessor
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
-import archives.tater.omnicrossbow.util.plus
-import archives.tater.omnicrossbow.util.times
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
-import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.projectile.ProjectileUtil
 import net.minecraft.world.item.SpawnEggItem
-import net.minecraft.world.level.ClipContext
-import net.minecraft.world.phys.AABB
 
 
 object OmniCrossbowProjectileActions {
@@ -62,32 +54,6 @@ object OmniCrossbowProjectileActions {
         (it.item as? MobBucketItemAccessor)?.type
     }
 
-    @JvmField
-    val SONIC_BOOM = registerDelegated("sonic_boom") { pos, velocity, level, shooter, _, projectile ->
-        val direction = velocity.normalize()
-        val vec = direction * 15.0
-        val end = pos + vec
-        for (hit in ProjectileUtil.getManyEntityHitResult(
-            level,
-            shooter,
-            pos,
-            end,
-            AABB(pos, end).inflate(1.0),
-            { it is LivingEntity },
-            1f,
-            ClipContext.Block.COLLIDER,
-            false
-        )) with (hit.entity) {
-            hurtServer(level, level.damageSources().sonicBoom(shooter), 10f)
-            push(direction * 2.5)
-        }
-        repeat(15) {
-            val particlePos = pos + direction * it.toDouble()
-            level.sendParticles(ParticleTypes.SONIC_BOOM, particlePos.x, particlePos.y, particlePos.z, 1, 0.0, 0.0, 0.0, 0.0)
-        }
-        level.playSound(null, shooter, SoundEvents.WARDEN_SONIC_BOOM, shooter.soundSource, 1f, 1f)
-    }
-
     fun init() {
         register("default", ProjectileAction.Default)
         register("spawn_projectile", SpawnProjectile.Direct.CODEC)
@@ -95,5 +61,6 @@ object OmniCrossbowProjectileActions {
         register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
         registerEntity("spawn_entity/item", SpawnEntity.Item)
         register("fire_beam", FireBeam.CODEC)
+        register("pierce", Pierce.CODEC)
     }
 }

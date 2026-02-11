@@ -1,0 +1,17 @@
+{
+  "ignore_gravity_aiming": true,
+  "items": "minecraft:breeze_rod",
+  "projectile_action": {
+    "type": "omnicrossbow:pierce",
+    "cheat_on_ground_knockback": -0.5,
+    "collide_with_blocks": true,
+    "distance": 16.0,
+    "knockback": 5.0,
+    "margin": 2.0,
+    "particle": {
+      "particle": "minecraft:gust_emitter_small"
+    },
+    "particle_step": 2.0
+  },
+  "shoot_sound": "minecraft:entity.breeze.wind_burst"
+}
