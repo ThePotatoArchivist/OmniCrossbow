@@ -3,6 +3,8 @@ package archives.tater.omnicrossbow
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
+import archives.tater.omnicrossbow.entity.CustomItemProjectile
+import archives.tater.omnicrossbow.network.AddMovementPayload
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
@@ -30,6 +32,8 @@ object OmniCrossbowClient : ClientModInitializer {
 		ChargedProjectileIndicatorRenderer.register()
 
 		EntityRenderers.register(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE, ::ThrownItemRenderer) // TODO temporary
+		EntityRenderers.register(OmniCrossbowEntities.SLIME_BALL, ::ThrownItemRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.MAGMA_CREAM, ::ThrownItemRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 
@@ -72,6 +76,10 @@ object OmniCrossbowClient : ClientModInitializer {
 					)
 				}
 			}
+		}
+
+		ClientPlayNetworking.registerGlobalReceiver(AddMovementPayload.TYPE) { (movement), context ->
+			context.player().deltaMovement += movement
 		}
 	}
 }

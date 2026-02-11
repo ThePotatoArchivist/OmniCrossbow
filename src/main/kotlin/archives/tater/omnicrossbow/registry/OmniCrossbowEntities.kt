@@ -3,6 +3,8 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.DelegateProjectile
+import archives.tater.omnicrossbow.entity.ThrownMagmaCream
+import archives.tater.omnicrossbow.entity.ThrownSlimeball
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -30,6 +32,15 @@ object OmniCrossbowEntities {
     private fun <T: Entity> register(path: String, factory: EntityType.EntityFactory<T>, category: MobCategory = MobCategory.MISC, init: EntityType.Builder<T>.() -> Unit) =
         register(OmniCrossbow.id(path), factory, category, init)
 
+    private fun <T: Entity> registerProjectile(path: String, factory: EntityType.EntityFactory<T>, category: MobCategory = MobCategory.MISC, init: EntityType.Builder<T>.() -> Unit = {}) =
+        register(path, factory, category) {
+            noLootTable()
+            sized(0.25f, 0.25f)
+            clientTrackingRange(4)
+            updateInterval(10)
+            init()
+        }
+
     @JvmField
     val DELEGATE_PROJECTILE = register("delegate_projectile", ::DelegateProjectile) {
         noSummon()
@@ -40,12 +51,13 @@ object OmniCrossbowEntities {
     }
 
     @JvmField
-    val CUSTOM_ITEM_PROJECTILE = register("custom_item_projectile", ::CustomItemProjectile) {
-        noLootTable()
-        sized(0.25f, 0.25f)
-        clientTrackingRange(4)
-        updateInterval(10)
-    }
+    val CUSTOM_ITEM_PROJECTILE = registerProjectile("custom_item_projectile", ::CustomItemProjectile)
+
+    @JvmField
+    val SLIME_BALL = registerProjectile("slimeball", ::ThrownSlimeball)
+
+    @JvmField
+    val MAGMA_CREAM = registerProjectile("magma_cream", ::ThrownMagmaCream)
 
     fun init() {
 

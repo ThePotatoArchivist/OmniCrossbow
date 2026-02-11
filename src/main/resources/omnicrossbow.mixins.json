@@ -18,6 +18,7 @@
     "behavior.MobBucketItemAccessor",
     "behavior.MobInvoker",
     "behavior.PlayerInvoker",
+    "behavior.ProjectileAccessor",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",
     "behavior.ThrownTridentAccessor",

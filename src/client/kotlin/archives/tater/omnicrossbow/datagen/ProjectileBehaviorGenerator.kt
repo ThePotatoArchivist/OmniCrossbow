@@ -7,6 +7,7 @@ import archives.tater.omnicrossbow.projectilebehavior.projectileaction.FireBeam
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
+import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags
@@ -88,6 +89,9 @@ class ProjectileBehaviorGenerator(
         register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
         register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
         register(ItemTags.BOATS, ProjectileBehavior(OmniCrossbowProjectileActions.SPAWN_BOAT, 0.5f))
+
+        register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
+        register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
 
         register(DataComponents.ENTITY_DATA, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_ENTITY_DATA, 0.5f))
 
