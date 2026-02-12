@@ -1,7 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
 import archives.tater.omnicrossbow.OmniCrossbowClient;
-import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -14,7 +13,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.CrossbowItem;
 
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,8 @@ public class HumanoidModelMixin {
     private <T extends HumanoidRenderState> void noHoldArm(ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean holdingInRightArm, Operation<Void> original, @Local(argsOnly = true) T state) {
         var isRightHanded = state.mainArm == HumanoidArm.RIGHT;
         var offhand = holdingInRightArm ^ isRightHanded;
-        var spinning = state.getDataOrDefault(OmniCrossbowClient.SPINNING_ITEM, false);
-        var otherHandNotPosed = offhand || (spinning && (!EnchantmentHelper.has(state.leftHandItemStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN) || !EnchantmentHelper.has(state.rightHandItemStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN)));
+        boolean spinning = state.getDataOrDefault(OmniCrossbowClient.SPINNING_ITEM, false);
+        var otherHandNotPosed = offhand || spinning || (CrossbowItem.isCharged(state.leftHandItemStack) && CrossbowItem.isCharged(state.rightHandItemStack));
 
         original.call(
                 otherHandNotPosed && !holdingInRightArm ? DUMMY : rightArm,
@@ -45,5 +44,19 @@ public class HumanoidModelMixin {
         );
         if (spinning)
             OmniCrossbowClient.transformCrossbowSpinTilt(holdingInRightArm ? rightArm : leftArm, !holdingInRightArm);
+    }
+
+    @WrapOperation(
+            method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V",
+            at = {
+                    @At(value = "INVOKE", target = "Lnet/minecraft/client/model/HumanoidModel$ArmPose;affectsOffhandPose()Z"),
+                    @At(value = "INVOKE", target = "Lnet/minecraft/client/model/HumanoidModel$ArmPose;isTwoHanded()Z")
+            }
+    )
+    private <T extends HumanoidRenderState> boolean twoHandedCrossbow(HumanoidModel.ArmPose instance, Operation<Boolean> original, @Local(argsOnly = true) T state) {
+        if (!original.call(instance)) return false;
+        if (instance != HumanoidModel.ArmPose.CROSSBOW_HOLD) return true;
+
+        return !CrossbowItem.isCharged(state.leftHandItemStack) || !CrossbowItem.isCharged(state.rightHandItemStack);
     }
 }
