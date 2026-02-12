@@ -13,5 +13,6 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.MAGAZINE, "Magazine")
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.OMNI, "Omni")
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.SHARPSHOOTING, "Sharpshooting")
+        translationBuilder.addEnchantment(OmniCrossbowEnchantments.TWIRLING_CURSE, "Curse of Twirling")
     }
 }

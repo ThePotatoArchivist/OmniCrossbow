@@ -1,11 +1,17 @@
 {
-	"required": true,
-	"package": "archives.tater.omnicrossbow.mixin.client",
-	"compatibilityLevel": "JAVA_25",
-	"client": [
-      "ChargeMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "archives.tater.omnicrossbow.mixin.client",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ChargeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ArmedEntityRenderStateMixin",
+    "HumanoidModelArmPoseMixin",
+    "HumanoidModelMixin",
+    "ItemInHandRendererMixin"
+  ]
 }

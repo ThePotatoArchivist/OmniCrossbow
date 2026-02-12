@@ -13,4 +13,6 @@ class DelegateProjectile(type: EntityType<out DelegateProjectile>, level: Level)
     constructor(level: Level, shooter: LivingEntity) : this(OmniCrossbowEntities.DELEGATE_PROJECTILE, level) {
         setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
     }
+
+    // TODO safety check should not be spawned
 }

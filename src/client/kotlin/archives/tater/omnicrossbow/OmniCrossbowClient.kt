@@ -3,7 +3,6 @@ package archives.tater.omnicrossbow
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
-import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.network.AddMovementPayload
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
@@ -15,17 +14,41 @@ import archives.tater.omnicrossbow.util.times
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
+import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.PackType
+import net.minecraft.util.Mth.TWO_PI
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
 
 object OmniCrossbowClient : ClientModInitializer {
+
+	@JvmField
+	val SPINNING_ITEM: RenderStateDataKey<Boolean> = RenderStateDataKey.create()
+
+	@JvmStatic
+	fun transformCrossbowSpin(
+		poseStack: PoseStack,
+		ticksUsingItem: Float,
+		hand: InteractionHand,
+	) {
+		poseStack.translate(0f, 0f, -5f / 16)
+
+		val f = if (hand == InteractionHand.OFF_HAND) -1 else 1
+
+		poseStack.translate(0.5f / 16 * f, 0f, 5f / 16)
+		poseStack.mulPose(Axis.ZP.rotation(TWO_PI * 2 / 12 * f))
+		poseStack.mulPose(Axis.YP.rotation(-3f * TWO_PI / 20 * ticksUsingItem * f))
+		poseStack.translate(-0.5f / 16 * f, 0f, -5f / 16)
+	}
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.

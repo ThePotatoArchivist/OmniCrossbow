@@ -116,5 +116,17 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_RICOCHET, AddValue(LevelBasedValue.perLevel(1f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_IGNORE_OWNER, McUnit.INSTANCE)
         }
+
+        register(OmniCrossbowEnchantments.TWIRLING_CURSE, definition(
+            crossbowEnchantable,
+            1,
+            1,
+            constantCost(25),
+            constantCost(50),
+            8,
+            EquipmentSlotGroup.MAINHAND
+        )) {
+            withSpecialEffect(OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN, LevelBasedValue.constant(20f))
+        }
     }
 }

@@ -36,6 +36,11 @@ object OmniCrossbowAttachments {
         syncWith(McUnit.STREAM_CODEC, AttachmentSyncPredicate.all())
     }
 
+    @JvmField
+    val SPINNING_ITEM: AttachmentType<McUnit> = register("spinning_item") {
+        syncWith(McUnit.STREAM_CODEC, AttachmentSyncPredicate.all())
+    }
+
     fun init() {
 
     }

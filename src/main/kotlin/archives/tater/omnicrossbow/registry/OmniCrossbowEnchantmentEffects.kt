@@ -12,6 +12,7 @@ import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.enchantment.ConditionalEffect
+import net.minecraft.world.item.enchantment.LevelBasedValue
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 
@@ -68,10 +69,13 @@ object OmniCrossbowEnchantmentEffects {
     ))
 
     @JvmField
-    val PROJECTILE_IGNORE_OWNER = register("ignore_owner", validatedListCodec(
+    val PROJECTILE_IGNORE_OWNER = register("projectile_ignore_owner", validatedListCodec(
         ConditionalEffect.codec(McUnit.CODEC),
         LootContextParamSets.ENCHANTED_ITEM
     ))
+
+    @JvmField
+    val CROSSBOW_SPIN = register("crossbow_spin", LevelBasedValue.CODEC)
 
     fun init() {
 

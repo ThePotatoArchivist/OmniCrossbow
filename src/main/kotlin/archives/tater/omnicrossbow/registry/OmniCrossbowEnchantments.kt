@@ -14,6 +14,7 @@ object OmniCrossbowEnchantments {
     @JvmField val MAGAZINE = of("magazine")
     @JvmField val OMNI = of("omni")
     @JvmField val SHARPSHOOTING = of("sharpshooting")
+    @JvmField val TWIRLING_CURSE = of("twirling_curse")
 
-    val MULTICHAMBERED_EXCLUSIVE: TagKey<Enchantment> = TagKey.create(Registries.ENCHANTMENT, OmniCrossbow.id("exclusive_set/multichambered"))
+    @JvmField val MULTICHAMBERED_EXCLUSIVE: TagKey<Enchantment> = TagKey.create(Registries.ENCHANTMENT, OmniCrossbow.id("exclusive_set/multichambered"))
 }

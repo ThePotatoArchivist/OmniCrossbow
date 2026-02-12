@@ -4,7 +4,7 @@
     "translate": "enchantment.omnicrossbow.sharpshooting"
   },
   "effects": {
-    "omnicrossbow:ignore_owner": [
+    "omnicrossbow:projectile_ignore_owner": [
       {
         "effect": {}
       }
