@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.mixin.enchantmenteffect.spin;
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
+import archives.tater.omnicrossbow.registry.OmniCrossbowSounds;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -58,8 +59,12 @@ public abstract class CrossbowItemMixin {
             cancellable = true
     )
     private void tickSpinning(Level level, LivingEntity entity, ItemStack itemStack, int ticksRemaining, CallbackInfo ci) {
-        if (entity.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM))
-            ci.cancel();
+        if (!entity.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM)) return;
+
+        if (entity.getTicksUsingItem() % 27 == 0)
+            entity.playSound(OmniCrossbowSounds.SPIN);
+
+        ci.cancel();
     }
 
     @Inject(

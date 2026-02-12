@@ -1,0 +1,7 @@
+{
+  "item.crossbow.spin": {
+    "sounds": [
+      {"name": "omnicrossbow:spin", "volume": 0.5}
+    ]
+  }
+}
