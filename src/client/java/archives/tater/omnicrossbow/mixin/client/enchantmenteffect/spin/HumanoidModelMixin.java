@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
 import archives.tater.omnicrossbow.OmniCrossbowClient;
+import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -13,6 +14,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class HumanoidModelMixin {
         var isRightHanded = state.mainArm == HumanoidArm.RIGHT;
         var offhand = holdingInRightArm ^ isRightHanded;
         var spinning = state.getDataOrDefault(OmniCrossbowClient.SPINNING_ITEM, false);
-        var otherHandNotPosed = offhand || spinning;
+        var otherHandNotPosed = offhand || (spinning && (!EnchantmentHelper.has(state.leftHandItemStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN) || !EnchantmentHelper.has(state.rightHandItemStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN)));
 
         original.call(
                 otherHandNotPosed && !holdingInRightArm ? DUMMY : rightArm,

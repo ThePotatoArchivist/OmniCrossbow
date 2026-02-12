@@ -79,8 +79,20 @@ public abstract class CrossbowItemMixin {
         if (chargedProjectiles.isEmpty()) return;
 
         float minSpinTicks = requireNonNullElse(getFirstEnchantmentComponent(itemStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN, LevelBasedValue::calculate), 0f);
-        if (entity.getTicksUsingItem() > minSpinTicks)
+        if (entity.getTicksUsingItem() > minSpinTicks) {
             performShooting(level, entity, entity.getUsedItemHand(), itemStack, getShootingPower(chargedProjectiles), 1.0F, null);
+
+            var otherHand = switch (entity.getUsedItemHand()) {
+                case OFF_HAND -> InteractionHand.MAIN_HAND;
+                case MAIN_HAND -> InteractionHand.OFF_HAND;
+            };
+            var otherHandStack = entity.getItemInHand(otherHand);
+            if (otherHandStack.getItem() instanceof CrossbowItem crossbowItem && EnchantmentHelper.has(otherHandStack, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN)) {
+                var otherProjectiles = otherHandStack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
+                if (!otherProjectiles.isEmpty())
+                    crossbowItem.performShooting(level, entity, otherHand, otherHandStack, getShootingPower(otherProjectiles), 1.0f, null);
+            }
+        }
 
         cir.setReturnValue(true);
     }

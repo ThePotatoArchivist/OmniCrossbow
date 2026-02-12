@@ -7,6 +7,7 @@ import archives.tater.omnicrossbow.network.AddMovementPayload
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
+import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.minus
 import archives.tater.omnicrossbow.util.plus
@@ -28,6 +29,9 @@ import net.minecraft.util.Mth.TWO_PI
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.ChargedProjectiles
+import net.minecraft.world.item.enchantment.EnchantmentHelper
 import org.joml.Quaternionf
 
 object OmniCrossbowClient : ClientModInitializer {
@@ -84,6 +88,10 @@ object OmniCrossbowClient : ClientModInitializer {
 		poseStack.mulPose(Axis.YP.rotation(-3f * TWO_PI / 20 * ticksUsingItem * f))
 		poseStack.translate(-0.5f / 16 * f, 0f, -5f / 16)
 	}
+
+	@JvmStatic
+	fun shouldSpin(crossbow: ItemStack) = EnchantmentHelper.has(crossbow, OmniCrossbowEnchantmentEffects.CROSSBOW_SPIN)
+			&& !crossbow.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).isEmpty
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.

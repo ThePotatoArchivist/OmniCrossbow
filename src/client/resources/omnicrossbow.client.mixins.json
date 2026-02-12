@@ -10,7 +10,7 @@
   },
   "mixins": [
     "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
-    "enchantmenteffect.spin.HumanoidModelArmPoseMixin",
+    "enchantmenteffect.spin.ItemInHandLayerMixin",
     "enchantmenteffect.spin.HumanoidModelMixin",
     "enchantmenteffect.spin.ItemInHandRendererMixin",
     "enchantmenteffect.spin.LocalPlayerMixin"

@@ -4,6 +4,8 @@ import archives.tater.omnicrossbow.OmniCrossbowClient;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +33,14 @@ public class ItemInHandRendererMixin {
         return original && !player.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM);
     }
 
+    @WrapOperation(
+            method = "selectionUsingItemWhileHoldingBowLike",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;isChargedCrossbow(Lnet/minecraft/world/item/ItemStack;)Z")
+    )
+    private static boolean showBothCrossbows(ItemStack item, Operation<Boolean> original, @Local(argsOnly = true) LocalPlayer player) {
+        return original.call(item) && !(OmniCrossbowClient.shouldSpin(item) && OmniCrossbowClient.shouldSpin(player.getMainHandItem()));
+    }
+
     @ModifyExpressionValue(
             method = "renderArmWithItem",
             at = {
@@ -47,7 +57,7 @@ public class ItemInHandRendererMixin {
             at = @At(value = "INVOKE:FIRST", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;swingArm(FLcom/mojang/blaze3d/vertex/PoseStack;ILnet/minecraft/world/entity/HumanoidArm;)V")
     )
     private void spin(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
-        if (!player.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM)) return;
+        if (!player.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM) || player.getUsedItemHand() != hand && !OmniCrossbowClient.shouldSpin(itemStack)) return;
 
         OmniCrossbowClient.transformCrossbowSpinInHand(poseStack, player.getTicksUsingItem(frameInterp), player.getMainArm() == HumanoidArm.LEFT ^ hand == InteractionHand.OFF_HAND);
     }
