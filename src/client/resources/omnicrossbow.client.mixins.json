@@ -9,9 +9,10 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "ArmedEntityRenderStateMixin",
-    "HumanoidModelArmPoseMixin",
-    "HumanoidModelMixin",
-    "ItemInHandRendererMixin"
+    "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
+    "enchantmenteffect.spin.HumanoidModelArmPoseMixin",
+    "enchantmenteffect.spin.HumanoidModelMixin",
+    "enchantmenteffect.spin.ItemInHandRendererMixin",
+    "enchantmenteffect.spin.LocalPlayerMixin"
   ]
 }

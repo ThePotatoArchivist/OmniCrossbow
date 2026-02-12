@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin.client;
+package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
 import archives.tater.omnicrossbow.OmniCrossbowClient;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
