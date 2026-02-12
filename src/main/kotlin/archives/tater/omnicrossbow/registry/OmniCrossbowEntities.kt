@@ -59,6 +59,11 @@ object OmniCrossbowEntities {
     @JvmField
     val FREEZING_SNOWBALL = registerProjectile("freezing_snowball", ::FreezingSnowball)
 
+    @JvmField
+    val END_CRYSTAL_PROJECTILE = registerProjectile("end_crystal", ::EndCrystalProjectile) {
+        sized(1f, 1f)
+    }
+
     fun init() {
 
     }

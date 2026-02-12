@@ -89,6 +89,7 @@ class ProjectileBehaviorGenerator(
         register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.FREEZING_SNOWBALL)))
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
+        register(Items.END_CRYSTAL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE), 0.1f, cooldownTicks = 4 * 20))
 
         register(Items.BREEZE_ROD, ProjectileBehavior(Pierce(
             16.0,

@@ -9,9 +9,10 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "EndCrystalModelMixin",
     "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
-    "enchantmenteffect.spin.ItemInHandLayerMixin",
     "enchantmenteffect.spin.HumanoidModelMixin",
+    "enchantmenteffect.spin.ItemInHandLayerMixin",
     "enchantmenteffect.spin.ItemInHandRendererMixin",
     "enchantmenteffect.spin.LocalPlayerMixin"
   ]
