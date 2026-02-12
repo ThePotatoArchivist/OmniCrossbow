@@ -16,6 +16,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -48,6 +49,6 @@ public class ItemInHandRendererMixin {
     private void spin(AbstractClientPlayer player, float frameInterp, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
         if (!player.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM)) return;
 
-        OmniCrossbowClient.transformCrossbowSpin(poseStack, player.getTicksUsingItem(frameInterp), hand);
+        OmniCrossbowClient.transformCrossbowSpinInHand(poseStack, player.getTicksUsingItem(frameInterp), player.getMainArm() == HumanoidArm.LEFT ^ hand == InteractionHand.OFF_HAND);
     }
 }

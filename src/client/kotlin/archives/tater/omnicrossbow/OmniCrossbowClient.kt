@@ -18,34 +18,69 @@ import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.PackType
 import net.minecraft.util.Mth.TWO_PI
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
+import org.joml.Quaternionf
 
 object OmniCrossbowClient : ClientModInitializer {
 
 	@JvmField
 	val SPINNING_ITEM: RenderStateDataKey<Boolean> = RenderStateDataKey.create()
 
+	private val ARM_TILT_RIGHT = Quaternionf().apply {
+		rotationY(getCrossbowSpinTilt(false))
+	}
+
+	private val ARM_TILT_LEFT = Quaternionf().apply {
+		rotationY(getCrossbowSpinTilt(true))
+	}
+
+	private fun getCrossbowSpinTilt(leftHand: Boolean): Float = -TWO_PI * 2 / 12 * (if (leftHand) -1 else 1)
+
 	@JvmStatic
-	fun transformCrossbowSpin(
+	fun transformCrossbowSpinTilt(part: ModelPart, leftHand: Boolean) {
+		part.rotateBy(if (leftHand) ARM_TILT_LEFT else ARM_TILT_RIGHT)
+	}
+
+	@JvmStatic
+	fun transformCrossbowSpinInHand(
 		poseStack: PoseStack,
 		ticksUsingItem: Float,
-		hand: InteractionHand,
+		leftHand: Boolean,
 	) {
 		poseStack.translate(0f, 0f, -5f / 16)
+		transformCrossbowSpin(poseStack, ticksUsingItem, leftHand, true)
+	}
 
-		val f = if (hand == InteractionHand.OFF_HAND) -1 else 1
+	@JvmStatic
+	fun transformCrossbowSpinModel(
+		poseStack: PoseStack,
+		ticksUsingItem: Float,
+		leftHand: Boolean,
+	) {
+		poseStack.translate(0f, 0f, -3f / 16)
+		transformCrossbowSpin(poseStack, ticksUsingItem, leftHand, false)
+		poseStack.translate(0f, 0f, 3f / 16)
+	}
+
+	private fun transformCrossbowSpin(
+		poseStack: PoseStack,
+		ticksUsingItem: Float,
+		leftHand: Boolean,
+		tilt: Boolean,
+	) {
+		val f = if (leftHand) -1 else 1
 
 		poseStack.translate(0.5f / 16 * f, 0f, 5f / 16)
-		poseStack.mulPose(Axis.ZP.rotation(TWO_PI * 2 / 12 * f))
+		if (tilt) poseStack.mulPose(Axis.ZN.rotation(getCrossbowSpinTilt(leftHand)))
 		poseStack.mulPose(Axis.YP.rotation(-3f * TWO_PI / 20 * ticksUsingItem * f))
 		poseStack.translate(-0.5f / 16 * f, 0f, -5f / 16)
 	}

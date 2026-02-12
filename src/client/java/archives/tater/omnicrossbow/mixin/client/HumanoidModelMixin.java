@@ -41,5 +41,7 @@ public class HumanoidModelMixin {
                 head,
                 holdingInRightArm
         );
+        if (spinning)
+            OmniCrossbowClient.transformCrossbowSpinTilt(holdingInRightArm ? rightArm : leftArm, !holdingInRightArm);
     }
 }
