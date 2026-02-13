@@ -17,7 +17,7 @@ fun createFakePlayer(
     xRot: Float = projectile.xRot,
     yRot: Float = projectile.yRot,
 ): FakePlayer = (ifNotNull(projectile.owner as? Player) {
-    FakePlayer.get(level, it.gameProfile)
+    FakePlayer.get(level, it.gameProfile) // TODO chamge username
 } orElse {
     FakePlayer.get(level)
 }).apply {

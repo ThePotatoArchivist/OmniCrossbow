@@ -35,8 +35,10 @@ data class ProjectileSpray private constructor(
             (type.create(level, EntitySpawnReason.TRIGGERED) as? Projectile)?.apply {
                 setPos(pos)
                 owner = shooter
-                shoot(direction.x, direction.y, direction.z, power, uncertainty)
-                level.addFreshEntity(this)
+            }?.let { entity ->
+                Projectile.spawnProjectile(entity, level, projectile) {
+                    it.shoot(direction.x, direction.y, direction.z, power, uncertainty)
+                }
             }
         }
     }
