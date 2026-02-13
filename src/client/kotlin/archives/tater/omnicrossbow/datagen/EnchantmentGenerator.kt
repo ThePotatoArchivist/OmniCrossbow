@@ -11,11 +11,9 @@ import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.entity.EquipmentSlotGroup
-import net.minecraft.world.item.CrossbowItem
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.item.enchantment.Enchantment.*
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents
@@ -23,7 +21,6 @@ import net.minecraft.world.item.enchantment.LevelBasedValue
 import net.minecraft.world.item.enchantment.effects.AddValue
 import net.minecraft.world.item.enchantment.effects.MultiplyValue
 import net.minecraft.world.item.enchantment.effects.SetValue
-import java.util.*
 
 object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> {
     override fun run(registry: BootstrapContext<Enchantment>) {
@@ -60,16 +57,12 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             8,
             EquipmentSlotGroup.MAINHAND
         )) {
-            exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
+            exclusiveWith(enchantments.getOrThrow(OmniCrossbowEnchantments.PUMP_CHARGE_EXCLUSIVE))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.LOAD_MULTIPLE, LoadMultiple(LevelBasedValue.constant(8f)))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.constant(8f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(2f))))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_VELOCITY, MultiplyValue(LevelBasedValue.constant(0.5f)))
             withEffect(EnchantmentEffectComponents.PROJECTILE_COUNT, SetValue(LevelBasedValue.constant(2f)))
-            withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGE_TIME, AddValue(LevelBasedValue.constant(-0.4F)))
-            withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGING_SOUNDS, listOf(
-                    CrossbowItem.ChargingSounds(Optional.of(SoundEvents.CROSSBOW_QUICK_CHARGE_2), Optional.empty(), Optional.of(SoundEvents.CROSSBOW_LOADING_END)),
-            ))
         }
 
         register(OmniCrossbowEnchantments.MAGAZINE, definition(
@@ -81,7 +74,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             8,
             EquipmentSlotGroup.MAINHAND
         )) {
-            exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
+            exclusiveWith(enchantments.getOrThrow(OmniCrossbowEnchantments.MAGAZINE_EXCLUSIVE))
             withEffect(EnchantmentEffectComponents.PROJECTILE_COUNT, SetValue(LevelBasedValue.perLevel(4f)))
             withSpecialEffect(OmniCrossbowEnchantmentEffects.CHARGED_PROJECTILE_INDICATOR, ChargedProjectileIndicator(LevelBasedValue.perLevel(4f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT, SetValue(LevelBasedValue.constant(1f)))
@@ -106,7 +99,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         register(OmniCrossbowEnchantments.SHARPSHOOTING, definition(
             crossbowEnchantable,
             1,
-            4,
+            3,
             dynamicCost(12, 20),
             constantCost(50),
             8,
@@ -115,6 +108,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_RICOCHET, AddValue(LevelBasedValue.perLevel(1f)))
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_IGNORE_OWNER, McUnit.INSTANCE)
+            withEffect(EnchantmentEffectComponents.PROJECTILE_PIERCING, AddValue(LevelBasedValue.perLevel(1f)))
         }
 
         register(OmniCrossbowEnchantments.TWIRLING_CURSE, definition(

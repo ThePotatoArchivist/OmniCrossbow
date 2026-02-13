@@ -1,6 +1,7 @@
 {
   "values": [
-    "omnicrossbow:pump_charge",
-    "omnicrossbow:magazine"
+    "omnicrossbow:magazine",
+    "omnicrossbow:omni",
+    "omnicrossbow:sharpshooting"
   ]
 }

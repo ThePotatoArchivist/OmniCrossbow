@@ -27,14 +27,28 @@ class EnchantmentTagGenerator(
             +OmniCrossbowEnchantments.MULTICHAMBERED
         }
         buildTag(EnchantmentTags.CROSSBOW_EXCLUSIVE) {
-            +OmniCrossbowEnchantments.PUMP_CHARGE
             +OmniCrossbowEnchantments.MAGAZINE
+            +OmniCrossbowEnchantments.OMNI
+            +OmniCrossbowEnchantments.SHARPSHOOTING
+        }
+        buildTag(OmniCrossbowEnchantments.MAGAZINE_EXCLUSIVE) {
+            +EnchantmentTags.CROSSBOW_EXCLUSIVE
+            +Enchantments.QUICK_CHARGE
+            +OmniCrossbowEnchantments.PUMP_CHARGE
+            +OmniCrossbowEnchantments.SHARPSHOOTING
+            +OmniCrossbowEnchantments.MULTICHAMBERED
         }
         buildTag(OmniCrossbowEnchantments.MULTICHAMBERED_EXCLUSIVE) {
             +Enchantments.QUICK_CHARGE
             +Enchantments.MULTISHOT
             +OmniCrossbowEnchantments.PUMP_CHARGE
-            +OmniCrossbowEnchantments.MAGAZINE
+        }
+        buildTag(OmniCrossbowEnchantments.PUMP_CHARGE_EXCLUSIVE) {
+            +Enchantments.PIERCING
+            +Enchantments.MULTISHOT
+        }
+        buildTag(EnchantmentTags.CURSE) {
+            +OmniCrossbowEnchantments.TWIRLING_CURSE
         }
     }
 

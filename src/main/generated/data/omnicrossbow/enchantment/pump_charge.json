@@ -4,16 +4,6 @@
     "translate": "enchantment.omnicrossbow.pump_charge"
   },
   "effects": {
-    "minecraft:crossbow_charge_time": {
-      "type": "minecraft:add",
-      "value": -0.4
-    },
-    "minecraft:crossbow_charging_sounds": [
-      {
-        "end": "minecraft:item.crossbow.loading_end",
-        "start": "minecraft:item.crossbow.quick_charge_2"
-      }
-    ],
     "minecraft:projectile_count": [
       {
         "effect": {
@@ -51,7 +41,7 @@
       }
     ]
   },
-  "exclusive_set": "#minecraft:exclusive_set/crossbow",
+  "exclusive_set": "#omnicrossbow:exclusive_set/pump_charge",
   "max_cost": {
     "base": 50,
     "per_level_above_first": 0

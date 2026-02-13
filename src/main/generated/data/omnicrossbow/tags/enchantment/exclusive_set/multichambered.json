@@ -2,7 +2,6 @@
   "values": [
     "minecraft:quick_charge",
     "minecraft:multishot",
-    "omnicrossbow:pump_charge",
-    "omnicrossbow:magazine"
+    "omnicrossbow:pump_charge"
   ]
 }
