@@ -17,6 +17,7 @@ import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ClipContext
+import net.minecraft.world.level.block.BaseFireBlock
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
@@ -77,7 +78,7 @@ data class FireBeam(
             }
         }
         for (blockPos in burntPositions.build()) {
-            level[blockPos] = (Blocks.FIRE as FireBlockInvoker).invokeGetStateForPlacement(level, blockPos)
+            level[blockPos] = BaseFireBlock.getState(level, blockPos)
             level.sendParticles(
                 destroyParticle,
                 blockPos.x + 0.5,

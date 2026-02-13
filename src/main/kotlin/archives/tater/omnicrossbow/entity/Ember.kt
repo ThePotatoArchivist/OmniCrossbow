@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow.entity
 
-import archives.tater.omnicrossbow.mixin.behavior.access.FireBlockInvoker
 import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.set
 import net.minecraft.core.particles.ParticleTypes
@@ -14,7 +13,7 @@ import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.ProjectileUtil
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.BaseFireBlock
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
@@ -78,7 +77,7 @@ class Ember(type: EntityType<out Projectile>, level: Level) : Projectile(type, l
         val firePos = hitResult.blockPos.relative(hitResult.direction)
         val oldState = level()[firePos]
         if (!oldState.canBeReplaced() || !oldState.fluidState.isEmpty) return
-        val fireState = (Blocks.FIRE as FireBlockInvoker).invokeGetStateForPlacement(level(), firePos)
+        val fireState = BaseFireBlock.getState(level(), firePos)
         level()[firePos] = fireState
         discard()
     }
