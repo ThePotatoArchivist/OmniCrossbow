@@ -1,5 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
 package archives.tater.omnicrossbow.util
 
+import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType
 import com.mojang.serialization.Codec
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.EntityPredicate
@@ -67,3 +71,9 @@ operator fun DataComponentHolder.contains(type: DataComponentType<*>) = has(type
 
 operator fun BlockGetter.get(pos: BlockPos): BlockState = getBlockState(pos)
 operator fun Level.set(pos: BlockPos, state: BlockState) = setBlockAndUpdate(pos, state)
+
+operator fun <T: Any> AttachmentTarget.get(type: AttachmentType<T>): T? = getAttached(type)
+operator fun <T: Any> AttachmentTarget.set(type: AttachmentType<T>, value: T) {
+    setAttached(type, value)
+}
+operator fun <T: Any> AttachmentTarget.contains(type: AttachmentType<T>) = hasAttached(type)

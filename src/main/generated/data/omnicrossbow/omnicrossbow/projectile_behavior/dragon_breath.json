@@ -4,7 +4,7 @@
   "items": "minecraft:dragon_breath",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "minecraft:dragon_fireball"
+    "entity": "minecraft:dragon_fireball"
   },
   "remainder": true,
   "shoot_sound": "minecraft:entity.ender_dragon.shoot",

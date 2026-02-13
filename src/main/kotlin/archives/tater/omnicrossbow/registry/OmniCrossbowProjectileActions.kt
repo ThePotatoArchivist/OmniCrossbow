@@ -57,6 +57,7 @@ object OmniCrossbowProjectileActions {
     fun init() {
         register("default", ProjectileAction.Default)
         register("spawn_projectile", SpawnProjectile.Direct.CODEC)
+        register("spawn_projectile/wind_charge", SpawnProjectile.CustomWindCharge.CODEC)
         register("spawn_entity", SpawnEntity.Direct.CODEC)
         register("spawn_entity/falling_block", SpawnEntity.FallingBlock.CODEC)
         registerEntity("spawn_entity/item", SpawnEntity.Item)

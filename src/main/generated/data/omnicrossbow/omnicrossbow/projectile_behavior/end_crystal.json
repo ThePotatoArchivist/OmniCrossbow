@@ -4,7 +4,7 @@
   "items": "minecraft:end_crystal",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "omnicrossbow:end_crystal"
+    "entity": "omnicrossbow:end_crystal"
   },
   "velocity_scale": 0.1
 }

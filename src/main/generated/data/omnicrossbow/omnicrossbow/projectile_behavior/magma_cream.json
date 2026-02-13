@@ -2,6 +2,6 @@
   "items": "minecraft:magma_cream",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "omnicrossbow:magma_cream"
+    "entity": "omnicrossbow:magma_cream"
   }
 }

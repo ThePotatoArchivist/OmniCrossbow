@@ -2,6 +2,6 @@
   "items": "minecraft:lingering_potion",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "minecraft:lingering_potion"
+    "entity": "minecraft:lingering_potion"
   }
 }

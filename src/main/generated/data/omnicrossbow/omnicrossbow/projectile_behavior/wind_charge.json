@@ -2,9 +2,9 @@
   "ignore_gravity_aiming": true,
   "items": "minecraft:wind_charge",
   "projectile_action": {
-    "type": "omnicrossbow:spawn_projectile",
-    "entity_type": "minecraft:wind_charge"
+    "type": "omnicrossbow:spawn_projectile/wind_charge",
+    "explosion_radius": 3.0
   },
-  "shoot_sound": "minecraft:entity.wind_charge.throw",
+  "shoot_sound": "minecraft:entity.breeze.shoot",
   "velocity_scale": 0.5
 }

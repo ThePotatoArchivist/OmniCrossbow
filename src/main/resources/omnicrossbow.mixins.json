@@ -8,6 +8,7 @@
     "behavior.CrossbowItemMixin",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",
+    "behavior.WindChargeMixin",
     "behavior.access.AbstractArrowAccessor",
     "behavior.access.BoatItemAccessor",
     "behavior.access.EntityAccessor",

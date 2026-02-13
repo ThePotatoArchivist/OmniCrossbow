@@ -16,29 +16,34 @@ object OmniCrossbowAttachments {
 
     // temporary field read during projectile initialization in different classes
     @JvmField
-    val PROJECTILE_BEHAVIOR: AttachmentType<ProjectileBehavior> = register("projectile_behavior")
+    val PROJECTILE_BEHAVIOR = register<ProjectileBehavior>("projectile_behavior")
 
     @JvmField
-    val RICOCHET_LEVEL: AttachmentType<Byte> = register("ricochet_level") {
+    val RICOCHET_LEVEL = register<Byte>("ricochet_level") {
         persistent(Codec.BYTE)
         syncWith(ByteBufCodecs.BYTE, AttachmentSyncPredicate.all())
     }
 
     @JvmField
-    val ORIGINAL_PIERCE_COUNT: AttachmentType<Byte> = register("original_pierce_count") {
+    val ORIGINAL_PIERCE_COUNT = register<Byte>("original_pierce_count") {
         persistent(Codec.BYTE)
         syncWith(ByteBufCodecs.BYTE, AttachmentSyncPredicate.all())
     }
 
     @JvmField
-    val IGNORE_OWNER: AttachmentType<McUnit> = register("ignore_owner") {
+    val IGNORE_OWNER = register<McUnit>("ignore_owner") {
         persistent(McUnit.CODEC)
         syncWith(McUnit.STREAM_CODEC, AttachmentSyncPredicate.all())
     }
 
     @JvmField
-    val SPINNING_ITEM: AttachmentType<McUnit> = register("spinning_item") {
+    val SPINNING_ITEM = register<McUnit>("spinning_item") {
         syncWith(McUnit.STREAM_CODEC, AttachmentSyncPredicate.all())
+    }
+
+    @JvmField
+    val WIND_CHARGE_EXPLOSION_RADIUS = register<Float>("wind_charge_explosion_radius") {
+        persistent(Codec.FLOAT)
     }
 
     fun init() {
