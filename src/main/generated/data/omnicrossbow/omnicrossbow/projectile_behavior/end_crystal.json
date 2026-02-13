@@ -1,5 +1,6 @@
 {
   "cooldown_ticks": 80,
+  "ignore_gravity_aiming": true,
   "items": "minecraft:end_crystal",
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",

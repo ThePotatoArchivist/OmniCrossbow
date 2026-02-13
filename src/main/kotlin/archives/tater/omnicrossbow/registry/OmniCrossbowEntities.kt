@@ -62,6 +62,7 @@ object OmniCrossbowEntities {
     @JvmField
     val END_CRYSTAL_PROJECTILE = registerProjectile("end_crystal", ::EndCrystalProjectile) {
         sized(1f, 1f)
+        fireImmune()
     }
 
     fun init() {
