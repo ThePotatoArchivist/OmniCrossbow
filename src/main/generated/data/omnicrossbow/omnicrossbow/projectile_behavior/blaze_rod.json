@@ -28,5 +28,5 @@
     },
     "margin": 0.2
   },
-  "shoot_sound": "minecraft:item.firecharge.use"
+  "shoot_sound": "minecraft:entity.blaze.shoot"
 }

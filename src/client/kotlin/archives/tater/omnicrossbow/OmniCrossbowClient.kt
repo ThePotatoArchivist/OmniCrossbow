@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow
 
 import archives.tater.omnicrossbow.client.render.AmmoPosition
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
+import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
 import archives.tater.omnicrossbow.network.AddMovementPayload
@@ -102,7 +103,8 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.SLIME_BALL, ::ThrownItemRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.MAGMA_CREAM, ::ThrownItemRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.FREEZING_SNOWBALL, ::ThrownItemRenderer)
-		EntityRenderers.register(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE, ::EndCrystalProjectileRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.END_CRYSTAL, ::EndCrystalProjectileRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.EMBER, ::EmberRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 

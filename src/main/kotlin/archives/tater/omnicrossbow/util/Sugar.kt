@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.Property
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.phys.Vec3
@@ -77,3 +78,5 @@ operator fun <T: Any> AttachmentTarget.set(type: AttachmentType<T>, value: T) {
     setAttached(type, value)
 }
 operator fun <T: Any> AttachmentTarget.contains(type: AttachmentType<T>) = hasAttached(type)
+
+operator fun <T: Comparable<T>> BlockState.get(property: Property<T>): T = getValue(property)

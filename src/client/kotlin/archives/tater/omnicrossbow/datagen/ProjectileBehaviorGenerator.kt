@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
+import net.minecraft.util.valueproviders.ConstantInt
 import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
@@ -89,7 +90,8 @@ class ProjectileBehaviorGenerator(
         register(Items.WIND_CHARGE, ProjectileBehavior(SpawnProjectile.CustomWindCharge(3f), 0.5f, shootSound = soundHolder(SoundEvents.BREEZE_SHOOT), ignoreGravityAiming = true))
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
-        register(Items.END_CRYSTAL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.END_CRYSTAL_PROJECTILE), 0.1f, cooldownTicks = 4 * 20, ignoreGravityAiming = true))
+        register(Items.END_CRYSTAL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.END_CRYSTAL), 0.1f, cooldownTicks = 4 * 20, ignoreGravityAiming = true))
+        register(Items.BLAZE_POWDER, ProjectileBehavior(ProjectileSpray(OmniCrossbowEntities.EMBER, ConstantInt.of(12), 32f), 0.35f, cooldownTicks = 4 * 20, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)))
 
         register(Items.BREEZE_ROD, ProjectileBehavior(Pierce(
             16.0,
@@ -141,7 +143,7 @@ class ProjectileBehaviorGenerator(
             beamParticleRandomness = 1.0,
             destroyParticle = ParticleConfig(ParticleTypes.LARGE_SMOKE, 16, 0.25, 0.25, 0.25),
             hitWaterParticle = ParticleConfig(ParticleTypes.CLOUD, 8),
-        ), shootSound = soundHolder(SoundEvents.FIRECHARGE_USE), cooldownTicks = 2 * 20, ignoreGravityAiming = true))
+        ), shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), cooldownTicks = 2 * 20, ignoreGravityAiming = true))
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 

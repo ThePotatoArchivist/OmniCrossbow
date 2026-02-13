@@ -26,14 +26,14 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
             +EntityType.BOGGED
         }
         with (valueLookupBuilder(EntityTypeTags.IMPACT_PROJECTILES)) {
-            +OmniCrossbowEntities.END_CRYSTAL_PROJECTILE
+            +OmniCrossbowEntities.END_CRYSTAL
             +OmniCrossbowEntities.SLIME_BALL
             +OmniCrossbowEntities.MAGMA_CREAM
             +OmniCrossbowEntities.FREEZING_SNOWBALL
             +OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE
         }
         with (valueLookupBuilder(EntityTypeTags.REDIRECTABLE_PROJECTILE)) {
-            +OmniCrossbowEntities.END_CRYSTAL_PROJECTILE
+            +OmniCrossbowEntities.END_CRYSTAL
         }
     }
 }

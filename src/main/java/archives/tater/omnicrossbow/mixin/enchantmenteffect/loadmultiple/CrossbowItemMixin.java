@@ -43,8 +43,8 @@ public class CrossbowItemMixin {
             method = "use",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z")
     )
-    private boolean failIfFull(boolean original, @Local(name = "chargedProjectiles") ChargedProjectiles chargedProjectiles, @Local(name = "itemStack") ItemStack stack) {
-        return original || chargedProjectiles.items().size() >= LoadMultiple.maxProjectilesOrDefault(stack);
+    private boolean failIfFull(boolean original, @Local(name = "chargedProjectiles") @Nullable ChargedProjectiles chargedProjectiles, @Local(name = "itemStack") ItemStack stack) {
+        return original || chargedProjectiles != null && chargedProjectiles.items().size() >= LoadMultiple.maxProjectilesOrDefault(stack);
     }
 
     @Inject(

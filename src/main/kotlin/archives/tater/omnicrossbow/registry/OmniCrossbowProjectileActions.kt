@@ -63,5 +63,6 @@ object OmniCrossbowProjectileActions {
         registerEntity("spawn_entity/item", SpawnEntity.Item)
         register("fire_beam", FireBeam.CODEC)
         register("pierce", Pierce.CODEC)
+        register("projectile_spray", ProjectileSpray.CODEC)
     }
 }
