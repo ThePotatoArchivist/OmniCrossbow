@@ -3,6 +3,7 @@
 package archives.tater.omnicrossbow.util
 
 import archives.tater.omnicrossbow.network.ParticleBeamPayload
+import com.llamalad7.mixinextras.sugar.ref.LocalRef
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
@@ -144,3 +145,5 @@ fun <T: Any> unverifiedUnitCodec(value: T) = object : StreamCodec<ByteBuf, T> {
 
     override fun encode(output: ByteBuf, value: T) {}
 }
+
+fun <T: Any> LocalRef<T?>.getOrSet(default: () -> T): T = get() ?: default().also { set(it) }

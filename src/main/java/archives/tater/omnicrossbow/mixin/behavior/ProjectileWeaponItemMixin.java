@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.mixin.behavior;
 
 import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
+import archives.tater.omnicrossbow.projectilebehavior.DelayTracker;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
@@ -11,6 +12,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,25 +26,28 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.component.ChargedProjectiles;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import static archives.tater.omnicrossbow.util.OmniUtil.getOrSet;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNullElse;
 
 @Mixin(ProjectileWeaponItem.class)
 public class ProjectileWeaponItemMixin {
-
     @SuppressWarnings({"UnstableApiUsage"})
     @WrapOperation(
             method = "shoot",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectile(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/world/entity/projectile/Projectile;")
     )
-    private Projectile modifyProjectileShoot(Projectile projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<Projectile> shootFunction, Operation<Projectile> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Share("cooldown") LocalIntRef cooldown) {
+    private Projectile modifyProjectileShoot(Projectile projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<Projectile> shootFunction, Operation<Projectile> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Share("cooldown") LocalIntRef cooldown, @Share("delayedProjectiles") LocalRef<@Nullable List<ItemStack>> delayedProjectiles) {
         var behavior = ProjectileBehavior.getBehavior(serverLevel, itemStack);
 
         Supplier<Projectile> shoot = () -> {
@@ -77,14 +82,17 @@ public class ProjectileWeaponItemMixin {
                 if (!shooter.isUsingItem()) delay.chargeSound().ifPresent(sound ->
                         serverLevel.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), sound, shooter.getSoundSource(), 1f, 1f));
 
-                shooter.getAttachedOrCreate(OmniCrossbowAttachments.DELAYED_SHOTS, ProjectileBehavior.Delay.Tracker::new)
+                shooter.getAttachedOrCreate(OmniCrossbowAttachments.DELAYED_SHOTS, DelayTracker::new)
                         .getEntries()
-                        .add(new ProjectileBehavior.Delay.Tracker.Entry(
+                        .add(new DelayTracker.Entry(
                                 delayTicks,
                                 shoot::get,
                                 weapon,
                                 itemStack
                         ));
+
+                getOrSet(delayedProjectiles, ArrayList::new).add(itemStack);
+
                 return projectile;
             }
         }
@@ -96,8 +104,17 @@ public class ProjectileWeaponItemMixin {
             method = "shoot",
             at = @At("TAIL")
     )
-    private void setCooldown(ServerLevel level, LivingEntity shooter, InteractionHand hand, ItemStack weapon, List<ItemStack> projectiles, float power, float uncertainty, boolean isCrit, @Nullable LivingEntity targetOverride, CallbackInfo ci, @Share("cooldown") LocalIntRef cooldown) {
+    private void setCooldownAndReinsertDelayed(ServerLevel level, LivingEntity shooter, InteractionHand hand, ItemStack weapon, List<ItemStack> projectiles, float power, float uncertainty, boolean isCrit, @Nullable LivingEntity targetOverride, CallbackInfo ci, @Share("cooldown") LocalIntRef cooldown, @Share("delayedProjectiles") LocalRef<@Nullable List<ItemStack>> delayedProjectiles) {
         if (cooldown.get() > 0 && shooter.onGround() && shooter instanceof Player player && !player.hasInfiniteMaterials())
             player.getCooldowns().addCooldown(weapon, cooldown.get());
+
+        if (weapon.has(DataComponents.CHARGED_PROJECTILES)) {
+            var delayed = delayedProjectiles.get();
+            if (delayed != null)
+                weapon.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(Stream.concat(
+                        weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).itemCopies().stream(),
+                        delayed.stream()
+                ).toList()));
+        }
     }
 }

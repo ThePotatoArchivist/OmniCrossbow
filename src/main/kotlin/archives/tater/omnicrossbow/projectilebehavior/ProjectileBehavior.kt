@@ -2,7 +2,6 @@ package archives.tater.omnicrossbow.projectilebehavior
 
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
-import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import com.mojang.datafixers.util.Either
@@ -13,7 +12,6 @@ import net.minecraft.core.Holder
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.valueproviders.IntProvider
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.FallingBlock
@@ -79,30 +77,6 @@ data class ProjectileBehavior(
         val chargeSound: Optional<Holder<SoundEvent>>,
     ) {
         constructor(ticks: IntProvider, chargeSound: Holder<SoundEvent>? = null) : this(ticks, Optional.ofNullable(chargeSound))
-
-        @Suppress("UnstableApiUsage")
-        data class Tracker(
-            val entries: MutableList<Entry> = mutableListOf(),
-            var ticksPassed: Int = 0
-        ) {
-            fun tick(entity: LivingEntity) {
-                if (entity.level().isClientSide) return
-                ticksPassed++
-                val active = entries.filter { ticksPassed >= it.delay }
-                entries.removeAll(active)
-                for (entry in active)
-                    entry.action.run()
-                if (entries.isEmpty())
-                    entity.removeAttached(OmniCrossbowAttachments.DELAYED_SHOTS)
-            }
-
-            data class Entry(
-                val delay: Int,
-                val action: Runnable,
-                val weapon: ItemStack,
-                val projectile: ItemStack,
-            )
-        }
 
         companion object {
             val CODEC: Codec<Delay> = RecordCodecBuilder.create { it.group(
