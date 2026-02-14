@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.mixin.enchantmenteffect.spin;
 
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
 import archives.tater.omnicrossbow.registry.OmniCrossbowSounds;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.Level;
 
+import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jspecify.annotations.Nullable;
 
 import static archives.tater.omnicrossbow.util.OmniUtil.getFirstEnchantmentComponent;
@@ -51,6 +54,27 @@ public abstract class CrossbowItemMixin {
         }
         shooter.setAttached(OmniCrossbowAttachments.SPINNING_ITEM, Unit.INSTANCE);
         shooter.startUsingItem(hand);
+
+        // Play delay sounds
+        if (!(level instanceof ServerLevel serverLevel)) return;
+        var projectiles = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).items();
+        var dirtyCount = new MutableFloat(projectiles.size());
+        EnchantmentHelper.runIterationOnItem(weapon, (enchantment, level2) ->
+                enchantment.value().modifyEntityFilteredValue(
+                        OmniCrossbowEnchantmentEffects.PROJECTILE_FIRED_COUNT,
+                        serverLevel,
+                        level2,
+                        weapon,
+                        shooter,
+                        dirtyCount
+                )
+        );
+        var count = dirtyCount.intValue();
+        projectiles.stream()
+                .limit(count)
+                .flatMap(template -> ProjectileBehavior.getBehavior(level, template.create()).delay().stream())
+                .flatMap(delay -> delay.chargeSound().stream())
+                .forEach(sound -> level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), sound, shooter.getSoundSource(), 1f, 1f));
     }
 
     @Inject(
@@ -82,6 +106,7 @@ public abstract class CrossbowItemMixin {
         if (entity.getTicksUsingItem() > minSpinTicks) {
             performShooting(level, entity, entity.getUsedItemHand(), itemStack, getShootingPower(chargedProjectiles), 1.0F, null);
 
+            // Shoot other hand crossbow
             var otherHand = switch (entity.getUsedItemHand()) {
                 case OFF_HAND -> InteractionHand.MAIN_HAND;
                 case MAIN_HAND -> InteractionHand.OFF_HAND;
