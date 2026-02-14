@@ -120,8 +120,7 @@ class ProjectileBehaviorGenerator(
             damageMax = 40,
         ), velocityScale = 0.7f))
 
-        register(Items.ECHO_SHARD, ProjectileBehavior(DelayedShot(
-            ConstantInt.of(20),
+        register(Items.ECHO_SHARD, ProjectileBehavior(
             Pierce(
                 15.0,
                 1.0,
@@ -132,8 +131,12 @@ class ProjectileBehaviorGenerator(
                 knockback = 2.5,
                 damage = 10f,
                 damageType = damageTypes.getOrThrow(DamageTypes.SONIC_BOOM)
-            )
-        ), cooldownTicks = 6 * 20, shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM), ignoreGravityAiming = true))
+            ),
+            cooldownTicks = 6 * 20,
+            shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM),
+            ignoreGravityAiming = true,
+            delay = ProjectileBehavior.Delay(ConstantInt.of(33), soundHolder(SoundEvents.WARDEN_SONIC_CHARGE))
+        ))
 
         register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(
             distance = 15.0,

@@ -2,9 +2,7 @@ package archives.tater.omnicrossbow.mixin.behavior;
 
 import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.DelayedShot;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated;
-import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
@@ -31,7 +29,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNullElse;
@@ -47,48 +45,51 @@ public class ProjectileWeaponItemMixin {
     private Projectile modifyProjectileShoot(Projectile projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<Projectile> shootFunction, Operation<Projectile> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Share("cooldown") LocalIntRef cooldown) {
         var behavior = ProjectileBehavior.getBehavior(serverLevel, itemStack);
 
-        var usedProjectile = switch (behavior.projectileAction()) {
-            case SpawnProjectile<?> spawnProjectile -> requireNonNullElse(spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack), projectile);
-            case Delegated _, DelayedShot _ -> new DelegateProjectile(serverLevel, shooter);
-            default -> projectile;
-        };
+        Supplier<Projectile> shoot = () -> {
 
-        usedProjectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
+            var usedProjectile = switch (behavior.projectileAction()) {
+                case SpawnProjectile<?> spawnProjectile -> requireNonNullElse(spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack), projectile);
+                case Delegated _ -> new DelegateProjectile(serverLevel, shooter);
+                default -> projectile;
+            };
 
-        if (!itemStack.has(DataComponents.INTANGIBLE_PROJECTILE)) {
-            var remainder = behavior.getRemainder(itemStack);
-            if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);
-        }
+            usedProjectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
 
-        cooldown.set(max(cooldown.get(), behavior.cooldownTicks()));
-
-        Function<ProjectileAction, Projectile> shoot = action -> switch (action) {
-            case Delegated delegated -> {
-                shootFunction.accept(usedProjectile);
-                delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
-
-                yield usedProjectile;
+            if (!itemStack.has(DataComponents.INTANGIBLE_PROJECTILE)) {
+                var remainder = behavior.getRemainder(itemStack);
+                if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);
             }
-            default -> original.call(usedProjectile, serverLevel, itemStack, shootFunction);
-        };
 
-        if (behavior.projectileAction() instanceof DelayedShot delayedShot) {
-            var delay = delayedShot.delay().sample(shooter.getRandom()) - shooter.getTicksUsingItem(); // spinning
-            if (delay <= 0) {
-                return shoot.apply(behavior.projectileAction());
-            }
-            shooter.getAttachedOrCreate(OmniCrossbowAttachments.DELAYED_SHOTS, DelayedShot.Tracker::new)
-                    .getEntries()
-                    .add(new DelayedShot.Tracker.Entry(
-                            delay,
-                            () -> shoot.apply(delayedShot.action()),
-                            weapon,
-                            itemStack
-                    ));
+            cooldown.set(max(cooldown.get(), behavior.cooldownTicks()));
+
+            if (!(behavior.projectileAction() instanceof Delegated delegated)) return original.call(usedProjectile, serverLevel, itemStack, shootFunction);
+
+            shootFunction.accept(usedProjectile);
+            delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
+
             return usedProjectile;
+        };
+
+        if (behavior.delay().isPresent()) {
+            var delay = behavior.delay().get();
+            var delayTicks = delay.ticks().sample(shooter.getRandom()) - shooter.getTicksUsingItem(); // spinning
+            if (delayTicks > 0) {
+                if (!shooter.isUsingItem()) delay.chargeSound().ifPresent(sound ->
+                        serverLevel.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), sound, shooter.getSoundSource(), 1f, 1f));
+
+                shooter.getAttachedOrCreate(OmniCrossbowAttachments.DELAYED_SHOTS, ProjectileBehavior.Delay.Tracker::new)
+                        .getEntries()
+                        .add(new ProjectileBehavior.Delay.Tracker.Entry(
+                                delayTicks,
+                                shoot::get,
+                                weapon,
+                                itemStack
+                        ));
+                return projectile;
+            }
         }
 
-        return shoot.apply(behavior.projectileAction());
+        return shoot.get();
     }
 
     @Inject(
