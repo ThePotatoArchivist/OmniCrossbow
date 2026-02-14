@@ -120,16 +120,19 @@ class ProjectileBehaviorGenerator(
             damageMax = 40,
         ), velocityScale = 0.7f))
 
-        register(Items.ECHO_SHARD, ProjectileBehavior(Pierce(
-            15.0,
-            1.0,
-            ParticleConfig(ParticleTypes.SONIC_BOOM),
-            1.0,
-            particleRandomness = 0.0,
-            collideWithBlocks = false,
-            knockback = 2.5,
-            damage = 10f,
-            damageType = damageTypes.getOrThrow(DamageTypes.SONIC_BOOM)
+        register(Items.ECHO_SHARD, ProjectileBehavior(DelayedShot(
+            ConstantInt.of(20),
+            Pierce(
+                15.0,
+                1.0,
+                ParticleConfig(ParticleTypes.SONIC_BOOM),
+                1.0,
+                particleRandomness = 0.0,
+                collideWithBlocks = false,
+                knockback = 2.5,
+                damage = 10f,
+                damageType = damageTypes.getOrThrow(DamageTypes.SONIC_BOOM)
+            )
         ), cooldownTicks = 6 * 20, shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM), ignoreGravityAiming = true))
 
         register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(

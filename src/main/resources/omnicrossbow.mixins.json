@@ -7,6 +7,7 @@
     "ProjectileWeaponItemMixin",
     "ThrownTridentMixin",
     "behavior.CrossbowItemMixin",
+    "behavior.LivingEntityMixin",
     "behavior.ProjectileMixin",
     "behavior.ProjectileWeaponItemMixin",
     "behavior.WindChargeMixin",

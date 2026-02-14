@@ -19,6 +19,7 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import io.netty.buffer.ByteBuf
 import java.util.*
 import java.util.function.Predicate
 import kotlin.reflect.KProperty1
@@ -136,3 +138,9 @@ fun <T, V> Codec<V>.optionalFieldOf(property: KProperty1<T, V>, default: V): Rec
 
 fun weightedRound(value: Float, random: RandomSource) = value.toInt() + if (random.nextFloat() < value.mod(1f)) 1 else 0
 fun weightedRound(value: Double, random: RandomSource) = weightedRound(value.toFloat(), random)
+
+fun <T: Any> unverifiedUnitCodec(value: T) = object : StreamCodec<ByteBuf, T> {
+    override fun decode(input: ByteBuf): T = value
+
+    override fun encode(output: ByteBuf, value: T) {}
+}

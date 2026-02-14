@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.DelayedShot;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated;
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
@@ -30,6 +31,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNullElse;
@@ -60,7 +62,7 @@ public class ProjectileWeaponItemMixin {
 
         cooldown.set(max(cooldown.get(), behavior.cooldownTicks()));
 
-        return switch (behavior.projectileAction()) {
+        Function<ProjectileAction, Projectile> shoot = action -> switch (action) {
             case Delegated delegated -> {
                 shootFunction.accept(usedProjectile);
                 delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
@@ -69,6 +71,24 @@ public class ProjectileWeaponItemMixin {
             }
             default -> original.call(usedProjectile, serverLevel, itemStack, shootFunction);
         };
+
+        if (behavior.projectileAction() instanceof DelayedShot delayedShot) {
+            var delay = delayedShot.delay().sample(shooter.getRandom()) - shooter.getTicksUsingItem(); // spinning
+            if (delay <= 0) {
+                return shoot.apply(behavior.projectileAction());
+            }
+            shooter.getAttachedOrCreate(OmniCrossbowAttachments.DELAYED_SHOTS, DelayedShot.Tracker::new)
+                    .getEntries()
+                    .add(new DelayedShot.Tracker.Entry(
+                            delay,
+                            () -> shoot.apply(delayedShot.action()),
+                            weapon,
+                            itemStack
+                    ));
+            return usedProjectile;
+        }
+
+        return shoot.apply(behavior.projectileAction());
     }
 
     @Inject(

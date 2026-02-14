@@ -2,7 +2,9 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.DelayedShot
 import archives.tater.omnicrossbow.util.McUnit
+import archives.tater.omnicrossbow.util.unverifiedUnitCodec
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
@@ -44,6 +46,11 @@ object OmniCrossbowAttachments {
     @JvmField
     val WIND_CHARGE_EXPLOSION_RADIUS = register<Float>("wind_charge_explosion_radius") {
         persistent(Codec.FLOAT)
+    }
+
+    @JvmField
+    val DELAYED_SHOTS = register<DelayedShot.Tracker>("delayed_shots") {
+        syncWith(unverifiedUnitCodec(DelayedShot.Tracker()), AttachmentSyncPredicate.targetOnly()) // Client only needs to know it's present
     }
 
     fun init() {

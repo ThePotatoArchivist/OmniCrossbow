@@ -56,6 +56,7 @@ object OmniCrossbowProjectileActions {
 
     fun init() {
         register("default", ProjectileAction.Default)
+        register("delay", DelayedShot.CODEC)
         register("spawn_projectile", SpawnProjectile.Direct.CODEC)
         register("spawn_projectile/wind_charge", SpawnProjectile.CustomWindCharge.CODEC)
         register("spawn_entity", SpawnEntity.Direct.CODEC)
