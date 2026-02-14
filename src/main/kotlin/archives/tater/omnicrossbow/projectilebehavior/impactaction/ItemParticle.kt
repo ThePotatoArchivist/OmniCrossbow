@@ -15,10 +15,10 @@ import net.minecraft.world.phys.HitResult
 @JvmRecord
 data class ItemParticle(
     val count: Int,
-    val dx: Double,
-    val dy: Double,
-    val dz: Double,
-    val speed: Double,
+    val dx: Double = 0.0,
+    val dy: Double = 0.0,
+    val dz: Double = 0.0,
+    val speed: Double = 0.0,
 ) : ImpactAction.Inline {
     override val codec: MapCodec<out ImpactAction.Inline> get() = CODEC
 
@@ -35,10 +35,10 @@ data class ItemParticle(
     companion object {
         val CODEC: MapCodec<ItemParticle> = RecordCodecBuilder.mapCodec { it.group(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").forGetter(ItemParticle::count),
-            NON_NEGATIVE_DOUBLE.fieldOf("dx").forGetter(ItemParticle::dx),
-            NON_NEGATIVE_DOUBLE.fieldOf("dy").forGetter(ItemParticle::dy),
-            NON_NEGATIVE_DOUBLE.fieldOf("dz").forGetter(ItemParticle::dz),
-            NON_NEGATIVE_DOUBLE.fieldOf("speed").forGetter(ItemParticle::speed),
+            NON_NEGATIVE_DOUBLE.optionalFieldOf("dx", 0.0).forGetter(ItemParticle::dx),
+            NON_NEGATIVE_DOUBLE.optionalFieldOf("dy", 0.0).forGetter(ItemParticle::dy),
+            NON_NEGATIVE_DOUBLE.optionalFieldOf("dz", 0.0).forGetter(ItemParticle::dz),
+            NON_NEGATIVE_DOUBLE.optionalFieldOf("speed", 0.0).forGetter(ItemParticle::speed),
         ).apply(it, ::ItemParticle) }
     }
 }

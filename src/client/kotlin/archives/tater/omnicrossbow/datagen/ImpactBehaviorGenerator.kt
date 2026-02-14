@@ -6,10 +6,7 @@ import archives.tater.omnicrossbow.condition.CanPickUpLoot
 import archives.tater.omnicrossbow.condition.ConsumablePredicate
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
-import archives.tater.omnicrossbow.registry.OmniCrossbowConditions
-import archives.tater.omnicrossbow.registry.OmniCrossbowImpactActions
-import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
-import archives.tater.omnicrossbow.registry.OmniCrossbowTags
+import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.*
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
@@ -63,7 +60,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         val blocks = entries.getLookup(Registries.BLOCK)
         val entities = entries.getLookup(Registries.ENTITY_TYPE)
 
-        val itemParticle = ItemParticle(8, 0.0, 0.0, 0.0, 0.1)
+        val itemParticle = ItemParticle(count = 8, speed =  0.1)
 
         fun register(path: String, behavior: ItemFiltered<ImpactAction>) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.IMPACT_BEHAVIOR, OmniCrossbow.id(path)), behavior)
@@ -169,6 +166,15 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             ),
             secondary = AllOf(
                 PlaySound(soundHolder(SoundEvents.AMETHYST_BLOCK_BREAK)),
+                itemParticle,
+                OmniCrossbowImpactActions.SHRINK
+            )
+        ))
+
+        register(Items.HONEY_BOTTLE, SideEffect(
+            main = PlaceBlock(OmniCrossbowBlocks.HONEY_SLICK),
+            secondary = AllOf(
+                PlaySound(soundHolder(SoundEvents.GLASS_BREAK)),
                 itemParticle,
                 OmniCrossbowImpactActions.SHRINK
             )

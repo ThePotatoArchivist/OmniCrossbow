@@ -3,6 +3,7 @@
   "package": "archives.tater.omnicrossbow.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "HoneyBlockInvoker",
     "ProjectileWeaponItemMixin",
     "ThrownTridentMixin",
     "behavior.CrossbowItemMixin",

@@ -277,6 +277,7 @@ object OmniCrossbowImpactActions {
         register("damage", Damage.CODEC)
         register("kinetic_damage", KineticDamage.CODEC)
         register("set_block", SetBlock.CODEC)
+        register("place_block", PlaceBlock.CODEC)
         register("apply_effects", ApplyEffects.CODEC)
     }
 }
