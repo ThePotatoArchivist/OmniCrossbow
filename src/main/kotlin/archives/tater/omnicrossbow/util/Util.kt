@@ -147,3 +147,13 @@ fun <T: Any> unverifiedUnitCodec(value: T) = object : StreamCodec<ByteBuf, T> {
 }
 
 fun <T: Any> LocalRef<T?>.getOrSet(default: () -> T): T = get() ?: default().also { set(it) }
+
+inline fun <T> MutableCollection<T>.removeFirst(predicate: (T) -> Boolean): Boolean {
+    val iterator = iterator()
+    for (value in iterator)
+        if (predicate(value)) {
+            iterator.remove()
+            return true
+        }
+    return false
+}

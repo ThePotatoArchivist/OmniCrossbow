@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments
+import archives.tater.omnicrossbow.util.removeFirst
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.LivingEntity
@@ -8,7 +9,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ChargedProjectiles
 
 @Suppress("UnstableApiUsage")
-data class DelayTracker(
+class DelayTracker(
     val entries: MutableList<Entry> = mutableListOf(),
     var ticksPassed: Int = 0
 ) {
@@ -26,7 +27,7 @@ data class DelayTracker(
 
             val projectiles = weapon[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.toMutableList() ?: return@removeIf true
 
-            if (!projectiles.removeIf { ItemStack.matches(it, entry.projectile) }) return@removeIf true
+            if (!projectiles.removeFirst { ItemStack.matches(it, entry.projectile) }) return@removeIf true
 
             entry.action.run()
             weapon[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.ofNonEmpty(projectiles)

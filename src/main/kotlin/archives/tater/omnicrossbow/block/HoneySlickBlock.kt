@@ -2,19 +2,13 @@ package archives.tater.omnicrossbow.block
 
 import archives.tater.omnicrossbow.mixin.HoneyBlockInvoker
 import archives.tater.omnicrossbow.util.get
-import archives.tater.omnicrossbow.util.isOf
+import archives.tater.omnicrossbow.util.minus
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.util.RandomSource
-import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.InsideBlockEffectApplier
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.ItemUtils
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -24,7 +18,6 @@ import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.EnumProperty
-import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
@@ -69,12 +62,14 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
 
         if (!entity.boundingBox.intersects(state.getShape(level, pos).move(pos).bounds())) return
 
-        val length = entity.deltaMovement.length()
+        val movement = if (entity.isClientAuthoritative) entity.knownMovement else entity.position() - entity.oldPosition()
 
-        if (!entity.onGround() && length >= 0.05)
+        val length = movement.length()
+
+        if (length >= 0.005)
             invokeMaybeDoSlideEffects(level, entity)
 
-        if (!entity.onGround() && entity.deltaMovement.y < -0.08)
+        if (!entity.onGround() && movement.y < -0.08)
             invokeDoSlideMovement(entity)
         else
             entity.makeStuckInBlock(state, Vec3(0.9, 1.5, 0.9))
@@ -84,7 +79,7 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
         super.skipRendering(state, neighborState, direction) && state[FACING] == neighborState[FACING]
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-        defaultBlockState().setValue(FACING, context.clickedFace.opposite)
+        defaultBlockState().setValue(FACING, context.clickedFace)
 
     override fun canSurvive(state: BlockState, level: LevelReader, pos: BlockPos): Boolean {
         val direction = state[FACING]
@@ -105,20 +100,6 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
         Blocks.AIR.defaultBlockState()
     else
         super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random)
-
-    override fun useItemOn(
-        itemStack: ItemStack,
-        state: BlockState,
-        level: Level,
-        pos: BlockPos,
-        player: Player,
-        hand: InteractionHand,
-        hitResult: BlockHitResult
-    ): InteractionResult {
-        if (!(itemStack isOf Items.GLASS_BOTTLE)) return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult)
-        level.destroyBlock(pos, false, player)
-        return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(itemStack, player, Items.HONEY_BOTTLE.defaultInstance))
-    }
 
     override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {
         if (level[pos.below()].isFaceSturdy(level, pos, Direction.DOWN, SupportType.FULL) || random.nextInt(10) != 0) return
