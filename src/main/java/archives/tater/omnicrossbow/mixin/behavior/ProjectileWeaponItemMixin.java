@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.mixin.behavior;
 
 import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.DelayedShot;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.Delegated;
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
@@ -11,7 +12,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.level.Level;
 
 import org.jspecify.annotations.Nullable;
 
@@ -33,47 +32,43 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static java.lang.Math.max;
+import static java.util.Objects.requireNonNullElse;
 
 @Mixin(ProjectileWeaponItem.class)
 public class ProjectileWeaponItemMixin {
-    @WrapOperation(
-            method = "shoot",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ProjectileWeaponItem;createProjectile(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/entity/projectile/Projectile;")
-    )
-    private Projectile modifyProjectile(ProjectileWeaponItem instance, Level level, LivingEntity shooter, ItemStack weapon, ItemStack projectile, boolean isCrit, Operation<Projectile> original, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior) {
-        var behavior = ProjectileBehavior.getBehavior(level, projectile);
 
-        projectileBehavior.set(behavior);
-
-        return switch (behavior.projectileAction()) {
-            case SpawnProjectile<?> spawnProjectile -> spawnProjectile.createProjectile(level, shooter, weapon, projectile);
-            case Delegated ignored -> new DelegateProjectile(level, shooter);
-            default -> original.call(instance, level, shooter, weapon, projectile, isCrit);
-        };
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
+    @SuppressWarnings({"UnstableApiUsage"})
     @WrapOperation(
             method = "shoot",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectile(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/world/entity/projectile/Projectile;")
     )
-    private <T extends Projectile> T modifyProjectileShoot(T projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<T> shootFunction, Operation<T> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Local(name = "projectile") ItemStack projectileItem, @Share("projectileBehavior") LocalRef<@Nullable ProjectileBehavior> projectileBehavior, @Share("cooldown") LocalIntRef cooldown) {
-        var behavior = projectileBehavior.get();
-        if (behavior == null) return original.call(projectile, serverLevel, itemStack, shootFunction);
+    private Projectile modifyProjectileShoot(Projectile projectile, ServerLevel serverLevel, ItemStack itemStack, Consumer<Projectile> shootFunction, Operation<Projectile> original, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter, @Local(argsOnly = true) ItemStack weapon, @Share("cooldown") LocalIntRef cooldown) {
+        var behavior = ProjectileBehavior.getBehavior(serverLevel, itemStack);
 
-        projectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
-        if (!projectileItem.has(DataComponents.INTANGIBLE_PROJECTILE)) {
-            var remainder = behavior.getRemainder(projectileItem);
+        var usedProjectile = switch (behavior.projectileAction()) {
+            case SpawnProjectile<?> spawnProjectile -> requireNonNullElse(spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack), projectile);
+            case Delegated _, DelayedShot _ -> new DelegateProjectile(serverLevel, shooter);
+            default -> projectile;
+        };
+
+        usedProjectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
+
+        if (!itemStack.has(DataComponents.INTANGIBLE_PROJECTILE)) {
+            var remainder = behavior.getRemainder(itemStack);
             if (remainder != null) shooter.handleExtraItemsCreatedOnUse(remainder);
         }
+
         cooldown.set(max(cooldown.get(), behavior.cooldownTicks()));
 
-        if (!(behavior.projectileAction() instanceof Delegated delegated)) return original.call(projectile, serverLevel, itemStack, shootFunction);
+        return switch (behavior.projectileAction()) {
+            case Delegated delegated -> {
+                shootFunction.accept(usedProjectile);
+                delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
 
-        shootFunction.accept(projectile);
-        delegated.shoot(projectile.position(), projectile.getDeltaMovement(), serverLevel, shooter, weapon, projectileItem);
-
-        return projectile;
+                yield usedProjectile;
+            }
+            default -> original.call(usedProjectile, serverLevel, itemStack, shootFunction);
+        };
     }
 
     @Inject(
