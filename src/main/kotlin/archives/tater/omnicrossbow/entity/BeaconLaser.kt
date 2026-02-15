@@ -12,6 +12,7 @@ import net.minecraft.util.Mth.*
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.monster.CrossbowAttackMob
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.ValueInput
@@ -31,13 +32,13 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
     private var ownerRef by OWNER
     var distance by DISTANCE
     var active by ACTIVE
-    var offset by OFFSET
+    var angleOffset by ANGLE_OFFSET
 
     var owner by ::ownerRef
 
     constructor(level: Level, owner: LivingEntity, offset: Quaternionfc) : this(OmniCrossbowEntities.BEACON_LASER, level) {
         this.owner = owner
-        this.offset = offset
+        this.angleOffset = offset
         updatePosition(owner)
     }
 
@@ -54,7 +55,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         entityData.define(OWNER, Optional.empty())
         entityData.define(ACTIVE, true)
         entityData.define(DISTANCE, 0)
-        entityData.define(OFFSET, Quaternionf())
+        entityData.define(ANGLE_OFFSET, Quaternionf())
     }
 
     private fun updatePosition(owner: LivingEntity) {
@@ -64,11 +65,11 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
                 owner.lookAt(target, MOB_TURN_SPEED, MOB_TURN_SPEED)
         }
 
-        val angle = owner.lookAngle.toVector3f().rotate(offset)
+        val angle = owner.lookAngle.toVector3f().rotate(angleOffset)
         yRot = atan2(angle.x, angle.z) * -RAD_TO_DEG
         xRot = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
 
-        setPos(owner.eyePosition.subtract(0.0, EYE_MARGIN, 0.0).add(lookAngle * 0.5))
+        setPos(owner.eyePosition.subtract(0.0, EYE_MARGIN, 0.0).add(lookAngle * OFFSET))
     }
 
     override fun tick() {
@@ -78,6 +79,9 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         }
 
         updatePosition(owner)
+
+        if (active && (owner !is Player || !owner.abilities.flying))
+            owner.deltaMovement += lookAngle * -RECOIL
 
         val level = level()
 
@@ -150,6 +154,8 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         const val TRANSITION_STEP = 1f / TRANSITION_TICKS
         const val EYE_MARGIN = 0.4
         const val MOB_TURN_SPEED = 2f
+        const val RECOIL = 0.05
+        const val OFFSET = 0.5
 
         val OWNER: EntityDataAccessor<Optional<EntityReference<LivingEntity>>> =
             SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE)
@@ -158,6 +164,6 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
 
         val ACTIVE: EntityDataAccessor<Boolean> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.BOOLEAN)
 
-        val OFFSET: EntityDataAccessor<Quaternionfc> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.QUATERNION)
+        val ANGLE_OFFSET: EntityDataAccessor<Quaternionfc> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.QUATERNION)
     }
 }
