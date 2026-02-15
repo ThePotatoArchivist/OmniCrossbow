@@ -54,7 +54,9 @@ object OmniCrossbowEntities {
     val SLIME_BALL = registerProjectile("slimeball", ::ThrownSlimeball)
 
     @JvmField
-    val MAGMA_CREAM = registerProjectile("magma_cream", ::ThrownMagmaCream)
+    val MAGMA_CREAM = registerProjectile("magma_cream", ::ThrownMagmaCream) {
+        fireImmune()
+    }
 
     @JvmField
     val FREEZING_SNOWBALL = registerProjectile("freezing_snowball", ::FreezingSnowball)
