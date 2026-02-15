@@ -30,7 +30,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
 
         fun register(key: ResourceKey<Enchantment>, definition: EnchantmentDefinition, init: Enchantment.Builder.() -> Unit) =
             enchantment(definition).apply(init).build(key.identifier()).also {
-                registry.register(key, it)
+                registry[key] = it
             }
 
         register(OmniCrossbowEnchantments.MULTICHAMBERED, definition(

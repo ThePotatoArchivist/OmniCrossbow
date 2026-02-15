@@ -12,7 +12,7 @@
     "beam_particle_randomness": 1.0,
     "beam_particle_step": 0.25,
     "damage": 8.0,
-    "damage_type": "minecraft:in_fire",
+    "damage_type": "omnicrossbow:fire_beam",
     "destroy_particle": {
       "count": 16,
       "dx": 0.25,

@@ -4,10 +4,7 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
-import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
-import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
-import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
-import archives.tater.omnicrossbow.registry.OmniCrossbowTags
+import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.ItemPredicate
 import archives.tater.omnicrossbow.util.ParticleConfig
 import archives.tater.omnicrossbow.util.hasAny
@@ -27,7 +24,6 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantInt
-import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -46,7 +42,6 @@ class ProjectileBehaviorGenerator(
         entries: Entries
     ) {
         val items = entries.getLookup(Registries.ITEM)
-        val damageTypes = entries.getLookup(Registries.DAMAGE_TYPE)
 
         fun register(path: String, behavior: ItemFiltered<ProjectileBehavior>) {
             entries.add(ResourceKey.create(OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, OmniCrossbow.id(path)), behavior)
@@ -130,7 +125,7 @@ class ProjectileBehaviorGenerator(
                 collideWithBlocks = false,
                 knockback = 2.5,
                 damage = 10f,
-                damageType = damageTypes.getOrThrow(DamageTypes.SONIC_BOOM)
+                damageType = registries.getOrThrow(OmniCrossbowDamageTypes.SONIC_BOOM)
             ),
             cooldownTicks = 6 * 20,
             shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM),
@@ -142,7 +137,7 @@ class ProjectileBehaviorGenerator(
             distance = 15.0,
             margin = 0.2,
             damage = 8f,
-            damageType = damageTypes.getOrThrow(DamageTypes.IN_FIRE),
+            damageType = registries.getOrThrow(OmniCrossbowDamageTypes.FIRE_BEAM),
             fireTicks = 8 * 20,
             beamParticle = ParticleConfig(ParticleTypes.FLAME, 4, speed = 0.01),
             beamParticleStep = 0.25,

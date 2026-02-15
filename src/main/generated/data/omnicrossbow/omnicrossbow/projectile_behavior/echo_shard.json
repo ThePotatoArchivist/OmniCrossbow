@@ -9,7 +9,7 @@
   "projectile_action": {
     "type": "omnicrossbow:pierce",
     "damage": 10.0,
-    "damage_type": "minecraft:sonic_boom",
+    "damage_type": "omnicrossbow:sonic_boom",
     "distance": 15.0,
     "knockback": 2.5,
     "margin": 1.0,

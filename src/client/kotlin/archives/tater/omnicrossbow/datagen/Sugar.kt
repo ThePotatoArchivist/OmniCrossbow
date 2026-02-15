@@ -8,6 +8,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.TagAppender
+import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
@@ -40,3 +41,7 @@ fun ItemTransform(
 ) = ItemTransform(rotation, translation, scale)
 
 fun soundHolder(soundEvent: SoundEvent): Holder<SoundEvent> = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent)
+
+operator fun <T: Any> BootstrapContext<T>.set(key: ResourceKey<T>, value: T) {
+    register(key, value)
+}

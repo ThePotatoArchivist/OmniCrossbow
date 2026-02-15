@@ -1,11 +1,11 @@
 package archives.tater.omnicrossbow.entity
 
+import archives.tater.omnicrossbow.registry.OmniCrossbowDamageTypes
 import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.set
 import archives.tater.omnicrossbow.util.weightedRound
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EntityEvent
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
@@ -42,7 +42,7 @@ class ThrownMagmaCream(type: EntityType<out ThrownMagmaCream>, level: Level) : B
         val level = level() as? ServerLevel ?: return
         if (!deflected && hitResult.entity == getOwner()) return
         with (hitResult.entity) {
-            hurtServer(level, damageSources().source(DamageTypes.IN_FIRE, this, getOwner()), 2f)
+            hurtServer(level, damageSources().source(OmniCrossbowDamageTypes.FIRE_PROJECTILE, this, getOwner()), 2f)
             remainingFireTicks += 4 * 20
         }
     }

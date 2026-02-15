@@ -10,12 +10,14 @@ object OmniCrossbowDataGenerator : DataGeneratorEntrypoint {
 	override fun buildRegistry(registryBuilder: RegistrySetBuilder) {
 		with (registryBuilder) {
 			add(Registries.ENCHANTMENT, EnchantmentGenerator)
+			add(Registries.DAMAGE_TYPE, DamageTypeGenerator)
 		}
 	}
 
 	override fun onInitializeDataGenerator(fabricDataGenerator: FabricDataGenerator) {
 		with (fabricDataGenerator.createPack()) {
 			addProvider(dynamicRegistry("Enchantments", Registries.ENCHANTMENT))
+			addProvider(dynamicRegistry("Damage Types", Registries.DAMAGE_TYPE))
 			addProvider(::ItemTagGenerator)
 			addProvider(::BlockTagGenerator)
 			addProvider(::EntityTagGenerator)

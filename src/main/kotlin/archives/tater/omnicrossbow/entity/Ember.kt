@@ -1,12 +1,12 @@
 package archives.tater.omnicrossbow.entity
 
+import archives.tater.omnicrossbow.registry.OmniCrossbowDamageTypes
 import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.set
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.EntityEvent
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MoverType
@@ -65,7 +65,7 @@ class Ember(type: EntityType<out Projectile>, level: Level) : Projectile(type, l
         val serverLevel = level() as? ServerLevel ?: return
         hitResult.entity.apply {
             remainingFireTicks += FIRE_TICKS
-            hurtServer(serverLevel, damageSources().source(DamageTypes.IN_FIRE, this, getOwner()), DAMAGE)
+            hurtServer(serverLevel, damageSources().source(OmniCrossbowDamageTypes.FIRE_PROJECTILE, this, getOwner()), DAMAGE)
         }
         discard()
     }
