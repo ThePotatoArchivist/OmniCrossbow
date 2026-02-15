@@ -136,9 +136,9 @@ object OmniCrossbowImpactActions {
     }
 
     @JvmField
-    val USE_ITEM_ON_ENTITY_BASE = registerEntity("use_item/on_entity_base") { level, projectile, hit, originalItem ->
+    val USE_ITEM_ON_ENTITY_BASE = registerEntity("use_item/on_entity_base") { level, projectile, hit, _ ->
         val player = createFakePlayer(level, projectile)
-        projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, BlockHitResult(hit.location, Direction.DOWN, hit.entity.blockPosition(), false))).also {
+        projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, BlockHitResult(hit.location, Direction.UP, hit.entity.blockPosition(), false))).also {
             if (it is InteractionResult.Success)
                 projectile.item = it.heldItemTransformedTo()?:  player.mainHandItem
         }.consumesAction()

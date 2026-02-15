@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.datagen
 
+import archives.tater.omnicrossbow.registry.OmniCrossbowBlocks
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
@@ -16,6 +17,9 @@ class BlockTagGenerator(output: FabricPackOutput, registryLookupFuture: Completa
             +BlockTags.MINEABLE_WITH_AXE
             +BlockTags.MINEABLE_WITH_SHOVEL
             +BlockTags.MINEABLE_WITH_HOE
+        }
+        with (valueLookupBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS)) {
+            +OmniCrossbowBlocks.HONEY_SLICK
         }
     }
 }

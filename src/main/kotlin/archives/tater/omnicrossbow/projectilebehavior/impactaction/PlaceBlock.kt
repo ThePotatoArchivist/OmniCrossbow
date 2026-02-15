@@ -29,7 +29,7 @@ data class PlaceBlock(
     ): Boolean {
         val blockHit = when (hit) {
             is BlockHitResult -> hit
-            is EntityHitResult -> BlockHitResult(hit.location, Direction.DOWN, hit.entity.blockPosition(), false)
+            is EntityHitResult -> BlockHitResult(hit.location, Direction.UP, hit.entity.blockPosition(), false)
             else -> return false
         }
         val player = createFakePlayer(level, projectile)

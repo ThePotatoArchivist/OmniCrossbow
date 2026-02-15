@@ -6,6 +6,7 @@ import archives.tater.omnicrossbow.util.minus
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.InsideBlockEffectApplier
@@ -49,6 +50,13 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
         context: CollisionContext
     ): VoxelShape = Shapes.empty()
 
+    override fun getEntityInsideCollisionShape(
+        state: BlockState,
+        level: BlockGetter,
+        pos: BlockPos,
+        entity: Entity
+    ): VoxelShape = getShape(state,  level, pos, CollisionContext.of(entity))
+
     override fun entityInside(
         state: BlockState,
         level: Level,
@@ -60,18 +68,14 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
         @Suppress("CAST_NEVER_SUCCEEDS")
         this as HoneyBlockInvoker
 
-        if (!entity.boundingBox.intersects(state.getShape(level, pos).move(pos).bounds())) return
+        val movement = if (entity is ServerPlayer) entity.knownMovement else entity.position() - entity.oldPosition()
 
-        val movement = if (entity.isClientAuthoritative) entity.knownMovement else entity.position() - entity.oldPosition()
-
-        val length = movement.length()
-
-        if (length >= 0.005)
+        if (movement.length() > 0)
             invokeMaybeDoSlideEffects(level, entity)
 
-        if (!entity.onGround() && movement.y < -0.08)
+        if (!entity.onGround() && movement.y < -0.08) {
             invokeDoSlideMovement(entity)
-        else
+        } else
             entity.makeStuckInBlock(state, Vec3(0.9, 1.5, 0.9))
     }
 
