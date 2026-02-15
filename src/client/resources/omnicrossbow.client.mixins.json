@@ -10,7 +10,6 @@
   },
   "mixins": [
     "EndCrystalModelMixin",
-    "LivingEntityRendererMixin",
     "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
     "enchantmenteffect.spin.HumanoidModelMixin",
     "enchantmenteffect.spin.ItemInHandLayerMixin",

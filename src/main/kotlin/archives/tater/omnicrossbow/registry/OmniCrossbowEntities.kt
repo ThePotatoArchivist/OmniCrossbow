@@ -73,6 +73,17 @@ object OmniCrossbowEntities {
         fireImmune()
     }
 
+    @JvmField
+    val BEACON_LASER = register("beacon_laser", ::BeaconLaser) {
+        sized(1f, 1f)
+        noLootTable()
+        fireImmune()
+        clientTrackingRange(4)
+        updateInterval(Int.MAX_VALUE)
+        noSummon()
+        noSave()
+    }
+
     fun init() {
 
     }

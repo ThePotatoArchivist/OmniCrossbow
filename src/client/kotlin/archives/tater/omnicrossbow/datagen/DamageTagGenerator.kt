@@ -29,6 +29,9 @@ class DamageTagGenerator(
         buildTag(DamageTypeTags.NO_KNOCKBACK) {
             add(OmniCrossbowDamageTypes.BEACON)
         }
+        buildTag(DamageTypeTags.NO_IMPACT) {
+            add(OmniCrossbowDamageTypes.BEACON)
+        }
         buildTag(DamageTypeTags.IS_FIRE) {
             add(OmniCrossbowDamageTypes.FIRE_BEAM)
             add(OmniCrossbowDamageTypes.FIRE_PROJECTILE)
