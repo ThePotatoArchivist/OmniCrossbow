@@ -22,5 +22,9 @@ object DamageTypeGenerator : RegistrySetBuilder.RegistryBootstrap<DamageType>  {
             "omnicrossbow.sonic_boom",
             0.1f
         )
+        registry[OmniCrossbowDamageTypes.BEACON] = DamageType(
+            "omnicrossbow.beacon",
+            0.1f
+        )
     }
 }

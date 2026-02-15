@@ -1,0 +1,11 @@
+{
+  "cooldown_ticks": 160,
+  "delay": {
+    "charge_sound": "omnicrossbow:item.crossbow.beacon_charge",
+    "ticks": 20
+  },
+  "ignore_gravity_aiming": true,
+  "items": "minecraft:nether_star",
+  "projectile_action": "omnicrossbow:beacon_laser",
+  "shoot_sound": "omnicrossbow:item.crossbow.beacon_fire"
+}

@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.datagen
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior.Delay
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
 import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.ItemPredicate
@@ -130,7 +131,15 @@ class ProjectileBehaviorGenerator(
             cooldownTicks = 6 * 20,
             shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM),
             ignoreGravityAiming = true,
-            delay = ProjectileBehavior.Delay(ConstantInt.of(33), soundHolder(SoundEvents.WARDEN_SONIC_CHARGE))
+            delay = Delay(ConstantInt.of(33), soundHolder(SoundEvents.WARDEN_SONIC_CHARGE))
+        ))
+
+        register(Items.NETHER_STAR, ProjectileBehavior(
+            OmniCrossbowProjectileActions.BEACON_LASER,
+            cooldownTicks = 8 * 20,
+            shootSound = soundHolder(OmniCrossbowSounds.BEACON_FIRE),
+            ignoreGravityAiming = true,
+            delay = Delay(ConstantInt.of(14), soundHolder(OmniCrossbowSounds.BEACON_CHARGE))
         ))
 
         register(Items.BLAZE_ROD, ProjectileBehavior(FireBeam(

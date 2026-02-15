@@ -1,5 +1,6 @@
 {
   "values": [
-    "#minecraft:is_projectile"
+    "#minecraft:is_projectile",
+    "omnicrossbow:beacon"
   ]
 }

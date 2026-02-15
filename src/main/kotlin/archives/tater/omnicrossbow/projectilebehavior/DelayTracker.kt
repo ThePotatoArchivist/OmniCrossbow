@@ -9,10 +9,10 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.ChargedProjectiles
 
 @Suppress("UnstableApiUsage")
-class DelayTracker(
-    val entries: MutableList<Entry> = mutableListOf(),
+class DelayTracker {
+    val entries: MutableList<Entry> = mutableListOf()
     var ticksPassed: Int = 0
-) {
+
     fun tick(entity: LivingEntity) {
         if (entity.level().isClientSide) return
 

@@ -5,7 +5,9 @@ import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.mixin.behavior.access.BoatItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MobBucketItemAccessor
+import archives.tater.omnicrossbow.projectilebehavior.BeaconLaser
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
+import archives.tater.omnicrossbow.util.set
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
 import net.minecraft.world.entity.Entity
@@ -52,6 +54,11 @@ object OmniCrossbowProjectileActions {
     @JvmField
     val FROM_BUCKET = registerEntity("spawn_entity/from_bucket") {
         (it.item as? MobBucketItemAccessor)?.type
+    }
+
+    @JvmField
+    val BEACON_LASER = registerDelegated("beacon_laser") { _, _, _, shooter, _, _ ->
+        shooter[OmniCrossbowAttachments.BEACON_LASER] = BeaconLaser()
     }
 
     fun init() {

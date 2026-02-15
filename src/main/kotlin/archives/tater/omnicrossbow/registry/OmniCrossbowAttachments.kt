@@ -1,8 +1,9 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
-import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
+import archives.tater.omnicrossbow.projectilebehavior.BeaconLaser
 import archives.tater.omnicrossbow.projectilebehavior.DelayTracker
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.util.McUnit
 import archives.tater.omnicrossbow.util.unverifiedUnitCodec
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
@@ -52,6 +53,14 @@ object OmniCrossbowAttachments {
     val DELAYED_SHOTS = register<DelayTracker>("delayed_shots") {
         syncWith(unverifiedUnitCodec(DelayTracker()), AttachmentSyncPredicate.targetOnly()) // Client only needs to know it's present
     }
+
+    @JvmField
+    val BEACON_LASER = register<BeaconLaser>("beacon_laser")  {
+        syncWith(unverifiedUnitCodec(BeaconLaser()), AttachmentSyncPredicate.all())
+    }
+
+    @JvmField
+    val BEACON_LASER_DISPLAY = register<BeaconLaser.Display>("beacon_laser_display") // manipulated on client
 
     fun init() {
 

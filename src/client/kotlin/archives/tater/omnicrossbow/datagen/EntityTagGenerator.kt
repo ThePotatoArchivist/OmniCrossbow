@@ -25,6 +25,13 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
             +EntityType.STRAY
             +EntityType.BOGGED
         }
+        with (valueLookupBuilder(OmniCrossbowTags.EXTRA_BEACON_DAMAGE)) {
+            +EntityType.PLAYER
+            +EntityType.WITHER
+        }
+        with (valueLookupBuilder(OmniCrossbowTags.UNCAPPED_BEACON_DAMAGE)) {
+            +EntityType.WITHER
+        }
         with (valueLookupBuilder(EntityTypeTags.IMPACT_PROJECTILES)) {
             +OmniCrossbowEntities.END_CRYSTAL
             +OmniCrossbowEntities.SLIME_BALL

@@ -36,6 +36,10 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
             normal = "%s was obliterated by a sonically-charged shriek from %s",
             item = "%s was obliterated by a sonically-charged shriek from %s using %s",
         )
+        add(OmniCrossbowDamageTypes.BEACON,
+            normal = "%s had a bad time at the hands of %s",
+            item = "%s had a bad time at the hands of %s using %s",
+        )
     }
 
 

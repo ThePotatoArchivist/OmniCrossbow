@@ -14,5 +14,8 @@ object OmniCrossbowSounds {
     @JvmField val SPIN = register("item.crossbow.spin")
     @JvmField val RICOCHET = register("entity.arrow.ricochet")
 
+    @JvmField val BEACON_CHARGE = register("item.crossbow.beacon_charge")
+    @JvmField val BEACON_FIRE = register("item.crossbow.beacon_fire")
+
     fun init() {}
 }

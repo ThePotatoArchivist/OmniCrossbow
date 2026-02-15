@@ -6,6 +6,7 @@
     "HoneyBlockInvoker",
     "ProjectileWeaponItemMixin",
     "ThrownTridentMixin",
+    "beacon.LivingEntityMixin",
     "behavior.CrossbowItemMixin",
     "behavior.LivingEntityMixin",
     "behavior.ProjectileMixin",

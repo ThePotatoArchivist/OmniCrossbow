@@ -18,4 +18,8 @@ object OmniCrossbowTags {
     @JvmField val HAS_PREFERRED_TOOL = ofBlock("has_preferred_tool")
 
     @JvmField val CAN_ALWAYS_EQUIP = ofEntity("can_always_equip")
+
+    @JvmField val EXTRA_BEACON_DAMAGE = ofEntity("extra_beacon_damage")
+
+    @JvmField val UNCAPPED_BEACON_DAMAGE = ofEntity("uncapped_beacon_damage")
 }

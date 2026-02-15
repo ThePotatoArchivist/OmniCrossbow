@@ -24,6 +24,10 @@ class DamageTagGenerator(
     override fun addTags(registries: HolderLookup.Provider) {
         buildTag(DamageTypeTags.BYPASSES_COOLDOWN) {
             forceAddTag(DamageTypeTags.IS_PROJECTILE)
+            add(OmniCrossbowDamageTypes.BEACON)
+        }
+        buildTag(DamageTypeTags.NO_KNOCKBACK) {
+            add(OmniCrossbowDamageTypes.BEACON)
         }
         buildTag(DamageTypeTags.IS_FIRE) {
             add(OmniCrossbowDamageTypes.FIRE_BEAM)
@@ -46,9 +50,17 @@ class DamageTagGenerator(
         }
         buildTag(DamageTypeTags.BYPASSES_ARMOR) {
             add(OmniCrossbowDamageTypes.SONIC_BOOM)
+            add(OmniCrossbowDamageTypes.BEACON)
         }
         buildTag(DamageTypeTags.BYPASSES_ENCHANTMENTS) {
             add(OmniCrossbowDamageTypes.SONIC_BOOM)
+            add(OmniCrossbowDamageTypes.BEACON)
+        }
+        buildTag(DamageTypeTags.BYPASSES_EFFECTS) {
+            add(OmniCrossbowDamageTypes.BEACON)
+        }
+        buildTag(DamageTypeTags.BYPASSES_INVULNERABILITY) {
+            add(OmniCrossbowDamageTypes.BEACON)
         }
     }
 

@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow
 
 import archives.tater.omnicrossbow.client.render.AmmoPosition
+import archives.tater.omnicrossbow.client.render.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
@@ -17,7 +18,9 @@ import archives.tater.omnicrossbow.util.times
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -38,8 +41,7 @@ import org.joml.Quaternionf
 
 object OmniCrossbowClient : ClientModInitializer {
 
-	@JvmField
-	val SPINNING_ITEM: RenderStateDataKey<Boolean> = RenderStateDataKey.create()
+	@JvmField val SPINNING_ITEM: RenderStateDataKey<Boolean> = RenderStateDataKey.create()
 
 	private val ARM_TILT_RIGHT = Quaternionf().apply {
 		rotationY(getCrossbowSpinTilt(false))
@@ -105,6 +107,10 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.FREEZING_SNOWBALL, ::ThrownItemRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.END_CRYSTAL, ::EndCrystalProjectileRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.EMBER, ::EmberRenderer)
+
+		LivingEntityRenderLayerRegistrationCallback.EVENT.register(BeaconLaserRenderer)
+		LevelRenderEvents.END_EXTRACTION.register(BeaconLaserRenderer)
+		LevelRenderEvents.AFTER_ENTITIES.register(BeaconLaserRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 
