@@ -13,5 +13,9 @@
     },
     "particle_step": 2.0
   },
+  "recoil": {
+    "amount": 1.0,
+    "reset_falling": true
+  },
   "shoot_sound": "minecraft:entity.breeze.wind_burst"
 }

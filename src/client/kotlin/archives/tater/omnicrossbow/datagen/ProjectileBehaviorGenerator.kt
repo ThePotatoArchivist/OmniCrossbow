@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.projectilebehavior.ItemFiltered
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior.Delay
+import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior.Recoil
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
 import archives.tater.omnicrossbow.registry.*
 import archives.tater.omnicrossbow.util.ItemPredicate
@@ -87,17 +88,29 @@ class ProjectileBehaviorGenerator(
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
         register(Items.END_CRYSTAL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.END_CRYSTAL), 0.1f, cooldownTicks = 4 * 20, ignoreGravityAiming = true))
-        register(Items.BLAZE_POWDER, ProjectileBehavior(ProjectileSpray(OmniCrossbowEntities.EMBER, ConstantInt.of(12), 32f), 0.35f, cooldownTicks = 4 * 20, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT)))
 
-        register(Items.BREEZE_ROD, ProjectileBehavior(Pierce(
-            16.0,
-            2.0,
-            ParticleConfig(ParticleTypes.GUST_EMITTER_SMALL),
-            2.0,
-            collideWithBlocks = true,
-            cheatOnGroundKnockback = -0.5,
-            knockback = 5.0,
-        ), shootSound = SoundEvents.BREEZE_WIND_CHARGE_BURST, ignoreGravityAiming = true))
+        register(Items.BLAZE_POWDER, ProjectileBehavior(
+            ProjectileSpray(OmniCrossbowEntities.EMBER, ConstantInt.of(12), 32f),
+            0.35f,
+            cooldownTicks = 4 * 20,
+            shootSound = soundHolder(SoundEvents.BLAZE_SHOOT),
+            recoil = Recoil(0.5, resetFalling = true)
+        ))
+
+        register(Items.BREEZE_ROD, ProjectileBehavior(
+            Pierce(
+                16.0,
+                2.0,
+                ParticleConfig(ParticleTypes.GUST_EMITTER_SMALL),
+                2.0,
+                collideWithBlocks = true,
+                cheatOnGroundKnockback = -0.5,
+                knockback = 5.0,
+            ),
+            shootSound = SoundEvents.BREEZE_WIND_CHARGE_BURST,
+            ignoreGravityAiming = true,
+            recoil = Recoil(1.0, resetFalling = true),
+        ))
 
         register(DataComponents.ENTITY_DATA, ProjectileBehavior(OmniCrossbowProjectileActions.FROM_ENTITY_DATA, 0.5f))
 
@@ -131,7 +144,8 @@ class ProjectileBehaviorGenerator(
             cooldownTicks = 6 * 20,
             shootSound = soundHolder(SoundEvents.WARDEN_SONIC_BOOM),
             ignoreGravityAiming = true,
-            delay = Delay(ConstantInt.of(33), soundHolder(SoundEvents.WARDEN_SONIC_CHARGE))
+            delay = Delay(ConstantInt.of(33), soundHolder(SoundEvents.WARDEN_SONIC_CHARGE)),
+            recoil = Recoil(1.0)
         ))
 
         register(Items.NETHER_STAR, ProjectileBehavior(

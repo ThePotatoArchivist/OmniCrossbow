@@ -154,7 +154,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         const val TRANSITION_STEP = 1f / TRANSITION_TICKS
         const val EYE_MARGIN = 0.4
         const val MOB_TURN_SPEED = 2f
-        const val RECOIL = 0.05
+        const val RECOIL = 0.06
         const val OFFSET = 0.5
 
         val OWNER: EntityDataAccessor<Optional<EntityReference<LivingEntity>>> =

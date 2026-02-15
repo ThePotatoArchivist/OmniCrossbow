@@ -1,9 +1,12 @@
 package archives.tater.omnicrossbow.projectilebehavior
 
+import archives.tater.omnicrossbow.network.addMovementClient
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
+import archives.tater.omnicrossbow.util.NON_NEGATIVE_DOUBLE
+import archives.tater.omnicrossbow.util.times
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
@@ -12,9 +15,11 @@ import net.minecraft.core.Holder
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.valueproviders.IntProvider
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.FallingBlock
+import net.minecraft.world.phys.Vec3
 import java.util.*
 
 @JvmRecord
@@ -23,6 +28,7 @@ data class ProjectileBehavior(
     val velocityScale: Float,
     val cooldownTicks: Int,
     val shootSound: Optional<Holder<SoundEvent>>,
+    val recoil: Optional<Recoil>,
     val ignoreGravityAiming: Boolean,
     val remainder: Either<Boolean, ItemStackTemplate>,
     val delay: Optional<Delay>,
@@ -32,6 +38,7 @@ data class ProjectileBehavior(
         velocityScale: Float = 1f,
         cooldownTicks: Int = 0,
         shootSound: Holder<SoundEvent>? = null,
+        recoil: Recoil? = null,
         ignoreGravityAiming: Boolean = false,
         remainder: Boolean = false,
         delay: Delay? = null,
@@ -40,6 +47,7 @@ data class ProjectileBehavior(
         velocityScale,
         cooldownTicks,
         Optional.ofNullable(shootSound),
+        Optional.ofNullable(recoil),
         ignoreGravityAiming,
         Either.left(remainder),
         Optional.ofNullable(delay)
@@ -50,6 +58,7 @@ data class ProjectileBehavior(
         velocityScale: Float = 1f,
         cooldownTicks: Int = 0,
         shootSound: Holder<SoundEvent>? = null,
+        recoil: Recoil? = null,
         ignoreGravityAiming: Boolean = false,
         remainder: ItemStackTemplate,
         delay: Delay? = null,
@@ -58,6 +67,7 @@ data class ProjectileBehavior(
         velocityScale,
         cooldownTicks,
         Optional.ofNullable(shootSound),
+        Optional.ofNullable(recoil),
         ignoreGravityAiming,
         Either.right(remainder),
         Optional.ofNullable(delay)
@@ -86,6 +96,28 @@ data class ProjectileBehavior(
         }
     }
 
+    @JvmRecord
+    data class Recoil(
+        val amount: Double,
+        val resetFalling: Boolean = false
+    ) {
+        fun apply(entity: LivingEntity, projectileMovement: Vec3) {
+            entity.addMovementClient(projectileMovement.normalize() * -amount, resetFalling)
+        }
+
+        companion object {
+            val CODEC: Codec<Recoil> = RecordCodecBuilder.create { it.group(
+                NON_NEGATIVE_DOUBLE.fieldOf("amount").forGetter(Recoil::amount),
+                Codec.BOOL.optionalFieldOf("reset_falling", false).forGetter(Recoil::resetFalling)
+            ).apply(it, ::Recoil) }
+
+            val SHORT_CODEC: Codec<Recoil> = Codec.either(CODEC, NON_NEGATIVE_DOUBLE).xmap(
+                { either -> either.map({ it }, ::Recoil) },
+                { if (it.resetFalling) Either.left(it) else Either.right(it.amount) }
+            )
+        }
+    }
+
     companion object {
         @JvmField
         val CODEC: MapCodec<ProjectileBehavior> = RecordCodecBuilder.mapCodec { it.group(
@@ -93,6 +125,7 @@ data class ProjectileBehavior(
             ExtraCodecs.NON_NEGATIVE_FLOAT.optionalFieldOf("velocity_scale", 1f).forGetter(ProjectileBehavior::velocityScale),
             ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("cooldown_ticks", 0).forGetter(ProjectileBehavior::cooldownTicks),
             SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound),
+            Recoil.SHORT_CODEC.optionalFieldOf("recoil").forGetter(ProjectileBehavior::recoil),
             Codec.BOOL.optionalFieldOf("ignore_gravity_aiming", false).forGetter(ProjectileBehavior::ignoreGravityAiming),
             Codec.either(Codec.BOOL, ItemStackTemplate.CODEC).optionalFieldOf("remainder", Either.left(false)).forGetter(ProjectileBehavior::remainder),
             Delay.CODEC.optionalFieldOf("delay").forGetter(ProjectileBehavior::delay),
@@ -108,14 +141,11 @@ data class ProjectileBehavior(
         fun of(
             projectileAction: ProjectileAction,
             velocityScale: Float = 1f,
-            cooldownTicks: Int = 1,
-            shootSound: Holder<SoundEvent>? = null,
-            ignoreGravityAiming: Boolean = false,
             remainder: ItemStackTemplate? = null
         ) = if (remainder == null)
-            ProjectileBehavior(projectileAction, velocityScale, cooldownTicks, shootSound, ignoreGravityAiming)
+            ProjectileBehavior(projectileAction, velocityScale)
         else
-            ProjectileBehavior(projectileAction, velocityScale, cooldownTicks, shootSound, ignoreGravityAiming, remainder)
+            ProjectileBehavior(projectileAction, velocityScale, remainder = remainder)
 
         fun getFallback(item: Item): ProjectileBehavior = when (item) {
             is SpawnEggItem -> OmniCrossbowProjectileActions.FROM_ENTITY_DATA

@@ -19,5 +19,6 @@
     "particle_randomness": 0.0,
     "particle_step": 1.0
   },
+  "recoil": 1.0,
   "shoot_sound": "minecraft:entity.warden.sonic_boom"
 }

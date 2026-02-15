@@ -6,10 +6,7 @@ import archives.tater.omnicrossbow.client.render.entity.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
-import archives.tater.omnicrossbow.network.AddMovementPayload
-import archives.tater.omnicrossbow.network.FireworksPayload
-import archives.tater.omnicrossbow.network.HaircutPayload
-import archives.tater.omnicrossbow.network.ParticleBeamPayload
+import archives.tater.omnicrossbow.network.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.minus
@@ -150,8 +147,8 @@ object OmniCrossbowClient : ClientModInitializer {
 			}
 		}
 
-		ClientPlayNetworking.registerGlobalReceiver(AddMovementPayload.TYPE) { (movement), context ->
-			context.player().deltaMovement += movement
+		ClientPlayNetworking.registerGlobalReceiver(AddMovementPayload.TYPE) { (movement, resetFalling), context ->
+			context.player().addMovementClient(movement, resetFalling)
 		}
 	}
 }

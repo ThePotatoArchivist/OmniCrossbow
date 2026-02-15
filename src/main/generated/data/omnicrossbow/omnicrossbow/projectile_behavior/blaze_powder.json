@@ -7,6 +7,10 @@
     "entity": "omnicrossbow:ember",
     "uncertainty": 32.0
   },
+  "recoil": {
+    "amount": 0.5,
+    "reset_falling": true
+  },
   "shoot_sound": "minecraft:entity.blaze.shoot",
   "velocity_scale": 0.35
 }
