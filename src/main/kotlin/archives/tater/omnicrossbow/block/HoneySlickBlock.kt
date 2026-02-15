@@ -100,7 +100,7 @@ class HoneySlickBlock(properties: Properties) : HoneyBlock(properties) {
         neighbourPos: BlockPos,
         neighbourState: BlockState,
         random: RandomSource
-    ): BlockState = if (directionToNeighbour == state[FACING] && !state.canSurvive(level, pos))
+    ): BlockState = if (directionToNeighbour == state[FACING].opposite && !state.canSurvive(level, pos))
         Blocks.AIR.defaultBlockState()
     else
         super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random)
