@@ -6,6 +6,7 @@ import archives.tater.omnicrossbow.client.render.entity.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
+import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.network.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.minus
@@ -23,8 +24,12 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
+import java.util.*
 
 object OmniCrossbowClient : ClientModInitializer {
+
+	@JvmField
+    var spyEyeUuid: UUID? = null
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -37,6 +42,7 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.END_CRYSTAL, ::EndCrystalProjectileRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.EMBER, ::EmberRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.BEACON_LASER, ::BeaconLaserRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.SPY_ENDER_EYE, ::ThrownItemRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 
@@ -83,6 +89,10 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(AddMovementPayload.TYPE) { (movement, resetFalling), context ->
 			context.player().addMovementClient(movement, resetFalling)
+		}
+
+		ClientPlayNetworking.registerGlobalReceiver(ViewSpyEyePayload.TYPE) { (entityId), context ->
+			spyEyeUuid = (context.client().level!!.getEntity(entityId) as? SpyEnderEye)?.uuid
 		}
 	}
 }
