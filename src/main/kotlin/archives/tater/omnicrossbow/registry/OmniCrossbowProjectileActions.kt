@@ -56,8 +56,8 @@ object OmniCrossbowProjectileActions {
     }
 
     @JvmField
-    val BEACON_LASER = registerDelegated("beacon_laser") { _, _, level, shooter, _, _ ->
-        level.addFreshEntity(BeaconLaser(level, shooter))
+    val BEACON_LASER = registerDelegated("beacon_laser") { _, velocity, level, shooter, _, _ ->
+        level.addFreshEntity(BeaconLaser(level, shooter, velocity))
     }
 
     fun init() {

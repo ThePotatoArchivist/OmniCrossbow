@@ -9,7 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
-import net.minecraft.util.Mth
+import net.minecraft.util.Mth.floor
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
@@ -59,7 +59,7 @@ data class KineticDamage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline
 
         if (!dealsDismount && !dealsKnockback && !dealsDamage) return false
 
-        val damageDealt = instance.value.toFloat() + Mth.floor(relativeSpeed * kineticWeapon.damageMultiplier)
+        val damageDealt = instance.value.toFloat() + floor(relativeSpeed * kineticWeapon.damageMultiplier)
 
         val damageSource = attackingItemStack.getDamageSource(owner) { level.damageSources().run { if (owner is Player) playerAttack(owner) else mobAttack(owner) } }
         val magicBoost = EnchantmentHelper.modifyDamage(level, attackingItemStack, entity, damageSource, damageDealt) - damageDealt

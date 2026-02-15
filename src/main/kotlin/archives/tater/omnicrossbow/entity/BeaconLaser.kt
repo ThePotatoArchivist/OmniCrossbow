@@ -8,18 +8,23 @@ import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.Mth.*
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityReference
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.monster.CrossbowAttackMob
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
+import org.joml.Quaternionf
+import org.joml.Quaternionfc
 import java.util.*
-import kotlin.math.ceil
+import kotlin.math.atan2
 
 class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type, level) {
     private var ticksRemaining: Int = DURATION
@@ -29,17 +34,31 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
     private var ownerRef by OWNER
     var distance by DISTANCE
     var active by ACTIVE
+    var offset by OFFSET
 
     var owner by ::ownerRef
 
-    constructor(level: Level, owner: LivingEntity) : this(OmniCrossbowEntities.BEACON_LASER, level) {
+    constructor(level: Level, owner: LivingEntity, offset: Quaternionfc) : this(OmniCrossbowEntities.BEACON_LASER, level) {
         this.owner = owner
+        this.offset = offset
         setPos(owner.position())
     }
+
+    constructor(level: Level, owner: LivingEntity, direction: Vec3)
+        : this(level, owner, Quaternionf().rotateTo((owner as? CrossbowAttackMob)?.target?.let {
+            (it.position() - owner.position()).normalize().toVector3f()
+        } ?: owner.lookAngle.toVector3f(), direction.normalize().toVector3f()))
 
     fun getAnimationTime(partialTicks: Float) = animationTime + partialTicks
 
     fun getThickness(partialTicks: Float) = (thickness + partialTicks * (if (active) TRANSITION_STEP else -TRANSITION_STEP)).coerceIn(0f, 1f)
+
+    override fun defineSynchedData(entityData: SynchedEntityData.Builder) {
+        entityData.define(OWNER, Optional.empty())
+        entityData.define(ACTIVE, true)
+        entityData.define(DISTANCE, 0)
+        entityData.define(OFFSET, Quaternionf())
+    }
 
     override fun tick() {
         val owner = owner ?: run {
@@ -47,9 +66,10 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
             return
         }
 
-        setPos(owner.eyePosition.subtract(0.0, EYE_MARGIN, 0.0))
-        yRot = owner.yRot
-        xRot = owner.xRot
+        val angle = owner.lookAngle.toVector3f().rotate(offset)
+        yRot = atan2(angle.x, angle.z) * -RAD_TO_DEG
+        xRot = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
+        setPos(owner.eyePosition.subtract(0.0, EYE_MARGIN, 0.0).add(lookAngle * 0.5))
 
         val level = level()
 
@@ -66,7 +86,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
                         CollisionContext.empty()
                     )
                 )
-                distance = ceil((hit.location - start).length()).toInt()
+                distance = ceil((hit.location - start).length())
                 for (target in getEntitiesPierced(level, start, hit.location, 0.2, owner)) {
                     target.hurtServer(
                         level,
@@ -108,12 +128,6 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         }
     }
 
-    override fun defineSynchedData(entityData: SynchedEntityData.Builder) {
-        entityData.define(OWNER, Optional.empty())
-        entityData.define(ACTIVE, true)
-        entityData.define(DISTANCE, 0)
-    }
-
     override fun hurtServer(level: ServerLevel, source: DamageSource, damage: Float): Boolean = false
 
     override fun readAdditionalSaveData(input: ValueInput) {}
@@ -134,5 +148,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         val DISTANCE: EntityDataAccessor<Int> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.INT)
 
         val ACTIVE: EntityDataAccessor<Boolean> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.BOOLEAN)
+
+        val OFFSET: EntityDataAccessor<Quaternionfc> = SynchedEntityData.defineId(BeaconLaser::class.java, EntityDataSerializers.QUATERNION)
     }
 }
