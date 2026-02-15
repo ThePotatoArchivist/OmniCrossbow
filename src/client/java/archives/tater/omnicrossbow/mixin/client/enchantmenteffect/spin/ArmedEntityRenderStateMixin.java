@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
-import archives.tater.omnicrossbow.OmniCrossbowClient;
+import archives.tater.omnicrossbow.client.render.CrossbowSpinRendering;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +20,6 @@ public class ArmedEntityRenderStateMixin {
             at = @At("TAIL")
     )
     private static void saveSpin(LivingEntity entity, ArmedEntityRenderState state, ItemModelResolver itemModelResolver, float partialTicks, CallbackInfo ci) {
-        state.setData(OmniCrossbowClient.SPINNING_ITEM, entity.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM));
+        state.setData(CrossbowSpinRendering.SPINNING_ITEM, entity.hasAttached(OmniCrossbowAttachments.SPINNING_ITEM));
     }
 }

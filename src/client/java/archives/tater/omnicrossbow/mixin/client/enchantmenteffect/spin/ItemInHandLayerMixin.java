@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
-import archives.tater.omnicrossbow.OmniCrossbowClient;
+import archives.tater.omnicrossbow.client.render.CrossbowSpinRendering;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,10 +22,10 @@ public class ItemInHandLayerMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V")
     )
     private <S extends ArmedEntityRenderState> void spinCrossbow(S state, ItemStackRenderState item, ItemStack itemStack, HumanoidArm arm, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
-        if (!state.getDataOrDefault(OmniCrossbowClient.SPINNING_ITEM, false)) return;
+        if (!state.getDataOrDefault(CrossbowSpinRendering.SPINNING_ITEM, false)) return;
         var ticksUsingItem = state.ticksUsingItem(arm);
-        if (ticksUsingItem == 0 && !OmniCrossbowClient.shouldSpin(itemStack)) return;
+        if (ticksUsingItem == 0 && !CrossbowSpinRendering.shouldSpin(itemStack)) return;
         var animateTicks = ticksUsingItem == 0 ? state.ticksUsingItem(arm.getOpposite()) : ticksUsingItem;
-        OmniCrossbowClient.transformCrossbowSpinModel(poseStack, animateTicks, arm == HumanoidArm.LEFT);
+        CrossbowSpinRendering.transformCrossbowSpinModel(poseStack, animateTicks, arm == HumanoidArm.LEFT);
     }
 }

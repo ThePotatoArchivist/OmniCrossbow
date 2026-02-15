@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client.enchantmenteffect.spin;
 
-import archives.tater.omnicrossbow.OmniCrossbowClient;
+import archives.tater.omnicrossbow.client.render.CrossbowSpinRendering;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -33,7 +33,7 @@ public class HumanoidModelMixin {
     private <T extends HumanoidRenderState> void noHoldArm(ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean holdingInRightArm, Operation<Void> original, @Local(argsOnly = true) T state) {
         var isRightHanded = state.mainArm == HumanoidArm.RIGHT;
         var offhand = holdingInRightArm ^ isRightHanded;
-        boolean spinning = state.getDataOrDefault(OmniCrossbowClient.SPINNING_ITEM, false);
+        boolean spinning = state.getDataOrDefault(CrossbowSpinRendering.SPINNING_ITEM, false);
         var otherHandNotPosed = offhand || spinning || (CrossbowItem.isCharged(state.leftHandItemStack) && CrossbowItem.isCharged(state.rightHandItemStack));
 
         original.call(
@@ -43,7 +43,7 @@ public class HumanoidModelMixin {
                 holdingInRightArm
         );
         if (spinning)
-            OmniCrossbowClient.transformCrossbowSpinTilt(holdingInRightArm ? rightArm : leftArm, !holdingInRightArm);
+            CrossbowSpinRendering.transformCrossbowSpinTilt(holdingInRightArm ? rightArm : leftArm, !holdingInRightArm);
     }
 
     @WrapOperation(
