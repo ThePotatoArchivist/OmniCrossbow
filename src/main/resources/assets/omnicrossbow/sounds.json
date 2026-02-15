@@ -1,7 +1,14 @@
 {
   "item.crossbow.spin": {
     "sounds": [
-      {"name": "omnicrossbow:spin", "volume": 0.5}
+      {"name": "omnicrossbow:spin", "volume": 0.2}
+    ]
+  },
+  "entity.arrow.ricochet": {
+    "sounds": [
+      {"name": "omnicrossbow:ricochet1", "volume": 3.0},
+      {"name": "omnicrossbow:ricochet3", "volume": 3.0},
+      {"name": "omnicrossbow:ricochet4", "volume": 3.0}
     ]
   }
 }

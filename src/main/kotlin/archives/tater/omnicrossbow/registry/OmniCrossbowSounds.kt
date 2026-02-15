@@ -12,6 +12,7 @@ object OmniCrossbowSounds {
     private fun register(path: String) = register(OmniCrossbow.id(path))
 
     @JvmField val SPIN = register("item.crossbow.spin")
+    @JvmField val RICOCHET = register("entity.arrow.ricochet")
 
     fun init() {}
 }

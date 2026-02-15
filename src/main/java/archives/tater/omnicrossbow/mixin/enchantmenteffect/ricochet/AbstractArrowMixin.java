@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.mixin.enchantmenteffect.ricochet;
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects;
+import archives.tater.omnicrossbow.registry.OmniCrossbowSounds;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -75,7 +76,7 @@ public abstract class AbstractArrowMixin extends Projectile {
         setDeltaMovement(movement.with(axis, -movement.get(axis)));
         needsSync = true;
         setAttached(OmniCrossbowAttachments.RICOCHET_LEVEL, (byte) (ricochetLevel - 1));
-        playSound(getHitGroundSoundEvent(), 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
+        playSound(OmniCrossbowSounds.RICOCHET, 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
         if (piercingIgnoreEntityIds != null)
             piercingIgnoreEntityIds.clear();
         byte originalPierceCount = getAttachedOrElse(OmniCrossbowAttachments.ORIGINAL_PIERCE_COUNT, (byte) 0);
