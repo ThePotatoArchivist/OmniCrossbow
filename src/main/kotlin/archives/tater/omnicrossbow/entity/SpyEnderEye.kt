@@ -60,7 +60,8 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
         val level = level()
 
         if (level is ServerLevel) {
-            if (owner?.isCrouching == true) {
+            val owner = owner
+            if (owner == null || owner.isRemoved || owner.level() != level || owner.isCrouching) {
                 discard()
                 return
             }

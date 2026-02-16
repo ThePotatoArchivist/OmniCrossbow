@@ -59,7 +59,7 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ClientTickEvents.START_CLIENT_TICK.register { minecraft ->
 			val spyEye = spyEye ?: return@register
-			if (spyEye.isRemoved) {
+			if (spyEye.isRemoved || spyEye.level() != minecraft.level) {
 				this.spyEye = null
 				lastEyeInput = Vec3.ZERO
 				return@register
