@@ -17,10 +17,15 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
+import net.minecraft.client.CameraType
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
@@ -32,6 +37,13 @@ object OmniCrossbowClient : ClientModInitializer {
 	@JvmField
     var spyEye: SpyEnderEye? = null
 	var lastEyeInput: Vec3 = Vec3.ZERO
+
+	@JvmStatic
+	fun renderEyeVignette(graphics: GuiGraphics, location: Identifier) {
+		if (spyEye == null || Minecraft.getInstance().options.cameraType != CameraType.FIRST_PERSON) return
+
+		graphics.blit(RenderPipelines.GUI_NAUSEA_OVERLAY, location, 0, 0, 0.0F, 0.0F, graphics.guiWidth(), graphics.guiHeight(), graphics.guiWidth(), graphics.guiHeight(), 0xFF71AC49u.toInt());
+	}
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
