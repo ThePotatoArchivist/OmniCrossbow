@@ -16,7 +16,7 @@ public abstract class ClientChunkCacheStorageMixin {
             cancellable = true
     )
     private void chunkRange(int i, int j, CallbackInfoReturnable<Boolean> info) {
-        if(OmniCrossbowClient.spyEyeUuid != null)
+        if(OmniCrossbowClient.spyEye != null)
             info.setReturnValue(true);
     }
 }

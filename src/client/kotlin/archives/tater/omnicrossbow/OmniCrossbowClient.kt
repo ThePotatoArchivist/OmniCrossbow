@@ -13,6 +13,7 @@ import archives.tater.omnicrossbow.util.minus
 import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.times
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
@@ -24,12 +25,13 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
-import java.util.*
+import net.minecraft.world.phys.Vec3
 
 object OmniCrossbowClient : ClientModInitializer {
 
 	@JvmField
-    var spyEyeUuid: UUID? = null
+    var spyEye: SpyEnderEye? = null
+	var lastEyeInput: Vec3 = Vec3.ZERO
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -52,6 +54,24 @@ object OmniCrossbowClient : ClientModInitializer {
 					OmniAmmoRenderer.wrapModel(model)
 				} else
 					model
+			}
+		}
+
+		ClientTickEvents.START_CLIENT_TICK.register { minecraft ->
+			val spyEye = spyEye ?: return@register
+			if (spyEye.isRemoved) {
+				this.spyEye = null
+				lastEyeInput = Vec3.ZERO
+				return@register
+			}
+			val input = if (minecraft.options.keyUp.isDown) {
+				spyEye.lookAngle
+			} else {
+				Vec3.ZERO
+			}
+			if (input != lastEyeInput) {
+				ClientPlayNetworking.send(SpyEyeInputPayload(input))
+				lastEyeInput = input
 			}
 		}
 
@@ -92,7 +112,7 @@ object OmniCrossbowClient : ClientModInitializer {
 		}
 
 		ClientPlayNetworking.registerGlobalReceiver(ViewSpyEyePayload.TYPE) { (entityId), context ->
-			spyEyeUuid = (context.client().level!!.getEntity(entityId) as? SpyEnderEye)?.uuid
+			spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
 		}
 	}
 }

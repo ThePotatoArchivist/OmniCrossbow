@@ -1,9 +1,13 @@
 package archives.tater.omnicrossbow.entity
 
 import archives.tater.omnicrossbow.EntityNullFix
+import archives.tater.omnicrossbow.network.SpyEyeInputPayload
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
+import archives.tater.omnicrossbow.util.lookAtAngle
+import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.times
 import net.fabricmc.fabric.api.entity.FakePlayer
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.authlib.GameProfile
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ChunkTrackingView
@@ -20,6 +24,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import net.minecraft.world.phys.Vec3
 import java.util.*
 
 class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullFix(type, level), ItemSupplier {
@@ -28,6 +33,13 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
         private set
     var fakePlayer: EyeFakePlayer? = null
         private set
+
+    var input: Vec3 = Vec3.ZERO
+        set(value) {
+            field = value
+            if (value.lengthSqr() != 0.0)
+                lookAtAngle(value)
+        }
 
     private val item = Items.ENDER_EYE.defaultInstance
 
@@ -41,17 +53,23 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
     override fun tick() {
         super.tick()
 
-        deltaMovement *= 0.98
+        deltaMovement *= FRICTION
+        deltaMovement += input * MOVEMENT_SPEED
         move(MoverType.SELF, deltaMovement)
 
         val level = level()
 
-        if (level is ServerLevel)
+        if (level is ServerLevel) {
+            if (owner?.isCrouching == true) {
+                discard()
+                return
+            }
             fakePlayer?.apply {
                 setOldPosAndRot()
                 setPos(this@SpyEnderEye.position())
                 level.chunkSource.move(this)
             }
+        }
     }
 
     override fun onRemoval(reason: RemovalReason) {
@@ -86,5 +104,19 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
         override fun requestedViewDistance(): Int = eyeEntity.owner?.requestedViewDistance() ?: 2
 
         override fun getDefaultDimensions(pose: Pose): EntityDimensions = EntityDimensions.fixed(0f, 0f)
+    }
+
+    companion object : ServerPlayNetworking.PlayPayloadHandler<SpyEyeInputPayload> {
+        const val FRICTION = 0.95
+        const val MOVEMENT_SPEED = 0.025
+
+        override fun receive(
+            payload: SpyEyeInputPayload,
+            context: ServerPlayNetworking.Context
+        ) {
+            val player = context.player()
+            val eye = player.level().getEntities(OmniCrossbowEntities.SPY_ENDER_EYE) { it.owner == player }.firstOrNull() ?: return
+            eye.input = payload.input.normalize()
+        }
     }
 }

@@ -9,6 +9,8 @@ import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MobBucketItemAccessor
 import archives.tater.omnicrossbow.network.ViewSpyEyePayload
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
+import archives.tater.omnicrossbow.util.lookAtAngle
+import archives.tater.omnicrossbow.util.unaryMinus
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -69,6 +71,7 @@ object OmniCrossbowProjectileActions {
         if (shooter is ServerPlayer)
             SpyEnderEye(shooter).let {
                 it.deltaMovement = velocity
+                it.lookAtAngle(-velocity)
                 level.addFreshEntity(it)
                 ServerPlayNetworking.send(shooter, ViewSpyEyePayload(it.id))
                 it.fakePlayer?.let(level::addNewPlayer)

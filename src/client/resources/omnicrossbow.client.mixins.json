@@ -17,6 +17,8 @@
     "enchantmenteffect.spin.LocalPlayerMixin",
     "endereye.CameraMixin",
     "endereye.ClientChunkCacheStorageMixin",
-    "endereye.LevelRendererMixin"
+    "endereye.LevelRendererMixin",
+    "endereye.LocalPlayerMixin",
+    "endereye.MouseHandlerMixin"
   ]
 }
