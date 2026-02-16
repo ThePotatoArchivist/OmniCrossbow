@@ -71,7 +71,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
     }
 
     override fun tick() {
-        val owner = owner ?: run {
+        val owner = owner?.takeIf { it.isAlive } ?: run {
             discard()
             return
         }
