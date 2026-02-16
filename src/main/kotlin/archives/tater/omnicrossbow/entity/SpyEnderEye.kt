@@ -9,10 +9,12 @@ import archives.tater.omnicrossbow.util.times
 import net.fabricmc.fabric.api.entity.FakePlayer
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.authlib.GameProfile
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ChunkTrackingView
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.EntityDimensions
 import net.minecraft.world.entity.EntityType
@@ -62,6 +64,8 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
         if (level is ServerLevel) {
             val owner = owner
             if (owner == null || owner.isRemoved || owner.level() != level || owner.isCrouching) {
+                playSound(SoundEvents.ENDER_EYE_DEATH)
+                spawnAtLocation(level, item)
                 discard()
                 return
             }
@@ -70,6 +74,17 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
                 setPos(this@SpyEnderEye.position())
                 level.chunkSource.move(this)
             }
+        } else {
+            val movement = deltaMovement
+            level.addParticle(
+                ParticleTypes.PORTAL,
+                x + this.random.nextDouble() * 0.6 - 0.3,
+                y - 0.5,
+                z + this.random.nextDouble() * 0.6 - 0.3,
+                movement.x,
+                movement.y,
+                movement.z
+            )
         }
     }
 
