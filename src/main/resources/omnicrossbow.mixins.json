@@ -37,7 +37,9 @@
     "enchantmenteffect.spin.CrossbowItemMixin",
     "enchantmenteffect.spin.LivingEntityMixin",
     "enchantmenteffect.uncertainty.ProjectileWeaponItemMixin",
-    "enchantmenteffect.velocity.ProjectileWeaponItemMixin"
+    "enchantmenteffect.velocity.ProjectileWeaponItemMixin",
+    "endereye.ChunkMapMixin",
+    "endereye.ChunkMapTrackedEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

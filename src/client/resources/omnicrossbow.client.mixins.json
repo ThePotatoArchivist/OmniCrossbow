@@ -14,6 +14,13 @@
     "enchantmenteffect.spin.HumanoidModelMixin",
     "enchantmenteffect.spin.ItemInHandLayerMixin",
     "enchantmenteffect.spin.ItemInHandRendererMixin",
-    "enchantmenteffect.spin.LocalPlayerMixin"
+    "enchantmenteffect.spin.LocalPlayerMixin",
+    "endereye.CameraMixin",
+    "endereye.ClientChunkCacheStorageMixin",
+    "endereye.GameRendererMixin",
+    "endereye.GuiMixin",
+    "endereye.LevelRendererMixin",
+    "endereye.LocalPlayerMixin",
+    "endereye.MouseHandlerMixin"
   ]
 }

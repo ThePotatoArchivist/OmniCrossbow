@@ -3,12 +3,18 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.BeaconLaser
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
+import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.mixin.behavior.access.BoatItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MobBucketItemAccessor
+import archives.tater.omnicrossbow.network.ViewSpyEyePayload
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
+import archives.tater.omnicrossbow.util.lookAtAngle
+import archives.tater.omnicrossbow.util.unaryMinus
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.SpawnEggItem
 
@@ -58,6 +64,18 @@ object OmniCrossbowProjectileActions {
     @JvmField
     val BEACON_LASER = registerDelegated("beacon_laser") { _, velocity, level, shooter, _, _ ->
         level.addFreshEntity(BeaconLaser(level, shooter, velocity))
+    }
+
+    @JvmField
+    val SPY_ENDER_EYE = registerDelegated("spy_ender_eye") { _, velocity, level, shooter, _, _ ->
+        if (shooter is ServerPlayer)
+            SpyEnderEye(shooter).let {
+                it.deltaMovement = velocity
+                it.lookAtAngle(-velocity)
+                level.addFreshEntity(it)
+                ServerPlayNetworking.send(shooter, ViewSpyEyePayload(it.id))
+                it.fakePlayer?.let(level::addNewPlayer)
+            }
     }
 
     fun init() {

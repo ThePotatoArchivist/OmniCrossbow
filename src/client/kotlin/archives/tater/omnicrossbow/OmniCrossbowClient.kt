@@ -6,25 +6,44 @@ import archives.tater.omnicrossbow.client.render.entity.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
+import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.network.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.minus
 import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.times
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
+import net.minecraft.client.CameraType
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
+import net.minecraft.world.phys.Vec3
 
 object OmniCrossbowClient : ClientModInitializer {
+
+	@JvmField
+    var spyEye: SpyEnderEye? = null
+	var lastEyeInput: Vec3 = Vec3.ZERO
+
+	@JvmStatic
+	fun renderEyeVignette(graphics: GuiGraphics, location: Identifier) {
+		if (spyEye == null || Minecraft.getInstance().options.cameraType != CameraType.FIRST_PERSON) return
+
+		graphics.blit(RenderPipelines.GUI_NAUSEA_OVERLAY, location, 0, 0, 0.0F, 0.0F, graphics.guiWidth(), graphics.guiHeight(), graphics.guiWidth(), graphics.guiHeight(), 0xFF71AC49u.toInt());
+	}
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
@@ -37,6 +56,7 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.END_CRYSTAL, ::EndCrystalProjectileRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.EMBER, ::EmberRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.BEACON_LASER, ::BeaconLaserRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.SPY_ENDER_EYE, ::ThrownItemRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 
@@ -46,6 +66,24 @@ object OmniCrossbowClient : ClientModInitializer {
 					OmniAmmoRenderer.wrapModel(model)
 				} else
 					model
+			}
+		}
+
+		ClientTickEvents.START_CLIENT_TICK.register { minecraft ->
+			val spyEye = spyEye ?: return@register
+			if (spyEye.isRemoved || spyEye.level() != minecraft.level) {
+				this.spyEye = null
+				lastEyeInput = Vec3.ZERO
+				return@register
+			}
+			val input = if (minecraft.options.keyUp.isDown) {
+				spyEye.lookAngle
+			} else {
+				Vec3.ZERO
+			}
+			if (input != lastEyeInput) {
+				ClientPlayNetworking.send(SpyEyeInputPayload(input))
+				lastEyeInput = input
 			}
 		}
 
@@ -83,6 +121,10 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(AddMovementPayload.TYPE) { (movement, resetFalling), context ->
 			context.player().addMovementClient(movement, resetFalling)
+		}
+
+		ClientPlayNetworking.registerGlobalReceiver(ViewSpyEyePayload.TYPE) { (entityId), context ->
+			spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
 		}
 	}
 }

@@ -1,0 +1,6 @@
+{
+  "ignore_gravity_aiming": true,
+  "items": "minecraft:ender_eye",
+  "projectile_action": "omnicrossbow:spy_ender_eye",
+  "shoot_sound": "minecraft:entity.ender_eye.launch"
+}

@@ -8,7 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.util.Mth.*
+import net.minecraft.util.Mth.ceil
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.monster.CrossbowAttackMob
@@ -22,7 +22,6 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import org.joml.Quaternionf
 import org.joml.Quaternionfc
 import java.util.*
-import kotlin.math.atan2
 
 class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type, level) {
     private var ticksRemaining: Int = DURATION
@@ -66,8 +65,7 @@ class BeaconLaser(type: EntityType<out BeaconLaser>, level: Level) : Entity(type
         }
 
         val angle = owner.lookAngle.toVector3f().rotate(angleOffset)
-        yRot = atan2(angle.x, angle.z) * -RAD_TO_DEG
-        xRot = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
+        lookAtAngle(angle)
 
         setPos(owner.eyePosition.subtract(0.0, EYE_MARGIN, 0.0).add(lookAngle * OFFSET))
     }

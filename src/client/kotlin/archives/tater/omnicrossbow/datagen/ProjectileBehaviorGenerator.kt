@@ -88,6 +88,7 @@ class ProjectileBehaviorGenerator(
         register(Items.SLIME_BALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.SLIME_BALL)))
         register(Items.MAGMA_CREAM, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.MAGMA_CREAM)))
         register(Items.END_CRYSTAL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.END_CRYSTAL), 0.1f, cooldownTicks = 4 * 20, ignoreGravityAiming = true))
+        register(Items.ENDER_EYE, ProjectileBehavior(OmniCrossbowProjectileActions.SPY_ENDER_EYE, shootSound = soundHolder(SoundEvents.ENDER_EYE_LAUNCH), ignoreGravityAiming = true))
 
         register(Items.BLAZE_POWDER, ProjectileBehavior(
             ProjectileSpray(OmniCrossbowEntities.EMBER, ConstantInt.of(12), 32f),

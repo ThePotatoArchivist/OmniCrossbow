@@ -84,6 +84,14 @@ object OmniCrossbowEntities {
         noSave()
     }
 
+    @JvmField
+    val SPY_ENDER_EYE = register("spy_ender_eye", ::SpyEnderEye) {
+        noLootTable()
+        sized(0.25f, 0.25f)
+        fireImmune()
+        noSave()
+    }
+
     fun init() {
 
     }

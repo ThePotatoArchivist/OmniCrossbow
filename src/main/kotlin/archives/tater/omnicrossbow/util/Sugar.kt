@@ -42,6 +42,7 @@ infix fun <T: Any> TypedInstance<T>.isIn(tag: TagKey<T>) = `is`(tag)
 operator fun Vec3.plus(other: Vec3): Vec3 = add(other)
 operator fun Vec3.minus(other: Vec3): Vec3 = subtract(other)
 operator fun Vec3.times(scale: Double): Vec3 = scale(scale)
+operator fun Vec3.unaryMinus(): Vec3 = reverse()
 
 fun ItemPredicate(init: ItemPredicate.Builder.() -> Unit): ItemPredicate = ItemPredicate.Builder.item().apply(init).build()
 fun itemPredicateBuilder(init: ItemPredicate.Builder.() -> Unit): ItemPredicate.Builder = ItemPredicate.Builder.item().apply(init)

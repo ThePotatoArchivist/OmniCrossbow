@@ -23,6 +23,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.Mth.RAD_TO_DEG
 import net.minecraft.util.RandomSource
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
@@ -33,8 +34,11 @@ import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import io.netty.buffer.ByteBuf
+import org.joml.Vector3f
 import java.util.*
 import java.util.function.Predicate
+import kotlin.math.atan2
+import kotlin.math.sqrt
 import kotlin.reflect.KProperty1
 
 inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type: DataComponentType<T>, combine: (T, Int) -> U): U? {
@@ -156,4 +160,13 @@ inline fun <T> MutableCollection<T>.removeFirst(predicate: (T) -> Boolean): Bool
             return true
         }
     return false
+}
+
+fun Entity.lookAtAngle(angle: Vector3f) {
+    yRot = atan2(angle.x, angle.z) * -RAD_TO_DEG
+    xRot = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
+}
+
+fun Entity.lookAtAngle(angle: Vec3) {
+    lookAtAngle(angle.toVector3f())
 }
