@@ -71,6 +71,7 @@ object OmniCrossbowProjectileActions {
                 it.deltaMovement = velocity
                 level.addFreshEntity(it)
                 ServerPlayNetworking.send(shooter, ViewSpyEyePayload(it.id))
+                it.fakePlayer?.let(level::addNewPlayer)
             }
     }
 
