@@ -14,6 +14,8 @@ import net.minecraft.core.TypedInstance
 import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializer
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
@@ -43,6 +45,7 @@ operator fun Vec3.plus(other: Vec3): Vec3 = add(other)
 operator fun Vec3.minus(other: Vec3): Vec3 = subtract(other)
 operator fun Vec3.times(scale: Double): Vec3 = scale(scale)
 operator fun Vec3.unaryMinus(): Vec3 = reverse()
+operator fun Vec3.times(other: Vec3) = dot(other)
 
 fun ItemPredicate(init: ItemPredicate.Builder.() -> Unit): ItemPredicate = ItemPredicate.Builder.item().apply(init).build()
 fun itemPredicateBuilder(init: ItemPredicate.Builder.() -> Unit): ItemPredicate.Builder = ItemPredicate.Builder.item().apply(init)
@@ -106,3 +109,6 @@ inline operator fun <reified E: Entity> KMutableProperty0<EntityReference<E>?>.g
 inline operator fun <reified E: Entity> KMutableProperty0<EntityReference<E>?>.setValue(thisRef: Entity, property: KProperty<*>, value: E?) {
     set(EntityReference.of(value))
 }
+
+inline fun <reified E: Entity, T: Any> defineSynchedEntityData(type: EntityDataSerializer<T>): EntityDataAccessor<T> =
+    SynchedEntityData.defineId(E::class.java, type)

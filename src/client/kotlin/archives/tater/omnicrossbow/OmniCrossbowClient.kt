@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRende
 import archives.tater.omnicrossbow.client.render.entity.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
+import archives.tater.omnicrossbow.client.render.entity.GrappleFishingHookRenderer
 import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
 import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.network.*
@@ -57,6 +58,7 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.EMBER, ::EmberRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.BEACON_LASER, ::BeaconLaserRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.SPY_ENDER_EYE, ::ThrownItemRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, ::GrappleFishingHookRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 

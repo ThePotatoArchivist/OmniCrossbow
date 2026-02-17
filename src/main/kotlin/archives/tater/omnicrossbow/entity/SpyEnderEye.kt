@@ -110,7 +110,7 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
 
     }
 
-    inner class EyeFakePlayer(owner: ServerPlayer) : FakePlayer(owner.level(), GameProfile(UUID.randomUUID(), "Spy Eye of ${owner.displayName!!.string}")) {
+    inner class EyeFakePlayer(owner: ServerPlayer) : FakePlayer(owner.level(), GameProfile(UUID.randomUUID(), "Spy Eye of ${owner.displayName?.string}")) {
         val eyeEntity = this@SpyEnderEye
 
         init {

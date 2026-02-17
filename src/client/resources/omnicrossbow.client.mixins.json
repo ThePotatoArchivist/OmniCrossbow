@@ -21,6 +21,7 @@
     "endereye.GuiMixin",
     "endereye.LevelRendererMixin",
     "endereye.LocalPlayerMixin",
-    "endereye.MouseHandlerMixin"
+    "endereye.MouseHandlerMixin",
+    "grapplehook.LivingEntityMixin"
   ]
 }

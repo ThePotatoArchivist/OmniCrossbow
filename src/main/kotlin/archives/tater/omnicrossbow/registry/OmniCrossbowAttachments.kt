@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
+import archives.tater.omnicrossbow.entity.GrappleFishingHook
 import archives.tater.omnicrossbow.projectilebehavior.DelayTracker
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior
 import archives.tater.omnicrossbow.util.McUnit
@@ -51,6 +52,11 @@ object OmniCrossbowAttachments {
     @JvmField
     val DELAYED_SHOTS = register<DelayTracker>("delayed_shots") {
         syncWith(unverifiedUnitCodec(DelayTracker()), AttachmentSyncPredicate.targetOnly()) // Client only needs to know it's present
+    }
+
+    @JvmField
+    val CONNECTED_GRAPPLE_HOOKS = register<MutableList<GrappleFishingHook>>("connected_grapple_hooks") {
+        initializer(::mutableListOf)
     }
 
     fun init() {

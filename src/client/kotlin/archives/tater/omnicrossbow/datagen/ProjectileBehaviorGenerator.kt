@@ -170,6 +170,12 @@ class ProjectileBehaviorGenerator(
             hitWaterParticle = ParticleConfig(ParticleTypes.CLOUD, 8),
         ), shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), cooldownTicks = 2 * 20, ignoreGravityAiming = true))
 
+        register(Items.FISHING_ROD, ProjectileBehavior(
+            OmniCrossbowProjectileActions.GRAPPLE_FISHING_HOOK,
+            shootSound = soundHolder(SoundEvents.FISHING_BOBBER_THROW),
+            ignoreGravityAiming = true,
+        ))
+
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 
     }

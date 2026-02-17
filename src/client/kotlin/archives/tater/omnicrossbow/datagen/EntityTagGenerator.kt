@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEntityTypeTags
 import net.minecraft.core.HolderLookup
 import net.minecraft.tags.EntityTypeTags
 import net.minecraft.world.entity.EntityType
@@ -31,6 +32,13 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
         }
         with (valueLookupBuilder(OmniCrossbowTags.UNCAPPED_BEACON_DAMAGE)) {
             +EntityType.WITHER
+        }
+        with (valueLookupBuilder(OmniCrossbowTags.GRAPPLE_UNMOVEABLE)) {
+            +EntityType.SHULKER
+            +EntityType.END_CRYSTAL
+            +EntityType.PHANTOM
+            +EntityType.GHAST
+            +ConventionalEntityTypeTags.BOSSES
         }
         with (valueLookupBuilder(EntityTypeTags.IMPACT_PROJECTILES)) {
             +OmniCrossbowEntities.END_CRYSTAL

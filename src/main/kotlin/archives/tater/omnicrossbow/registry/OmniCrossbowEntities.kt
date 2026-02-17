@@ -92,6 +92,12 @@ object OmniCrossbowEntities {
         noSave()
     }
 
+    @JvmField
+    val GRAPPLE_FISHING_HOOK = registerProjectile("grapple_fishing_hook", ::GrappleFishingHook) {
+        noSave()
+        noSummon()
+    }
+
     fun init() {
 
     }

@@ -22,4 +22,6 @@ object OmniCrossbowTags {
     @JvmField val EXTRA_BEACON_DAMAGE = ofEntity("extra_beacon_damage")
 
     @JvmField val UNCAPPED_BEACON_DAMAGE = ofEntity("uncapped_beacon_damage")
+
+    @JvmField val GRAPPLE_UNMOVEABLE = ofEntity("grapple_unmoveable")
 }

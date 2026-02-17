@@ -3,6 +3,7 @@ package archives.tater.omnicrossbow.registry
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.BeaconLaser
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
+import archives.tater.omnicrossbow.entity.GrappleFishingHook
 import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.mixin.behavior.access.BoatItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
@@ -76,6 +77,11 @@ object OmniCrossbowProjectileActions {
                 ServerPlayNetworking.send(shooter, ViewSpyEyePayload(it.id))
                 it.fakePlayer?.let(level::addNewPlayer)
             }
+    }
+
+    @JvmField
+    val GRAPPLE_FISHING_HOOK = registerProjectile("grapple_fishing_hook") { level, shooter, _, _ ->
+        GrappleFishingHook(level, shooter)
     }
 
     fun init() {
