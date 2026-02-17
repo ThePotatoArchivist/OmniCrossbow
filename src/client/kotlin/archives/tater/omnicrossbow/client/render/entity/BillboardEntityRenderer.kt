@@ -26,10 +26,7 @@ abstract class BillboardEntityRenderer<T: Entity, S : EntityRenderState>(context
         poseStack.scale(scale, scale, scale)
         poseStack.mulPose(camera.orientation)
         poseStack.translate(0f, 0f, 0.25f)
-        submitNodeCollector.submitCustomGeometry(
-            poseStack,
-            renderType
-        ) { pose, buffer ->
+        submitNodeCollector.submitCustomGeometry(poseStack, renderType) { pose, buffer ->
             vertex(buffer, pose, state.lightCoords, 0.0f, 0, 0, 1)
             vertex(buffer, pose, state.lightCoords, 1.0f, 0, 1, 1)
             vertex(buffer, pose, state.lightCoords, 1.0f, 1, 1, 0)

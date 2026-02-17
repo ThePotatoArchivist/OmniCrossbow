@@ -1,7 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client.grapplehook;
 
 import archives.tater.omnicrossbow.entity.GrappleFishingHook;
-import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -19,16 +18,14 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, level);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @ModifyReturnValue(
             method = "getEffectiveGravity",
             at = @At("RETURN")
     )
     private double noGravityWhileGrappling(double original) {
-        return getAttachedOrCreate(OmniCrossbowAttachments.CONNECTED_GRAPPLE_HOOKS).isEmpty() ? original : 0.0;
+        return GrappleFishingHook.isBeingPulled(this) ? 0.0 : original;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @ModifyExpressionValue(
             method = "travelInAir",
             at = {
@@ -37,6 +34,6 @@ public abstract class LivingEntityMixin extends Entity {
             }
     )
     private float grapplingAirResistance(float original) {
-        return getAttachedOrCreate(OmniCrossbowAttachments.CONNECTED_GRAPPLE_HOOKS).isEmpty() ? original : GrappleFishingHook.GRAPPLING_ENTITY_AIR_RESISTANCE;
+        return GrappleFishingHook.isBeingPulled(this) ? GrappleFishingHook.GRAPPLING_ENTITY_AIR_RESISTANCE : original;
     }
 }

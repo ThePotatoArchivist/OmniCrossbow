@@ -39,6 +39,8 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     var pullingOwner by PULLING_OWNER
         private set
 
+    val isPulling get() = hookedEntity != null || hookedBlockFace != null
+
     constructor(level: Level, owner: LivingEntity) : this(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, level) {
         setOwner(owner)
         setPos(owner.x, owner.eyeY - 0.1, owner.z)
@@ -49,6 +51,8 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         entityData.define(HOOKED_BLOCK_FACE, Optional.empty())
         entityData.define(PULLING_OWNER, false)
     }
+
+    override fun shouldRender(camX: Double, camY: Double, camZ: Double): Boolean = true
 
     override fun setOwner(owner: EntityReference<Entity>?) {
         getOwner()?.getAttachedOrCreate(OmniCrossbowAttachments.CONNECTED_GRAPPLE_HOOKS)?.remove(this)
@@ -166,7 +170,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         const val PULL_FACTOR = 0.5 // exponential
         const val KNOCKBACK_RESISTANCE_WEIGHT_FACTOR = 50f
         const val NONLIVING_ENTITY_VOLUME_FACTOR = 20f
-        const val GRAPPLING_ENTITY_AIR_RESISTANCE = 0.95f
+        const val GRAPPLING_ENTITY_AIR_RESISTANCE = 0.9f
 
         fun getWeightScore(entity: Entity): Float {
             if (entity isIn OmniCrossbowTags.GRAPPLE_UNMOVEABLE) return Float.MAX_VALUE
@@ -180,5 +184,9 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
                         entity.getAttributeValue(KNOCKBACK_RESISTANCE).toFloat() * KNOCKBACK_RESISTANCE_WEIGHT_FACTOR
                     else 0f
         }
+
+        @JvmStatic
+        fun isBeingPulled(entity: Entity) =
+            entity.getAttached(OmniCrossbowAttachments.CONNECTED_GRAPPLE_HOOKS)?.any { it.isPulling && (it.hookedBlockFace != null || it.pullingOwner == (it.getOwner() == entity)) } == true
     }
 }

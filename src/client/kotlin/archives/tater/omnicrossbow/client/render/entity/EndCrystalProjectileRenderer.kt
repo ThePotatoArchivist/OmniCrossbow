@@ -5,6 +5,7 @@ import archives.tater.omnicrossbow.entity.EndCrystalProjectile
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.state.EndCrystalRenderState
@@ -51,6 +52,14 @@ class EndCrystalProjectileRenderer(context: EntityRendererProvider.Context) :
         poseStack.popPose()
         super.submit(state, poseStack, submitNodeCollector, camera)
     }
+
+    override fun shouldRender(
+        entity: EndCrystalProjectile,
+        culler: Frustum,
+        camX: Double,
+        camY: Double,
+        camZ: Double
+    ): Boolean = true
 
     companion object {
 
