@@ -174,6 +174,7 @@ class ProjectileBehaviorGenerator(
             OmniCrossbowProjectileActions.GRAPPLE_FISHING_HOOK,
             shootSound = soundHolder(SoundEvents.FISHING_BOBBER_THROW),
             ignoreGravityAiming = true,
+            keepProjectileLoaded = true,
         ))
 
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))

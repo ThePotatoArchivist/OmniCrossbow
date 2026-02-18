@@ -8,6 +8,7 @@ import archives.tater.omnicrossbow.util.set
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.component.DataComponents
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
@@ -18,11 +19,10 @@ import net.minecraft.world.entity.projectile.arrow.ThrownTrident
 import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 
 fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
     fun createProjectile(
-        level: Level,
+        level: ServerLevel,
         shooter: LivingEntity,
         weapon: ItemStack,
         projectile: ItemStack,
@@ -33,7 +33,7 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
     data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile>, ProjectileAction.Inline {
 
         override fun createProjectile(
-            level: Level,
+            level: ServerLevel,
             shooter: LivingEntity,
             weapon: ItemStack,
             projectile: ItemStack
@@ -72,7 +72,7 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
     @JvmRecord
     data class CustomWindCharge(val explosionRadius: Float) : SpawnProjectile<WindCharge>, ProjectileAction.Inline {
         override fun createProjectile(
-            level: Level,
+            level: ServerLevel,
             shooter: LivingEntity,
             weapon: ItemStack,
             projectile: ItemStack

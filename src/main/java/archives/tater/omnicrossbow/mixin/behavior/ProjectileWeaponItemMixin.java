@@ -37,7 +37,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static archives.tater.omnicrossbow.util.OmniUtil.getOrSet;
-import static java.util.Objects.requireNonNullElse;
 
 @Mixin(ProjectileWeaponItem.class)
 public class ProjectileWeaponItemMixin {
@@ -55,10 +54,12 @@ public class ProjectileWeaponItemMixin {
         Supplier<Projectile> shoot = () -> {
 
             var usedProjectile = switch (behavior.projectileAction()) {
-                case SpawnProjectile<?> spawnProjectile -> requireNonNullElse(spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack), projectile);
+                case SpawnProjectile<?> spawnProjectile -> spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack);
                 case Delegated _ -> new DelegateProjectile(serverLevel, shooter);
                 default -> projectile;
             };
+
+            if (usedProjectile == null) return projectile;
 
             usedProjectile.setAttached(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, behavior);
 
@@ -85,8 +86,9 @@ public class ProjectileWeaponItemMixin {
             return result;
         };
 
-        if (behavior.delay().isPresent()) {
-            var delay = behavior.delay().get();
+        var delay = behavior.delay().orElse(null);
+
+        if (delay != null) {
             var delayTicks = delay.ticks().sample(shooter.getRandom()) - shooter.getTicksUsingItem(); // spinning
             if (delayTicks > 0) {
                 if (!shooter.isUsingItem()) delay.chargeSound().ifPresent(sound ->
@@ -106,6 +108,9 @@ public class ProjectileWeaponItemMixin {
                 return projectile;
             }
         }
+
+        if (behavior.keepProjectileLoaded())
+            getOrSet(delayedProjectiles, ArrayList::new).add(itemStack);
 
         return shoot.get();
     }

@@ -10,11 +10,14 @@ import archives.tater.omnicrossbow.mixin.behavior.access.MinecartItemAccessor
 import archives.tater.omnicrossbow.mixin.behavior.access.MobBucketItemAccessor
 import archives.tater.omnicrossbow.network.ViewSpyEyePayload
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.*
+import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.lookAtAngle
 import archives.tater.omnicrossbow.util.unaryMinus
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.core.particles.ItemParticleOption
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.SpawnEggItem
@@ -80,8 +83,21 @@ object OmniCrossbowProjectileActions {
     }
 
     @JvmField
-    val GRAPPLE_FISHING_HOOK = registerProjectile("grapple_fishing_hook") { level, shooter, _, _ ->
-        GrappleFishingHook(level, shooter)
+    val GRAPPLE_FISHING_HOOK = registerProjectile("grapple_fishing_hook") { level, shooter, _, projectile ->
+        val disconnected = shooter[OmniCrossbowAttachments.CONNECTED_GRAPPLE_HOOKS]
+            ?.mapNotNull { if (it.owner == shooter) it else null }
+
+        if (disconnected?.isEmpty() == false) {
+            for (hook in disconnected)
+                hook.discard()
+            return@registerProjectile null
+        }
+
+        projectile.hurtAndBreak(1, level, shooter as? ServerPlayer) {
+            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it), shooter.x, shooter.eyeY - 0.1, shooter.z, 8, 0.0, 0.0, 0.0, 0.1)
+        }
+
+        GrappleFishingHook(level, shooter, projectile)
     }
 
     fun init() {

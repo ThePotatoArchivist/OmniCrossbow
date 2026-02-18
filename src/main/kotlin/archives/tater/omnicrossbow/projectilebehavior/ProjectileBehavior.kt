@@ -32,6 +32,7 @@ data class ProjectileBehavior(
     val ignoreGravityAiming: Boolean,
     val remainder: Either<Boolean, ItemStackTemplate>,
     val delay: Optional<Delay>,
+    val keepProjectileLoaded: Boolean,
 ) {
     constructor(
         projectileAction: ProjectileAction,
@@ -42,6 +43,7 @@ data class ProjectileBehavior(
         ignoreGravityAiming: Boolean = false,
         remainder: Boolean = false,
         delay: Delay? = null,
+        keepProjectileLoaded: Boolean = false,
     ) : this(
         projectileAction,
         velocityScale,
@@ -50,7 +52,8 @@ data class ProjectileBehavior(
         Optional.ofNullable(recoil),
         ignoreGravityAiming,
         Either.left(remainder),
-        Optional.ofNullable(delay)
+        Optional.ofNullable(delay),
+        keepProjectileLoaded,
     )
 
     private constructor(
@@ -62,6 +65,7 @@ data class ProjectileBehavior(
         ignoreGravityAiming: Boolean = false,
         remainder: ItemStackTemplate,
         delay: Delay? = null,
+        keepProjectileLoaded: Boolean = false,
     ) : this(
         projectileAction,
         velocityScale,
@@ -70,7 +74,8 @@ data class ProjectileBehavior(
         Optional.ofNullable(recoil),
         ignoreGravityAiming,
         Either.right(remainder),
-        Optional.ofNullable(delay)
+        Optional.ofNullable(delay),
+        keepProjectileLoaded,
     )
 
     fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
@@ -129,6 +134,7 @@ data class ProjectileBehavior(
             Codec.BOOL.optionalFieldOf("ignore_gravity_aiming", false).forGetter(ProjectileBehavior::ignoreGravityAiming),
             Codec.either(Codec.BOOL, ItemStackTemplate.CODEC).optionalFieldOf("remainder", Either.left(false)).forGetter(ProjectileBehavior::remainder),
             Delay.CODEC.optionalFieldOf("delay").forGetter(ProjectileBehavior::delay),
+            Codec.BOOL.optionalFieldOf("keep_projectile_loaded", false).forGetter(ProjectileBehavior::keepProjectileLoaded),
         ).apply(it, ::ProjectileBehavior) }
 
         @JvmField

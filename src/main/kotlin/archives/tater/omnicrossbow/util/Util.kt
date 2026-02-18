@@ -27,6 +27,8 @@ import net.minecraft.util.Mth.RAD_TO_DEG
 import net.minecraft.util.RandomSource
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
@@ -169,4 +171,9 @@ fun Entity.lookAtAngle(angle: Vector3f) {
 
 fun Entity.lookAtAngle(angle: Vec3) {
     lookAtAngle(angle.toVector3f())
+}
+
+fun LivingEntity.giveOrDrop(stack: ItemStack) {
+    if ((this as? Player)?.inventory?.add(stack) == true) return
+    drop(stack, false, false)
 }

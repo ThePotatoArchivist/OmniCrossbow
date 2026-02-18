@@ -8,14 +8,19 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import archives.tater.omnicrossbow.util.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.component.DataComponents
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.ProjectileUtil
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.ChargedProjectiles
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.SupportType
 import net.minecraft.world.phys.BlockHitResult
@@ -40,12 +45,15 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         private set
     var pullingOwner by PULLING_OWNER
         private set
+    var projectileItem: ItemStack? = null
+        private set
 
     val isPulling get() = hookedEntity != null || hookedBlockFace != null
 
-    constructor(level: Level, owner: LivingEntity) : this(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, level) {
+    constructor(level: Level, owner: LivingEntity, projectile: ItemStack) : this(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, level) {
         setOwner(owner)
         setPos(owner.x, owner.eyeY - 0.1, owner.z)
+        projectileItem = projectile
     }
 
     override fun defineSynchedData(entityData: SynchedEntityData.Builder) {
@@ -130,18 +138,35 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     fun pullOrDisconnect(entity: Entity, target: Vec3) {
         val offset = target - if (hookedBlockFace == Direction.UP) entity.position() else entity.eyePosition
 
-        if (offset.lengthSqr() < MIN_DISTANCE * MIN_DISTANCE) {
+        if (!level().isClientSide && offset.lengthSqr() < MIN_DISTANCE * MIN_DISTANCE) {
             if (hookedBlockFace?.axis == Direction.Axis.X || hookedBlockFace?.axis == Direction.Axis.Z) {
                 entity.addMovementClient(Vec3(0.0, DISCONNECT_BOOST, 0.0), true)
             } else if (hookedEntity != null) {
                 entity.deltaMovement -= offset.normalize() * (entity.deltaMovement * offset.normalize())
                 entity.needsSync
             }
-            discard()
+            disconnect()
             return
         }
 
         pullTowards(entity, offset)
+    }
+
+    fun disconnect() {
+        val projectileItem = projectileItem
+        val owner = getOwner() as? LivingEntity
+        if (projectileItem != null && owner != null)
+            for (hand in InteractionHand.entries) {
+                val stack = owner.getItemInHand(hand)
+                val items = stack[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.toMutableList() ?: continue
+                if (items.removeFirst { ItemStack.matches(it, projectileItem) }) {
+                    stack[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.ofNonEmpty(items)
+                    owner.giveOrDrop(projectileItem)
+                    break
+                }
+            }
+
+        discard()
     }
 
     fun pullTowards(entity: Entity, offset: Vec3) {
@@ -162,7 +187,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         setHooked(pos = hitResult.blockPos, face = hitResult.direction)
         setPos(hitResult.blockPos.center.relative(hitResult.direction, 0.5))
         deltaMovement = Vec3.ZERO
-//        needsSync = true
+        level().playSound(null, getOwner() ?: this, SoundEvents.FISHING_BOBBER_RETRIEVE, soundSource, 1f, 1f)
     }
 
     override fun onHitEntity(hitResult: EntityHitResult) {
@@ -170,6 +195,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         if (level().isClientSide) return
         setHooked(entity = hitResult.entity)
         deltaMovement = Vec3.ZERO
+        level().playSound(null, getOwner() ?: this, SoundEvents.FISHING_BOBBER_RETRIEVE, soundSource, 1f, 1f)
     }
 
     private fun setHooked(pos: BlockPos? = null, face: Direction? = null, entity: Entity? = null) {
@@ -190,7 +216,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         const val KNOCKBACK_RESISTANCE_WEIGHT_FACTOR = 200f // Max knockback resistance is 0.4 with full netherite armor
         const val NONLIVING_ENTITY_VOLUME_FACTOR = 20f
         const val GRAPPLING_ENTITY_AIR_RESISTANCE = 0.9f
-        const val DISCONNECT_BOOST = 0.3
+        const val DISCONNECT_BOOST = 0.7
         const val NO_HIT_TICKS = 6
 
         fun getWeightScore(entity: Entity): Float {
