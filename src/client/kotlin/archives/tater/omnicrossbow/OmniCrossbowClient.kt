@@ -61,6 +61,7 @@ object OmniCrossbowClient : ClientModInitializer {
 		EntityRenderers.register(OmniCrossbowEntities.BEACON_LASER, ::BeaconLaserRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.SPY_ENDER_EYE, ::ThrownItemRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.GRAPPLE_FISHING_HOOK, ::GrappleFishingHookRenderer)
+		EntityRenderers.register(OmniCrossbowEntities.CROSSBOW, ::ThrownItemRenderer)
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 

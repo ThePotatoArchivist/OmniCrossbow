@@ -177,6 +177,8 @@ class ProjectileBehaviorGenerator(
             keepProjectileLoaded = true,
         ))
 
+        register(Items.CROSSBOW, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.CROSSBOW)))
+
         register(OmniCrossbowTags.BUILTIN_PROJECTILES, ProjectileBehavior(ProjectileAction.Default))
 
     }

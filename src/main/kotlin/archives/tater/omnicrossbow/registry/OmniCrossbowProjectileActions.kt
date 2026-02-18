@@ -2,7 +2,6 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.BeaconLaser
-import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.entity.GrappleFishingHook
 import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.mixin.behavior.access.BoatItemAccessor
@@ -39,11 +38,6 @@ object OmniCrossbowProjectileActions {
 
     @JvmField
     val NONE = registerDelegated("none") { _, _, _, _, _, _ -> }
-
-    @JvmField
-    val CUSTOM_ITEM_PROJECTILE = registerProjectile("custom_item_projectile") { level, shooter, _, projectile ->
-        CustomItemProjectile(shooter, level, projectile)
-    }
 
     @JvmField
     val SPAWN_BOAT = registerEntity("spawn_entity/boat") {

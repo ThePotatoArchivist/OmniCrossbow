@@ -165,13 +165,19 @@ inline fun <T> MutableCollection<T>.removeFirst(predicate: (T) -> Boolean): Bool
 }
 
 fun Entity.lookAtAngle(angle: Vector3f) {
-    yRot = atan2(angle.x, angle.z) * -RAD_TO_DEG
-    xRot = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
+    yRot = getYRotForAngle(angle)
+    xRot = getXRotForAngle(angle)
 }
+
+fun getYRotForAngle(angle: Vector3f): Float = atan2(angle.x, angle.z) * -RAD_TO_DEG
+fun getXRotForAngle(angle: Vector3f): Float = atan2(angle.y, sqrt(angle.x * angle.x + angle.z * angle.z)) * -RAD_TO_DEG
 
 fun Entity.lookAtAngle(angle: Vec3) {
     lookAtAngle(angle.toVector3f())
 }
+
+fun getYRotForAngle(angle: Vec3) = getYRotForAngle(angle.toVector3f())
+fun getXRotForAngle(angle: Vec3) = getXRotForAngle(angle.toVector3f())
 
 fun LivingEntity.giveOrDrop(stack: ItemStack) {
     if ((this as? Player)?.inventory?.add(stack) == true) return

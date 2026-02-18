@@ -62,6 +62,9 @@ object OmniCrossbowEntities {
     val FREEZING_SNOWBALL = registerProjectile("freezing_snowball", ::FreezingSnowball)
 
     @JvmField
+    val CROSSBOW = registerProjectile("crossbow", ::ThrownCrossbow)
+
+    @JvmField
     val END_CRYSTAL = registerProjectile("end_crystal", ::EndCrystalProjectile) {
         sized(1f, 1f)
         fireImmune()

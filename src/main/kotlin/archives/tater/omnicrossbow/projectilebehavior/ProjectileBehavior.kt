@@ -3,6 +3,8 @@ package archives.tater.omnicrossbow.projectilebehavior
 import archives.tater.omnicrossbow.network.addMovementClient
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.ProjectileAction
 import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnEntity
+import archives.tater.omnicrossbow.projectilebehavior.projectileaction.SpawnProjectile
+import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.registry.OmniCrossbowProjectileActions
 import archives.tater.omnicrossbow.registry.OmniCrossbowRegistries
 import archives.tater.omnicrossbow.util.NON_NEGATIVE_DOUBLE
@@ -162,7 +164,7 @@ data class ProjectileBehavior(
             else -> null
         }?.let {
             of(it, 0.3f, remainder = if (item is MobBucketItem) ItemStackTemplate(Items.WATER_BUCKET) else null)
-        } ?: ProjectileBehavior(OmniCrossbowProjectileActions.CUSTOM_ITEM_PROJECTILE)
+        } ?: ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE))
 
         @JvmStatic
         fun getBehavior(level: Level, projectile: ItemStack): ProjectileBehavior =
