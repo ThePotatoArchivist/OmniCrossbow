@@ -100,8 +100,11 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
 
                 if (pullingOwner)
                     pullOrDisconnect(owner, hookedEntity.eyePosition)
-                else
+                else {
+                    if (hookedEntity is LivingEntity && hookedEntity !is Player)
+                        hookedEntity[OmniCrossbowAttachments.GRAPPLE_NO_HIT_COOLDOWN] = NO_HIT_TICKS
                     pullOrDisconnect(hookedEntity, owner.eyePosition)
+                }
             }
             hookedBlockFace != null -> {
                 val hookedBlockPos = hookedBlockPos
@@ -188,6 +191,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         const val NONLIVING_ENTITY_VOLUME_FACTOR = 20f
         const val GRAPPLING_ENTITY_AIR_RESISTANCE = 0.9f
         const val DISCONNECT_BOOST = 0.3
+        const val NO_HIT_TICKS = 6
 
         fun getWeightScore(entity: Entity): Float {
             if (entity isIn OmniCrossbowTags.GRAPPLE_UNMOVEABLE) return Float.MAX_VALUE

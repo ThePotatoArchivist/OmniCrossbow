@@ -59,6 +59,9 @@ object OmniCrossbowAttachments {
         initializer(::mutableListOf)
     }
 
+    @JvmField
+    val GRAPPLE_NO_HIT_COOLDOWN = register<Int>("grapple_no_hit_cooldown")
+
     fun init() {
 
     }
