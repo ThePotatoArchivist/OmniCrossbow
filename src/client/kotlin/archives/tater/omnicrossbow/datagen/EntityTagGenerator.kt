@@ -38,6 +38,7 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
             +EntityType.END_CRYSTAL
             +EntityType.PHANTOM
             +EntityType.GHAST
+            +EntityType.CREAKING
             +ConventionalEntityTypeTags.BOSSES
         }
         with (valueLookupBuilder(EntityTypeTags.IMPACT_PROJECTILES)) {
