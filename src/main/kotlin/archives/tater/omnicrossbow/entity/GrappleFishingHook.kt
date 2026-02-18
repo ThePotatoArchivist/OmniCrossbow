@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.ProjectileUtil
@@ -83,6 +84,8 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         cleanupRefs()
     }
 
+    override fun canHitEntity(entity: Entity): Boolean = super.canHitEntity(entity) || entity is ItemEntity
+
     override fun tick() {
         val owner = getOwner() as? LivingEntity ?: run {
             discard()
@@ -104,9 +107,9 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         val hookedBlockFace = hookedBlockFace
 
         when {
-            hookedEntity != null -> {
-                if (!hookedEntity.canInteractWithLevel() || hookedEntity.level() != this.level()) {
-                    discard()
+            hookedEntityRef != null -> {
+                if (hookedEntity == null || !hookedEntity.canInteractWithLevel() || hookedEntity.level() != this.level()) {
+                    disconnect()
                     return
                 }
 
@@ -126,7 +129,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
             hookedBlockFace != null -> {
                 val hookedBlockPos = hookedBlockPos
                 if (!level().isClientSide && (hookedBlockPos == null || !level()[hookedBlockPos].isFaceSturdy(level(), hookedBlockPos, hookedBlockFace, SupportType.CENTER))) {
-                    discard()
+                    disconnect()
                     return
                 }
 
