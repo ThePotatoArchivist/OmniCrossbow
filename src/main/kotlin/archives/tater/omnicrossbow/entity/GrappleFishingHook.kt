@@ -45,7 +45,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         private set
     var pullingOwner by PULLING_OWNER
         private set
-    var projectileItem: ItemStack? = null
+    var projectileItem: ItemStack = ItemStack.EMPTY
         private set
 
     val isPulling get() = hookedEntity != null || hookedBlockFace != null
@@ -84,7 +84,16 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     }
 
     override fun tick() {
-        val owner = getOwner()?.takeIf { it.level() == this.level() && distanceToSqr(it) <= MAX_DISTANCE * MAX_DISTANCE } ?: run {
+        val owner = getOwner() as? LivingEntity ?: run {
+            discard()
+            return
+        }
+        if (!level().isClientSide && (
+            owner.level() != this.level()
+            || distanceToSqr(owner) > MAX_DISTANCE * MAX_DISTANCE
+            || InteractionHand.entries.none { hand ->
+                owner.getItemInHand(hand)[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.any { ItemStack.matches(it, projectileItem) } == true
+            })) {
             discard()
             return
         }
@@ -153,9 +162,8 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     }
 
     fun disconnect() {
-        val projectileItem = projectileItem
         val owner = getOwner() as? LivingEntity
-        if (projectileItem != null && owner != null)
+        if (owner != null)
             for (hand in InteractionHand.entries) {
                 val stack = owner.getItemInHand(hand)
                 val items = stack[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.toMutableList() ?: continue
