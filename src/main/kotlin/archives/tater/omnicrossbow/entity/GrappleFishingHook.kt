@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity
 
+import archives.tater.omnicrossbow.network.addMovementClient
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntityDataSerializers
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.ProjectileUtil
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.SupportType
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
@@ -74,7 +76,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     }
 
     override fun tick() {
-        val owner = getOwner() ?: run {
+        val owner = getOwner()?.takeIf { it.level() == this.level() && distanceToSqr(it) <= MAX_DISTANCE * MAX_DISTANCE } ?: run {
             discard()
             return
         }
@@ -102,7 +104,11 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
                     pullOrDisconnect(hookedEntity, owner.eyePosition)
             }
             hookedBlockFace != null -> {
-                // TODO check if block removed
+                val hookedBlockPos = hookedBlockPos
+                if (!level().isClientSide && (hookedBlockPos == null || !level()[hookedBlockPos].isFaceSturdy(level(), hookedBlockPos, hookedBlockFace, SupportType.CENTER))) {
+                    discard()
+                    return
+                }
 
                 pullOrDisconnect(owner, position())
             }
@@ -122,7 +128,13 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         val offset = target - if (hookedBlockFace == Direction.UP) entity.position() else entity.eyePosition
 
         if (offset.lengthSqr() < MIN_DISTANCE * MIN_DISTANCE) {
-            discard() // TODO jump
+            if (hookedBlockFace?.axis == Direction.Axis.X || hookedBlockFace?.axis == Direction.Axis.Z) {
+                entity.addMovementClient(Vec3(0.0, DISCONNECT_BOOST, 0.0), true)
+            } else if (hookedEntity != null) {
+                entity.deltaMovement -= offset.normalize() * (entity.deltaMovement * offset.normalize())
+                entity.needsSync
+            }
+            discard()
             return
         }
 
@@ -140,6 +152,10 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
     override fun onHitBlock(hitResult: BlockHitResult) {
         super.onHitBlock(hitResult)
         if (level().isClientSide) return
+        if (!level()[hitResult.blockPos].isFaceSturdy(level(), hitResult.blockPos, hitResult.direction, SupportType.CENTER)) {
+            discard()
+            return
+        }
         setHooked(pos = hitResult.blockPos, face = hitResult.direction)
         setPos(hitResult.blockPos.center.relative(hitResult.direction, 0.5))
         deltaMovement = Vec3.ZERO
@@ -168,9 +184,10 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         const val MIN_DISTANCE = 1.5
         const val MAX_DISTANCE = 64.0
         const val PULL_FACTOR = 0.5 // exponential
-        const val KNOCKBACK_RESISTANCE_WEIGHT_FACTOR = 50f
+        const val KNOCKBACK_RESISTANCE_WEIGHT_FACTOR = 200f // Max knockback resistance is 0.4 with full netherite armor
         const val NONLIVING_ENTITY_VOLUME_FACTOR = 20f
         const val GRAPPLING_ENTITY_AIR_RESISTANCE = 0.9f
+        const val DISCONNECT_BOOST = 0.3
 
         fun getWeightScore(entity: Entity): Float {
             if (entity isIn OmniCrossbowTags.GRAPPLE_UNMOVEABLE) return Float.MAX_VALUE

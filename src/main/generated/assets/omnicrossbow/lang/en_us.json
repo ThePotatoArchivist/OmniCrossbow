@@ -12,5 +12,6 @@
   "enchantment.omnicrossbow.omni": "Omni",
   "enchantment.omnicrossbow.pump_charge": "Pump Charge",
   "enchantment.omnicrossbow.sharpshooting": "Sharpshooting",
-  "enchantment.omnicrossbow.twirling_curse": "Curse of Twirling"
+  "enchantment.omnicrossbow.twirling_curse": "Curse of Twirling",
+  "omnicrossbow.endereye.beginview": "Press %s to stop observing"
 }

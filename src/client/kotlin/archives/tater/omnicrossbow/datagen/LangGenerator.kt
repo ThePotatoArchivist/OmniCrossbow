@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.datagen
 
+import archives.tater.omnicrossbow.OmniCrossbowClient
 import archives.tater.omnicrossbow.registry.OmniCrossbowDamageTypes
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
@@ -40,6 +41,8 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
             normal = "%s had a bad time at the hands of %s",
             item = "%s had a bad time at the hands of %s using %s",
         )
+
+        translationBuilder.add(OmniCrossbowClient.EYE_HINT, "Press %s to stop observing")
     }
 
 

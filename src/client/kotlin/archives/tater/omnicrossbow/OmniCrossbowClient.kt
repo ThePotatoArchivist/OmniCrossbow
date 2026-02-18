@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
@@ -38,6 +39,7 @@ object OmniCrossbowClient : ClientModInitializer {
 	@JvmField
     var spyEye: SpyEnderEye? = null
 	var lastEyeInput: Vec3 = Vec3.ZERO
+	const val EYE_HINT = "omnicrossbow.endereye.beginview"
 
 	@JvmStatic
 	fun renderEyeVignette(graphics: GuiGraphics, location: Identifier) {
@@ -127,6 +129,7 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(ViewSpyEyePayload.TYPE) { (entityId), context ->
 			spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
+			context.player().displayClientMessage(Component.translatable(EYE_HINT, context.client().options.keyShift.translatedKeyMessage), true)
 		}
 	}
 }

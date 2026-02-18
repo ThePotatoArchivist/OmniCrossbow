@@ -23,6 +23,7 @@ import net.minecraft.world.entity.Pose
 import net.minecraft.world.entity.projectile.ItemSupplier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.GameType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
@@ -115,6 +116,7 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
 
         init {
             refreshDimensions()
+            setGameMode(GameType.SPECTATOR)
         }
 
         override fun requestedViewDistance(): Int = eyeEntity.owner?.requestedViewDistance() ?: 2
