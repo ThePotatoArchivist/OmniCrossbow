@@ -1,9 +1,10 @@
 package archives.tater.omnicrossbow.client.render.entity
 
-import archives.tater.omnicrossbow.client.render.entity.model.EndCrystalProjectileModel
 import archives.tater.omnicrossbow.entity.EndCrystalProjectile
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.geom.ModelLayers
+import net.minecraft.client.model.geom.ModelPart
+import net.minecraft.client.model.`object`.crystal.EndCrystalModel
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.entity.EntityRenderer
@@ -19,7 +20,7 @@ import net.minecraft.resources.Identifier
 class EndCrystalProjectileRenderer(context: EntityRendererProvider.Context) :
     EntityRenderer<EndCrystalProjectile, EndCrystalRenderState>(context) {
 
-    private val model = EndCrystalProjectileModel(context.bakeLayer(ModelLayers.END_CRYSTAL));
+    private val model = Model(context.bakeLayer(ModelLayers.END_CRYSTAL));
 
     override fun getBlockLightLevel(entity: EndCrystalProjectile, blockPos: BlockPos): Int = 15
 
@@ -60,6 +61,8 @@ class EndCrystalProjectileRenderer(context: EntityRendererProvider.Context) :
         camY: Double,
         camZ: Double
     ): Boolean = true
+
+    class Model(root: ModelPart) : EndCrystalModel(root)
 
     companion object {
 

@@ -1,6 +1,6 @@
 package archives.tater.omnicrossbow.mixin.client;
 
-import archives.tater.omnicrossbow.client.render.entity.model.EndCrystalProjectileModel;
+import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +15,6 @@ public class EndCrystalModelMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EndCrystalRenderer;getY(F)F")
     )
     private float noBob(float original) {
-        return (Object) this instanceof EndCrystalProjectileModel ? 0 : original;
+        return (Object) this instanceof EndCrystalProjectileRenderer.Model ? 0 : original;
     }
 }
