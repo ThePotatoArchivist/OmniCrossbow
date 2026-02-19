@@ -75,7 +75,7 @@ public class ProjectileWeaponItemMixin {
             var result = switch (behavior.projectileAction()) {
                 case Delegated delegated -> {
                     shootFunction.accept(usedProjectile);
-                    delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, DelegateFakePlayer.getOriginalOwner(shooter), weapon, itemStack);
+                    delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
 
                     yield usedProjectile;
                 }
@@ -89,7 +89,7 @@ public class ProjectileWeaponItemMixin {
 
         var delay = behavior.delay().orElse(null);
 
-        if (delay != null) {
+        if (!(shooter instanceof DelegateFakePlayer) && delay != null) {
             var delayTicks = delay.ticks().sample(shooter.getRandom()) - shooter.getTicksUsingItem(); // spinning
             if (delayTicks > 0) {
                 if (!shooter.isUsingItem()) delay.chargeSound().ifPresent(sound ->

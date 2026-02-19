@@ -1,10 +1,8 @@
 package archives.tater.omnicrossbow.mixin.behavior;
 
-import archives.tater.omnicrossbow.entity.DelegateFakePlayer;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -29,15 +27,5 @@ public abstract class ProjectileMixin extends Entity {
     )
     private float scaleVelocity(float velocity) {
         return velocity * getAttachedOrElse(OmniCrossbowAttachments.PROJECTILE_BEHAVIOR, ProjectileBehavior.DEFAULT).velocityScale();
-    }
-
-    @ModifyReturnValue(
-            method = "spawnProjectile(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/world/entity/projectile/Projectile;",
-            at = @At("RETURN")
-    )
-    private static <T extends Projectile> T delegateOwner(T original) {
-        if (original.getOwner() instanceof DelegateFakePlayer delegateFakePlayer)
-            original.setOwner(delegateFakePlayer.getOwner());
-        return original;
     }
 }

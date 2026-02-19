@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.entity.FakePlayer
 import com.mojang.authlib.GameProfile
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityDimensions
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Pose
@@ -24,7 +25,7 @@ class DelegateFakePlayer(level: ServerLevel, val stack: ItemStack, val owner: Li
 
     companion object {
         @JvmStatic
-        tailrec fun getOriginalOwner(entity: LivingEntity): LivingEntity = if (entity is DelegateFakePlayer) {
+        tailrec fun getOriginalOwner(entity: Entity): Entity = if (entity is DelegateFakePlayer) {
             val owner = entity.owner
             if (owner == null) entity else getOriginalOwner(owner)
         } else
@@ -41,7 +42,11 @@ class DelegateFakePlayer(level: ServerLevel, val stack: ItemStack, val owner: Li
             DelegateFakePlayer(level, projectile.item, projectile.owner as? LivingEntity).apply {
                 this as EntityAccessor
                 this as LivingEntityInvoker
+
                 snapTo(pos, yRot, xRot)
+                yHeadRot = yRot
+                yHeadRotO = yRot
+
                 eyeHeight = 0f
                 deltaMovement = projectile.deltaMovement
                 setItemInHand(InteractionHand.MAIN_HAND, projectile.item)
