@@ -46,9 +46,9 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
             repeat(2) { y ->
                 repeat(2) { z ->
                     output.accept(Vector3f(
-                        if (x == 0) -3 / 16f else 13 / 16f,
-                        if (y == 0) 3 / 16f else 19 / 16f,
-                        if (z == 0) 1 / 16f else 17 / 16f
+                        if (x == 0) -1f else 1f,
+                        if (y == 0) 0f else 2f,
+                        if (z == 0) 0f else 1f
                     ))
                 }
             }

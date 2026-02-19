@@ -24,6 +24,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
+import net.minecraft.client.renderer.special.SpecialModelRenderers
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -32,6 +33,7 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
+import net.minecraft.world.item.Items
 import net.minecraft.world.phys.Vec3
 
 object OmniCrossbowClient : ClientModInitializer {
@@ -40,6 +42,9 @@ object OmniCrossbowClient : ClientModInitializer {
     var spyEye: SpyEnderEye? = null
 	var lastEyeInput: Vec3 = Vec3.ZERO
 	const val EYE_HINT = "omnicrossbow.endereye.beginview"
+
+	@JvmStatic
+	fun isCrossbow(id: Identifier?): Boolean = BuiltInRegistries.ITEM.getValue(id) is CrossbowItem
 
 	@JvmStatic
 	fun renderEyeVignette(graphics: GuiGraphics, location: Identifier) {
@@ -65,9 +70,11 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(OmniCrossbow.id("ammo_position"), AmmoPosition)
 
+		SpecialModelRenderers.ID_MAPPER.put(OmniCrossbow.id("crossbow_ammo"), OmniAmmoRenderer.Unbaked.CODEC)
+
 		ModelLoadingPlugin.register { context ->
 			context.modifyItemModelBeforeBake().register { model, context ->
-				if (BuiltInRegistries.ITEM.getValue(context.itemId()) is CrossbowItem) {
+				if (isCrossbow(context.itemId())) {
 					OmniAmmoRenderer.wrapModel(model)
 				} else
 					model
