@@ -54,6 +54,11 @@ class AmmoPositionGenerator(
             )) {
                 +ItemTags.AXES
             },
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-4 / 16f, 4 / 16f, 1 / 16f),
+            )) {
+                +ConventionalItemTags.CROSSBOW_TOOLS
+            },
 
             AmmoPosition.Entry(ItemTransform(
                 rotation = Vector3f(0f, 0f, 45f),

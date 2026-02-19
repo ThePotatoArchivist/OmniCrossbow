@@ -81,6 +81,16 @@
     }
   },
   {
+    "items": "#c:tools/crossbow",
+    "transform": {
+      "translation": [
+        -0.25,
+        0.25,
+        0.0625
+      ]
+    }
+  },
+  {
     "items": [
       "#minecraft:eggs",
       "minecraft:glass_bottle",
