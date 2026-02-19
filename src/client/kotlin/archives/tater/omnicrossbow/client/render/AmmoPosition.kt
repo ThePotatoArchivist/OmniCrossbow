@@ -15,10 +15,8 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
-import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemDisplayContext
-import net.minecraft.world.level.block.CropBlock
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import org.joml.Vector3f
@@ -35,10 +33,6 @@ object AmmoPosition : ResourceManagerReloadListener {
     private val JSON_PATH = PATH.withSuffix(".json")
 
     val DEFAULT_TRANSFORM = Entry(listOf(), ItemDisplayContext.FIXED, ItemTransform(
-        translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
-    ))
-
-    val DEFAULT_BLOCK_TRANSFORM = Entry(listOf(), ItemDisplayContext.FIXED, ItemTransform(
         rotation = Vector3f(0f, 0f, 45f),
         translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
     ))
@@ -60,7 +54,7 @@ object AmmoPosition : ResourceManagerReloadListener {
             { it.second },
             { _, second -> second }
         ))
-    }[item] ?: if (item is BlockItem && item.block !is CropBlock) DEFAULT_BLOCK_TRANSFORM else DEFAULT_TRANSFORM // temporary solution
+    }[item] ?: DEFAULT_TRANSFORM
 
     override fun onResourceManagerReload(resourceManager: ResourceManager) {
         positions.clear()

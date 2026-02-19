@@ -306,7 +306,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             secondary = OmniCrossbowImpactActions.DURABILITY_DAMAGE
         ))
 
-        register("use", ItemPredicate {}, AnyOf(
+        register("any", ItemPredicate {}, AnyOf(
             ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
             Damage()
         ))

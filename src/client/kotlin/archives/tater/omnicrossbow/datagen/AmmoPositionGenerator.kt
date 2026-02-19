@@ -53,6 +53,7 @@ class AmmoPositionGenerator(
                 translation = Vector3f(-3 / 16f, 2 / 16f, 1 / 16f),
             )) {
                 +ItemTags.AXES
+                +Items.AMETHYST_SHARD
             },
             AmmoPosition.Entry(ItemTransform(
                 translation = Vector3f(-4 / 16f, 4 / 16f, 1 / 16f),
@@ -60,20 +61,6 @@ class AmmoPositionGenerator(
                 +ConventionalItemTags.CROSSBOW_TOOLS
             },
 
-            AmmoPosition.Entry(ItemTransform(
-                rotation = Vector3f(0f, 0f, 45f),
-                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
-            )) {
-                +ItemTags.EGGS
-                +Items.GLASS_BOTTLE
-                +Items.DRAGON_BREATH
-                +ConventionalItemTags.BUCKETS
-                +ConventionalItemTags.POTIONS
-                +ConventionalItemTags.DRINKS
-                +ConventionalItemTags.SOUP_FOODS
-                +ConventionalItemTags.DUSTS
-                +ConventionalItemTags.GUNPOWDERS
-            },
             AmmoPosition.Entry(ItemTransform(
                 rotation = Vector3f(0f, 0f, -90f),
                 translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
@@ -95,9 +82,35 @@ class AmmoPositionGenerator(
                 +Items.SLIME_BALL
                 +Items.MAGMA_CREAM
                 +Items.FIRE_CHARGE
+                +Items.ENDER_PEARL
+                +Items.ENDER_EYE
             },
-            AmmoPosition.Entry(AmmoPosition.DEFAULT_TRANSFORM.transform) {
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+            )) {
                 +Items.PUFFERFISH
+                +Items.ECHO_SHARD
+                +Items.PRISMARINE_SHARD
+                +Items.COBWEB
+                +Items.END_CRYSTAL
+                +Items.BONE_MEAL
+                +Items.CHORUS_FRUIT
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, -90f),
+                translation = Vector3f(-1 / 16f, 1 / 16f, 1 / 16f),
+            )) {
+                +ConventionalItemTags.CARROT_CROPS
+                +ConventionalItemTags.POTATO_CROPS
+                +ConventionalItemTags.BEETROOT_CROPS
+                +Items.INK_SAC
+                +Items.GLOW_INK_SAC
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 90f),
+                translation = Vector3f(-3 / 16f, 1 / 16f, 1 / 16f),
+            )) {
+                +Items.FEATHER
             },
             AmmoPosition.Entry(ItemTransform(
                 rotation = Vector3f(0f, 0f, 225f),
@@ -105,6 +118,49 @@ class AmmoPositionGenerator(
             )) {
                 +Items.POINTED_DRIPSTONE
             },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 45f),
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+                scale = Vector3f(2f),
+            )) {
+                +Items.END_ROD
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 225f),
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+                scale = Vector3f(2f),
+            )) {
+                +ItemTags.LIGHTNING_RODS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-4 / 16f, 3 / 16f, 1 / 16f),
+                scale = Vector3f(-1f, 1f, -1f),
+            )) {
+                +ItemTags.BOATS
+            },
+            AmmoPosition.Entry(ItemTransform(
+                translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
+                scale = Vector3f(-1f, 1f, -1f),
+            )) {
+                +Items.MINECART
+                +Items.CHEST_MINECART
+                +Items.COMMAND_BLOCK_MINECART
+                +Items.FURNACE_MINECART
+                +Items.HOPPER_MINECART
+                +Items.TNT_MINECART
+            },
+            AmmoPosition.Entry(ItemTransform(
+                rotation = Vector3f(0f, 0f, 45f),
+                translation = Vector3f(-2 / 16f, 2 / 16f, 1 / 16f),
+            )) {
+                +ConventionalItemTags.BUCKETS
+                +ConventionalItemTags.DRINK_CONTAINING_BOTTLE
+                +ConventionalItemTags.BOTTLE_POTIONS
+                +Items.DRAGON_BREATH
+                +Items.EXPERIENCE_BOTTLE
+                +Items.OMINOUS_BOTTLE
+                +Items.GLASS_BOTTLE
+            }
         ))
     }
 
