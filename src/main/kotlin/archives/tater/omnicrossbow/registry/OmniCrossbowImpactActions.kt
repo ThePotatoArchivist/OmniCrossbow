@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import archives.tater.omnicrossbow.entity.createFakePlayer
+import archives.tater.omnicrossbow.entity.DelegateFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.access.MobInvoker
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
@@ -118,7 +118,7 @@ object OmniCrossbowImpactActions {
 
     @JvmField
     val USE_ITEM = register("use_item") { level, projectile, hit, _ ->
-        val player = createFakePlayer(level, projectile)
+        val player = DelegateFakePlayer.create(level, projectile)
         val result = when (hit) {
             is BlockHitResult -> {
                 level.getBlockState(hit.blockPos).useItemOn(projectile.item, level, player, InteractionHand.MAIN_HAND, hit)
@@ -137,7 +137,7 @@ object OmniCrossbowImpactActions {
 
     @JvmField
     val USE_ITEM_ON_ENTITY_BASE = registerEntity("use_item/on_entity_base") { level, projectile, hit, _ ->
-        val player = createFakePlayer(level, projectile)
+        val player = DelegateFakePlayer.create(level, projectile)
         projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, BlockHitResult(hit.location, Direction.UP, hit.entity.blockPosition(), false))).also {
             if (it is InteractionResult.Success)
                 projectile.item = it.heldItemTransformedTo()?:  player.mainHandItem
@@ -156,14 +156,16 @@ object OmniCrossbowImpactActions {
             else -> Direction.DOWN
         }
 
-        val player = createFakePlayer(level, projectile, pos.center, when (direction) {
-            Direction.UP -> -90f
-            Direction.DOWN -> 90f
-            else -> 0f
-        }, when (direction) {
-            Direction.UP, Direction.DOWN -> 0f
-            else -> Direction.getYRot(direction)
-        })
+        val player = DelegateFakePlayer.create(
+            level, projectile, pos.center, when (direction) {
+                Direction.UP -> -90f
+                Direction.DOWN -> 90f
+                else -> 0f
+            }, when (direction) {
+                Direction.UP, Direction.DOWN -> 0f
+                else -> Direction.getYRot(direction)
+            }
+        )
 
         projectile.item.use(level, player, InteractionHand.MAIN_HAND).also { result ->
             if (result is InteractionResult.Success)

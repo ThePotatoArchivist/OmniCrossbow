@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import archives.tater.omnicrossbow.entity.createFakePlayer
+import archives.tater.omnicrossbow.entity.DelegateFakePlayer
 import archives.tater.omnicrossbow.mixin.behavior.access.LivingEntityInvoker
 import archives.tater.omnicrossbow.mixin.behavior.access.PlayerInvoker
 import com.mojang.serialization.MapCodec
@@ -27,6 +27,7 @@ data class KineticDamage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline
      * @see net.minecraft.world.item.component.KineticWeapon.damageEntities
      * @see Player.stabAttack
      */
+    @Suppress("CAST_NEVER_SUCCEEDS")
     override fun tryImpact(
         level: ServerLevel,
         projectile: CustomItemProjectile,
@@ -37,7 +38,7 @@ data class KineticDamage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline
         val attackingItemStack = projectile.item
         val kineticWeapon = attackingItemStack[DataComponents.KINETIC_WEAPON] ?: return false
 
-        val fakePlayer = createFakePlayer(level, projectile)
+        val fakePlayer = DelegateFakePlayer.create(level, projectile)
         fakePlayer as PlayerInvoker
         fakePlayer as LivingEntityInvoker
 

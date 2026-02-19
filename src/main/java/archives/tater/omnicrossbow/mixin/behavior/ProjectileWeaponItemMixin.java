@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.mixin.behavior;
 
+import archives.tater.omnicrossbow.entity.DelegateFakePlayer;
 import archives.tater.omnicrossbow.entity.DelegateProjectile;
 import archives.tater.omnicrossbow.projectilebehavior.DelayTracker;
 import archives.tater.omnicrossbow.projectilebehavior.ProjectileBehavior;
@@ -74,7 +75,7 @@ public class ProjectileWeaponItemMixin {
             var result = switch (behavior.projectileAction()) {
                 case Delegated delegated -> {
                     shootFunction.accept(usedProjectile);
-                    delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, shooter, weapon, itemStack);
+                    delegated.shoot(usedProjectile.position(), usedProjectile.getDeltaMovement(), serverLevel, DelegateFakePlayer.getOriginalOwner(shooter), weapon, itemStack);
 
                     yield usedProjectile;
                 }

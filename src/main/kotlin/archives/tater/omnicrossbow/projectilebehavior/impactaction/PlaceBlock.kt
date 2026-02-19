@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
-import archives.tater.omnicrossbow.entity.createFakePlayer
+import archives.tater.omnicrossbow.entity.DelegateFakePlayer
 import archives.tater.omnicrossbow.util.get
 import archives.tater.omnicrossbow.util.set
 import com.mojang.serialization.MapCodec
@@ -32,7 +32,7 @@ data class PlaceBlock(
             is EntityHitResult -> BlockHitResult(hit.location, Direction.UP, hit.entity.blockPosition(), false)
             else -> return false
         }
-        val player = createFakePlayer(level, projectile)
+        val player = DelegateFakePlayer.create(level, projectile)
         val context = BlockPlaceContext(player, InteractionHand.MAIN_HAND, projectile.item, blockHit)
         val placePos = context.clickedPos
         if (!level[placePos].canBeReplaced(context)) return false

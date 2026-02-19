@@ -20,7 +20,7 @@ class ThrownCrossbow(type: EntityType<out ThrownCrossbow>, level: Level) : Throw
     private fun shoot() {
         val level = level() as? ServerLevel ?: return
         val itemType = item.item as? CrossbowItem ?: return
-        val player = createFakePlayer(level, this)
+        val player = DelegateFakePlayer.create(level, this)
         itemType.performShooting(level, player, InteractionHand.MAIN_HAND, item, 3.15f, 1f, null)
         spawnAtLocation(level, item)
         discard()

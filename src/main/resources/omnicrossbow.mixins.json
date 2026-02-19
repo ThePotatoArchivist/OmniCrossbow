@@ -40,7 +40,8 @@
     "enchantmenteffect.velocity.ProjectileWeaponItemMixin",
     "endereye.ChunkMapMixin",
     "endereye.ChunkMapTrackedEntityMixin",
-    "grapplehook.LivingEntityMixin"
+    "grapplehook.LivingEntityMixin",
+    "throwncrossbow.ProjectileMixin"
   ],
   "injectors": {
     "defaultRequire": 1
