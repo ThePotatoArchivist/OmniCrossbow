@@ -15,11 +15,11 @@ import archives.tater.omnicrossbow.util.unaryMinus
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.item.SpawnEggItem
 
 
 object OmniCrossbowProjectileActions {
@@ -51,7 +51,7 @@ object OmniCrossbowProjectileActions {
 
     @JvmField
     val FROM_ENTITY_DATA = registerEntity("spawn_entity/from_entity_data") {
-        SpawnEggItem.getType(it)
+        it[DataComponents.ENTITY_DATA]?.type()
     }
 
     @JvmField
