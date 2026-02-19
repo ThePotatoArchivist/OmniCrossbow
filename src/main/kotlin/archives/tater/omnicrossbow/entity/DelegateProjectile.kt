@@ -1,5 +1,6 @@
 package archives.tater.omnicrossbow.entity
 
+import archives.tater.omnicrossbow.OmniCrossbow
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.world.entity.EntityType
@@ -14,5 +15,8 @@ class DelegateProjectile(type: EntityType<out DelegateProjectile>, level: Level)
         setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
     }
 
-    // TODO safety check should not be spawned
+    override fun tick() {
+        discard()
+        OmniCrossbow.logger.warn("Delegate projectile should never be spawned in the world")
+    }
 }
