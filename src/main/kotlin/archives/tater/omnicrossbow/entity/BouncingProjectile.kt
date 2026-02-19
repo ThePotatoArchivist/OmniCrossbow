@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.EntityEvent
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
-import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.BlockHitResult
 
@@ -47,7 +46,7 @@ abstract class BouncingProjectile(type: EntityType<out BouncingProjectile>, leve
             return
         }
 
-        val particle = ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(item))
+        val particle = ItemParticleOption(ParticleTypes.ITEM, item)
 
         repeat(6) {
             level().addParticle(

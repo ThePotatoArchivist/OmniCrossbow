@@ -10,7 +10,6 @@ import net.minecraft.advancements.criterion.EntityPredicate
 import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderSet
-import net.minecraft.core.TypedInstance
 import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -23,12 +22,16 @@ import net.minecraft.util.context.ContextKey
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityReference
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.Property
+import net.minecraft.world.level.material.Fluid
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.phys.Vec3
@@ -38,8 +41,10 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
 operator fun HolderSet<Item>.contains(stack: ItemStack) = stack.`is`(this)
-infix fun <T: Any> TypedInstance<T>.isOf(type: T) = `is`(type)
-infix fun <T: Any> TypedInstance<T>.isIn(tag: TagKey<T>) = `is`(tag)
+infix fun BlockState.isOf(block: Block) = `is`(block)
+infix fun FluidState.isIn(tag: TagKey<Fluid>) = `is`(tag)
+infix fun ItemStack.isIn(tag: TagKey<Item>) = `is`(tag)
+infix fun Entity.isIn(tag: TagKey<EntityType<*>>) = type.`is`(tag)
 
 operator fun Vec3.plus(other: Vec3): Vec3 = add(other)
 operator fun Vec3.minus(other: Vec3): Vec3 = subtract(other)

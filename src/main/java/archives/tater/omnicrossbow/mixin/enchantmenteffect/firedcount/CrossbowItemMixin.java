@@ -30,7 +30,7 @@ public class CrossbowItemMixin {
     private <T> T firedCount(ItemStack instance, DataComponentType<T> type, @Nullable T value, Operation<T> original, @Local(name = "serverLevel") ServerLevel serverLevel, @Local(argsOnly = true, ordinal = 0) LivingEntity shooter) {
         if (type != DataComponents.CHARGED_PROJECTILES) return original.call(instance, type, value);
 
-        var items = instance.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).items();
+        var items = instance.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).getItems();
 
         var dirtyCount = new MutableFloat(items.size());
         EnchantmentHelper.runIterationOnItem(instance, (enchantment, level) ->
@@ -49,9 +49,9 @@ public class CrossbowItemMixin {
         if (count >= items.size()) return original.call(instance, type, value);
 
         // Set to remainder
-        original.call(instance, type, new ChargedProjectiles(items.subList(count, items.size())));
+        original.call(instance, type, ChargedProjectiles.of(items.subList(count, items.size())));
 
         // Return head
-        return (T) new ChargedProjectiles(items.subList(0, count));
+        return (T) ChargedProjectiles.of(items.subList(0, count));
     }
 }

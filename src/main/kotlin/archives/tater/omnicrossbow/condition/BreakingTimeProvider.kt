@@ -6,10 +6,13 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
+import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider
 
 object BreakingTimeProvider : NumberProvider {
     val CODEC: MapCodec<BreakingTimeProvider> = MapCodec.unit(this)
+
+    val TYPE = LootNumberProviderType(CODEC)
 
     override fun getFloat(context: LootContext): Float {
         val state = context.getOptionalParameter(LootContextParams.BLOCK_STATE) ?: return Float.MAX_VALUE
@@ -21,5 +24,5 @@ object BreakingTimeProvider : NumberProvider {
         return modifier * blockSpeed / toolSpeed
     }
 
-    override fun codec(): MapCodec<out NumberProvider> = CODEC
+    override fun getType(): LootNumberProviderType = TYPE
 }

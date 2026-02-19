@@ -7,10 +7,11 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootContext.EntityTarget
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType
 
 @JvmRecord
 data class CanPickUpLoot(val entity: EntityTarget) : LootItemCondition, LootItemCondition.Builder {
-    override fun codec(): MapCodec<out LootItemCondition> = CODEC
+    override fun getType(): LootItemConditionType = TYPE
 
     override fun test(context: LootContext): Boolean = (entity[context] as? LivingEntity)?.canPickUpLoot() == true
 
@@ -22,5 +23,7 @@ data class CanPickUpLoot(val entity: EntityTarget) : LootItemCondition, LootItem
         val CODEC: MapCodec<CanPickUpLoot> = RecordCodecBuilder.mapCodec { it.group(
             EntityTarget.CODEC.fieldOf("entity").forGetter(CanPickUpLoot::entity)
         ).apply(it, ::CanPickUpLoot) }
+
+        val TYPE = LootItemConditionType(CODEC)
     }
 }

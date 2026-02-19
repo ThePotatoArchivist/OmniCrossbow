@@ -1,7 +1,7 @@
 package archives.tater.omnicrossbow.registry
 
 import archives.tater.omnicrossbow.OmniCrossbow
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityDataRegistry
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricTrackedDataRegistry
 import net.minecraft.core.Direction
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.syncher.EntityDataSerializer
@@ -11,7 +11,7 @@ import java.util.*
 
 object OmniCrossbowEntityDataSerializers {
     private fun <T: Any> register(path: String, serializer: EntityDataSerializer<T>) = serializer.also {
-        FabricEntityDataRegistry.register(OmniCrossbow.id(path), it)
+        FabricTrackedDataRegistry.register(OmniCrossbow.id(path), it)
     }
 
     val OPTIONAL_ENTITY_REFERENCE: EntityDataSerializer<Optional<EntityReference<Entity>>> = register(

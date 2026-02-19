@@ -6,7 +6,6 @@ import archives.tater.omnicrossbow.condition.CanPickUpLoot
 import archives.tater.omnicrossbow.condition.ConsumablePredicate
 import archives.tater.omnicrossbow.condition.SingletonLootCondition
 import archives.tater.omnicrossbow.util.get
-import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponents
@@ -15,14 +14,14 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.util.context.ContextKey
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType
 
 object OmniCrossbowConditions {
-    private fun <T: LootItemCondition> register(path: String, codec: MapCodec<T>): MapCodec<T> =
-        Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, OmniCrossbow.id(path), codec)
+    private fun register(path: String, type: LootItemConditionType): LootItemConditionType =
+        Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, OmniCrossbow.id(path), type)
 
     private fun register(path: String, condition: SingletonLootCondition) = condition.apply {
-        register(path, codec)
+        register(path, type)
     }
 
     private fun register(path: String, vararg keys: ContextKey<*>, test: (LootContext) -> Boolean) =
@@ -46,7 +45,7 @@ object OmniCrossbowConditions {
     )
 
     fun init() {
-        Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)
-        register("can_pick_up_loot", CanPickUpLoot.CODEC)
+        Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.TYPE)
+        register("can_pick_up_loot", CanPickUpLoot.TYPE)
     }
 }

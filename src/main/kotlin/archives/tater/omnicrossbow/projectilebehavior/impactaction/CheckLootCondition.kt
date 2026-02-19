@@ -7,7 +7,6 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
 import net.minecraft.world.phys.BlockHitResult
@@ -52,7 +51,7 @@ data class CheckLootCondition(
         }
 
         val CODEC: MapCodec<CheckLootCondition> = RecordCodecBuilder.mapCodec { it.group(
-            LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(CUSTOM_PROJECTILE_CONTEXT)).fieldOf("condition").forGetter(CheckLootCondition::condition)
+            LootItemCondition.DIRECT_CODEC.fieldOf("condition").forGetter(CheckLootCondition::condition)
         ).apply(it, ::CheckLootCondition) }
     }
 }

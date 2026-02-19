@@ -34,20 +34,20 @@ object OmniCrossbowEnchantmentEffects {
 
     @JvmField
     val PROJECTILE_FIRED_COUNT = register("projectile_fired_count", validatedListCodec(
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
-        LootContextParamSets.ENCHANTED_ENTITY
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC,
+        LootContextParamSets.ENCHANTED_ENTITY)
     ))
 
     @JvmField
     val PROJECTILE_UNCERTAINTY = register("projectile_uncertainty", validatedListCodec(
-        ConditionalEffect.codec(ProjectileUncertainty.CODEC),
-        LootContextParamSets.ENCHANTED_ENTITY
+        ConditionalEffect.codec(ProjectileUncertainty.CODEC,
+        LootContextParamSets.ENCHANTED_ENTITY)
     ))
 
     @JvmField
     val PROJECTILE_VELOCITY = register("projectile_velocity", validatedListCodec(
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
-        LootContextParamSets.ENCHANTED_ENTITY
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC,
+        LootContextParamSets.ENCHANTED_ENTITY)
     ))
 
     @JvmField
@@ -55,8 +55,8 @@ object OmniCrossbowEnchantmentEffects {
 
     @JvmField
     val CROSSBOW_COOLDOWN = register("crossbow_cooldown", validatedListCodec(
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
-        LootContextParamSets.ENCHANTED_ITEM
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC,
+        LootContextParamSets.ENCHANTED_ITEM)
     ))
 
     @JvmField
@@ -64,14 +64,14 @@ object OmniCrossbowEnchantmentEffects {
 
     @JvmField
     val PROJECTILE_RICOCHET = register("projectile_ricochet", validatedListCodec(
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC),
-        LootContextParamSets.ENCHANTED_ITEM
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC,
+        LootContextParamSets.ENCHANTED_ITEM)
     ))
 
     @JvmField
     val PROJECTILE_IGNORE_OWNER = register("projectile_ignore_owner", validatedListCodec(
-        ConditionalEffect.codec(McUnit.CODEC),
-        LootContextParamSets.ENCHANTED_ITEM
+        ConditionalEffect.codec(McUnit.CODEC,
+        LootContextParamSets.ENCHANTED_ITEM)
     ))
 
     @JvmField

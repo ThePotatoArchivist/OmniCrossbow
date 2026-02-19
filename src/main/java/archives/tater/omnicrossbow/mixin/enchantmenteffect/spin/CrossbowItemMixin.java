@@ -57,7 +57,7 @@ public abstract class CrossbowItemMixin {
 
         // Play delay sounds
         if (!(level instanceof ServerLevel serverLevel)) return;
-        var projectiles = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).items();
+        var projectiles = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).getItems();
         var dirtyCount = new MutableFloat(projectiles.size());
         EnchantmentHelper.runIterationOnItem(weapon, (enchantment, level2) ->
                 enchantment.value().modifyEntityFilteredValue(
@@ -72,7 +72,7 @@ public abstract class CrossbowItemMixin {
         var count = dirtyCount.intValue();
         projectiles.stream()
                 .limit(count)
-                .flatMap(template -> ProjectileBehavior.getBehavior(level, template.create()).delay().stream())
+                .flatMap(template -> ProjectileBehavior.getBehavior(level, template).delay().stream())
                 .flatMap(delay -> delay.chargeSound().stream())
                 .forEach(sound -> level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), sound, shooter.getSoundSource(), 1f, 1f));
     }

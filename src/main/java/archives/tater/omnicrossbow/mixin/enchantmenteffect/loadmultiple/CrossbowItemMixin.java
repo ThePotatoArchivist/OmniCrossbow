@@ -43,8 +43,8 @@ public class CrossbowItemMixin {
             method = "use",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z")
     )
-    private boolean failIfFull(boolean original, @Local(name = "chargedProjectiles") @Nullable ChargedProjectiles chargedProjectiles, @Local(name = "itemStack") ItemStack stack) {
-        return original || chargedProjectiles != null && chargedProjectiles.items().size() >= LoadMultiple.maxProjectilesOrDefault(stack);
+    private boolean failIfFull(boolean original, @Local @Nullable ChargedProjectiles chargedProjectiles, @Local(name = "itemStack") ItemStack stack) {
+        return original || chargedProjectiles != null && chargedProjectiles.getItems().size() >= LoadMultiple.maxProjectilesOrDefault(stack);
     }
 
     @Inject(
@@ -66,9 +66,9 @@ public class CrossbowItemMixin {
         var existing = instance.get(OmniCrossbowComponents.ADDITIONAL_CHARGED_PROJECTILES);
         if (existing == null) return original.call(instance, type, value);
 
-        return original.call(instance, type, new ChargedProjectiles(Stream.concat(
-                existing.items().stream(),
-                ((ChargedProjectiles) value).items().stream()
+        return original.call(instance, type, ChargedProjectiles.of(Stream.concat(
+                existing.getItems().stream(),
+                ((ChargedProjectiles) value).getItems().stream()
         ).toList()));
     }
 

@@ -32,7 +32,7 @@ data class ProjectileBehavior(
     val shootSound: Optional<Holder<SoundEvent>>,
     val recoil: Optional<Recoil>,
     val ignoreGravityAiming: Boolean,
-    val remainder: Either<Boolean, ItemStackTemplate>,
+    val remainder: Either<Boolean, ItemStack>,
     val delay: Optional<Delay>,
     val keepProjectileLoaded: Boolean,
 ) {
@@ -65,7 +65,7 @@ data class ProjectileBehavior(
         shootSound: Holder<SoundEvent>? = null,
         recoil: Recoil? = null,
         ignoreGravityAiming: Boolean = false,
-        remainder: ItemStackTemplate,
+        remainder: ItemStack,
         delay: Delay? = null,
         keepProjectileLoaded: Boolean = false,
     ) : this(
@@ -83,9 +83,9 @@ data class ProjectileBehavior(
     fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
         { if (it) when (val item = projectile.item) {
             is MobBucketItem -> item.content.bucket.defaultInstance
-            else -> projectile.craftingRemainder?.create()
+            else -> projectile.recipeRemainder
         } else null },
-        { it.create() }
+        { it.copy() }
     )
 
     @JvmRecord
@@ -134,7 +134,7 @@ data class ProjectileBehavior(
             SoundEvent.CODEC.optionalFieldOf("shoot_sound").forGetter(ProjectileBehavior::shootSound),
             Recoil.SHORT_CODEC.optionalFieldOf("recoil").forGetter(ProjectileBehavior::recoil),
             Codec.BOOL.optionalFieldOf("ignore_gravity_aiming", false).forGetter(ProjectileBehavior::ignoreGravityAiming),
-            Codec.either(Codec.BOOL, ItemStackTemplate.CODEC).optionalFieldOf("remainder", Either.left(false)).forGetter(ProjectileBehavior::remainder),
+            Codec.either(Codec.BOOL, ItemStack.CODEC).optionalFieldOf("remainder", Either.left(false)).forGetter(ProjectileBehavior::remainder),
             Delay.CODEC.optionalFieldOf("delay").forGetter(ProjectileBehavior::delay),
             Codec.BOOL.optionalFieldOf("keep_projectile_loaded", false).forGetter(ProjectileBehavior::keepProjectileLoaded),
         ).apply(it, ::ProjectileBehavior) }
@@ -149,7 +149,7 @@ data class ProjectileBehavior(
         fun of(
             projectileAction: ProjectileAction,
             velocityScale: Float = 1f,
-            remainder: ItemStackTemplate? = null
+            remainder: ItemStack? = null
         ) = if (remainder == null)
             ProjectileBehavior(projectileAction, velocityScale)
         else
@@ -162,8 +162,8 @@ data class ProjectileBehavior(
             is MinecartItem -> OmniCrossbowProjectileActions.SPAWN_MINECART
             is BlockItem if item.block is FallingBlock -> SpawnEntity.FallingBlock(item.block.defaultBlockState())
             else -> null
-        }?.let {
-            of(it, 0.3f, remainder = if (item is MobBucketItem) ItemStackTemplate(Items.WATER_BUCKET) else null)
+        }?.let<ProjectileAction, _> {
+            of(it, 0.3f, remainder = if (item is MobBucketItem) Items.WATER_BUCKET.defaultInstance else null)
         } ?: ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE))
 
         @JvmStatic

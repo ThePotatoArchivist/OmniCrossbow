@@ -34,7 +34,7 @@ public abstract class AbstractArrowMixin extends Projectile {
     )
     private void setIgnoreOwner(EntityType<? extends AbstractArrow> type, double x, double y, double z, Level level2, ItemStack pickupItemStack, ItemStack firedFromWeapon, CallbackInfo ci) {
         if (firedFromWeapon == null || !(level2 instanceof ServerLevel serverLevel)) return;
-        EnchantmentHelper.runIterationOnItem(firedFromWeapon, (enchantment, _) -> {
+        EnchantmentHelper.runIterationOnItem(firedFromWeapon, (enchantment, ignored) -> {
             if (!enchantment.value().getEffects(OmniCrossbowEnchantmentEffects.PROJECTILE_IGNORE_OWNER).isEmpty())
                 setAttached(OmniCrossbowAttachments.IGNORE_OWNER, Unit.INSTANCE);
         });

@@ -95,7 +95,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
             owner.level() != this.level()
             || distanceToSqr(owner) > MAX_DISTANCE * MAX_DISTANCE
             || InteractionHand.entries.none { hand ->
-                owner.getItemInHand(hand)[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.any { ItemStack.matches(it, projectileItem) } == true
+                owner.getItemInHand(hand)[DataComponents.CHARGED_PROJECTILES]?.items?.any { ItemStack.matches(it, projectileItem) } == true
             })) {
             discard()
             return
@@ -169,9 +169,9 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
         if (owner != null)
             for (hand in InteractionHand.entries) {
                 val stack = owner.getItemInHand(hand)
-                val items = stack[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.toMutableList() ?: continue
+                val items = stack[DataComponents.CHARGED_PROJECTILES]?.items?.toMutableList() ?: continue
                 if (items.removeFirst { ItemStack.matches(it, projectileItem) }) {
-                    stack[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.ofNonEmpty(items)
+                    stack[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.of(items)
                     owner.giveOrDrop(projectileItem)
                     break
                 }

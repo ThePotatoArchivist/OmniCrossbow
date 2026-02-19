@@ -28,7 +28,7 @@ public class ProjectileWeaponItemMixin {
         var maxProjectiles = LoadMultiple.maxProjectiles(weapon);
         if (maxProjectiles == null) return result;
 
-        var chargedCount = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).items().size();
+        var chargedCount = weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).getItems().size();
         return min(result, maxProjectiles - chargedCount);
     }
 }

@@ -111,7 +111,7 @@ object OmniCrossbowImpactActions {
         val stack = projectile.item
         if (!stack.isDamageableItem) return@register false
         stack.hurtAndBreak(1, level, null) {
-            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
+            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it.defaultInstance), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
         }
         true
     }
@@ -126,7 +126,7 @@ object OmniCrossbowImpactActions {
                     ?: projectile.item.useOn(UseOnContext(player, InteractionHand.MAIN_HAND, hit))
             }
             is EntityHitResult -> {
-                hit.entity.interact(player, InteractionHand.MAIN_HAND, hit.location)
+                hit.entity.interact(player, InteractionHand.MAIN_HAND)
             }
             else -> return@register false
         }
@@ -218,8 +218,6 @@ object OmniCrossbowImpactActions {
 
     @JvmField
     val DYE = registerBlock("dye") { level, projectile, hit, _ ->
-        if (DataComponents.DYE !in projectile.item) return@registerBlock false
-
         val state = level[hit.blockPos]
         val blockItem = state.block.asItem().defaultInstance.takeUnless { it.isEmpty } ?: return@registerBlock false
 
@@ -228,7 +226,7 @@ object OmniCrossbowImpactActions {
                 RecipeType.CRAFTING,
                 input,
                 level
-            ).getOrNull()?.value?.assemble(input)
+            ).getOrNull()?.value?.assemble(input, level.registryAccess())
 
         val result = attemptDyeCraft(CraftingInput.of(2, 1, listOf(blockItem, projectile.item)))?.takeIf { it.count == 1 }
             ?: attemptDyeCraft(CraftingInput.of(3, 3, buildList {

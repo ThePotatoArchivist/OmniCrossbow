@@ -9,7 +9,6 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.phys.HitResult
 
 @JvmRecord
@@ -28,7 +27,7 @@ data class ItemParticle(
         hit: HitResult,
         originalItem: ItemStack,
     ): Boolean {
-        level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(originalItem)), hit.location.x, hit.location.y, hit.location.z, count, dx, dy, dz, speed)
+        level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, originalItem), hit.location.x, hit.location.y, hit.location.z, count, dx, dy, dz, speed)
         return true
     }
 

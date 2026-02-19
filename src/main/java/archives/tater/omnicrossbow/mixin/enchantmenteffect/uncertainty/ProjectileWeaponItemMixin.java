@@ -36,8 +36,7 @@ public class ProjectileWeaponItemMixin {
                 Enchantment.applyEffects(
                         enchantment.value().getEffects(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY),
                         Enchantment.entityContext(serverLevel, level, shooter, shooter.position()),
-                        value,
-                        (e, v) -> e.process(level, projectileCount, shooter.getRandom(), v)
+                        e -> value.setValue(e.process(level, projectileCount, shooter.getRandom(), value.floatValue()))
                 )
         );
 

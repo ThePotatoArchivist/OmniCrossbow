@@ -25,12 +25,12 @@ class DelayTracker {
                 entity.getItemInHand(hand).takeIf { ItemStack.matches(it, entry.weapon) }
             } ?: return@removeIf true
 
-            val projectiles = weapon[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.toMutableList() ?: return@removeIf true
+            val projectiles = weapon[DataComponents.CHARGED_PROJECTILES]?.items?.toMutableList() ?: return@removeIf true
 
             if (!projectiles.removeFirst { ItemStack.matches(it, entry.projectile) }) return@removeIf true
 
             entry.action.run()
-            weapon[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.ofNonEmpty(projectiles)
+            weapon[DataComponents.CHARGED_PROJECTILES] = ChargedProjectiles.of(projectiles)
 
             true
         }

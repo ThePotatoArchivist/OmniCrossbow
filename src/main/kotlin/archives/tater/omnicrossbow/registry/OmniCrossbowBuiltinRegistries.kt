@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceKey
 
 object OmniCrossbowBuiltinRegistries {
     private fun <T: Any> register(key: ResourceKey<Registry<T>>, init: FabricRegistryBuilder<T, MappedRegistry<T>>.() -> Unit = {}): Registry<T> =
-        FabricRegistryBuilder.create(key).apply(init).buildAndRegister()
+        FabricRegistryBuilder.createSimple(key).apply(init).buildAndRegister()
 
     @JvmField val PROJECTILE_ACTION = register(OmniCrossbowRegistries.PROJECTILE_ACTION)
     @JvmField val PROJECTILE_ACTION_TYPE = register(OmniCrossbowRegistries.PROJECTILE_ACTION_TYPE)

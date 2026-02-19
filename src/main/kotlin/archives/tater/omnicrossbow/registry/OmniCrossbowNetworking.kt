@@ -7,14 +7,14 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 
 object OmniCrossbowNetworking {
     fun init() {
-        with (PayloadTypeRegistry.clientboundPlay()) {
+        with (PayloadTypeRegistry.playS2C()) {
             register(HaircutPayload.TYPE, HaircutPayload.CODEC)
             register(FireworksPayload.TYPE, FireworksPayload.CODEC)
             register(ParticleBeamPayload.TYPE, ParticleBeamPayload.CODEC)
             register(AddMovementPayload.TYPE, AddMovementPayload.CODEC)
             register(ViewSpyEyePayload.TYPE, ViewSpyEyePayload.CODEC)
         }
-        with (PayloadTypeRegistry.serverboundPlay()) {
+        with (PayloadTypeRegistry.playC2S()) {
             register(SpyEyeInputPayload.TYPE, SpyEyeInputPayload.CODEC)
         }
 

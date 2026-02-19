@@ -56,7 +56,7 @@ public class ProjectileWeaponItemMixin {
 
             var usedProjectile = switch (behavior.projectileAction()) {
                 case SpawnProjectile<?> spawnProjectile -> spawnProjectile.createProjectile(serverLevel, shooter, weapon, itemStack);
-                case Delegated _ -> new DelegateProjectile(serverLevel, shooter);
+                case Delegated ignored -> new DelegateProjectile(serverLevel, shooter);
                 default -> projectile;
             };
 
@@ -124,8 +124,8 @@ public class ProjectileWeaponItemMixin {
         if (weapon.has(DataComponents.CHARGED_PROJECTILES)) {
             var delayed = delayedProjectiles.get();
             if (delayed != null)
-                weapon.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(Stream.concat(
-                        weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).itemCopies().stream(),
+                weapon.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(Stream.concat(
+                        weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).getItems().stream(),
                         delayed.stream()
                 ).toList()));
         }
