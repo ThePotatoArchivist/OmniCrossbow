@@ -10,12 +10,12 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.Mth.floor
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.KineticWeapon.getMotion
-import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
 
@@ -62,28 +62,7 @@ data class KineticDamage(val baseAttackDamage: Float = 1f) : ImpactAction.Inline
 
         val damageDealt = instance.value.toFloat() + floor(relativeSpeed * kineticWeapon.damageMultiplier)
 
-        val damageSource = attackingItemStack.getDamageSource(owner) { level.damageSources().run { if (owner is Player) playerAttack(owner) else mobAttack(owner) } }
-        val magicBoost = EnchantmentHelper.modifyDamage(level, attackingItemStack, entity, damageSource, damageDealt) - damageDealt
-
-        val totalDamage = if (dealsDamage) damageDealt + magicBoost else 0.0f
-
-        val oldMovement = entity.deltaMovement
-        val wasHurt = dealsDamage && entity.hurtServer(level, damageSource, totalDamage)
-        if (dealsKnockback) {
-            fakePlayer.causeExtraKnockback(entity, 0.4f + fakePlayer.invokeGetKnockback(entity, damageSource), oldMovement)
-        }
-
-        var dismounted = false
-        if (dealsDismount && entity.isPassenger) {
-            dismounted = true
-            entity.stopRiding()
-        }
-
-        if (!wasHurt && !dealsKnockback && !dismounted) return false
-
-        (owner as? PlayerInvoker ?: fakePlayer).invokeItemAttackInteraction(entity, attackingItemStack, damageSource, wasHurt)
-
-        return true
+        return fakePlayer.stabAttack(EquipmentSlot.MAINHAND, entity, damageDealt, dealsDamage, dealsKnockback, dealsDismount)
     }
 
     override val codec: MapCodec<out KineticDamage> get() = CODEC
