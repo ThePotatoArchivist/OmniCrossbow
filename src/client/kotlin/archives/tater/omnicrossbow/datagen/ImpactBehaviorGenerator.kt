@@ -42,7 +42,7 @@ import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
-import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition.hasProperties
 import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
 import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
@@ -252,9 +252,14 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
 
         register(DataComponents.CONSUMABLE, SideEffect(
             main = Conditional(
-                condition = OmniCrossbowImpactActions.IS_ENTITY,
+                condition = CheckLootCondition(invert(hasProperties(LootContext.EntityTarget.TARGET_ENTITY, EntityPredicate {
+                    entityType(EntityTypePredicate(entities.getOrThrow(OmniCrossbowTags.NON_FEEDABLE)))
+                }))),
                 AnyOf(
-                    OmniCrossbowImpactActions.USE_ITEM,
+                    SideEffect(
+                        main = OmniCrossbowImpactActions.USE_ITEM,
+                        secondary = PlaySound(SoundEvents.GENERIC_EAT),
+                    ),
                     OmniCrossbowImpactActions.CONSUME_ITEM,
                 ),
             ),
@@ -274,7 +279,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             condition = CheckLootCondition(allOf(
                 lootNotIntangible,
                 anyOf(
-                    LootItemEntityPropertyCondition.hasProperties(
+                    hasProperties(
                         LootContext.EntityTarget.TARGET_ENTITY,
                         EntityPredicate {
                             entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))

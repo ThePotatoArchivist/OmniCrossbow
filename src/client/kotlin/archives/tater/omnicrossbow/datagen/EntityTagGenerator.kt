@@ -41,6 +41,10 @@ class EntityTagGenerator(output: FabricPackOutput, registryLookupFuture: Complet
             +EntityType.CREAKING
             +ConventionalEntityTypeTags.BOSSES
         }
+        with (valueLookupBuilder(OmniCrossbowTags.NON_FEEDABLE)) {
+            +EntityType.ITEM_FRAME
+            +EntityType.GLOW_ITEM_FRAME
+        }
         with (valueLookupBuilder(EntityTypeTags.IMPACT_PROJECTILES)) {
             +OmniCrossbowEntities.END_CRYSTAL
             +OmniCrossbowEntities.SLIME_BALL

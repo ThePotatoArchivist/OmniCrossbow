@@ -3,11 +3,30 @@
     "type": "omnicrossbow:side_effect",
     "main": {
       "type": "omnicrossbow:conditional",
-      "condition": "omnicrossbow:is_entity",
+      "condition": {
+        "type": "omnicrossbow:check_loot_condition",
+        "condition": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:entity_properties",
+            "entity": "target_entity",
+            "predicate": {
+              "type": "#omnicrossbow:non_feedable"
+            }
+          }
+        }
+      },
       "on_success": {
         "type": "omnicrossbow:any_of",
         "actions": [
-          "omnicrossbow:use_item",
+          {
+            "type": "omnicrossbow:side_effect",
+            "main": "omnicrossbow:use_item",
+            "secondary": {
+              "type": "omnicrossbow:play_sound",
+              "sound_event": "minecraft:entity.generic.eat"
+            }
+          },
           "omnicrossbow:consume_item"
         ]
       }
