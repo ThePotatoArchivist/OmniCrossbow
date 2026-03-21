@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.multiplayer.ClientPacketListener
 import net.minecraft.client.renderer.RenderPipelines
@@ -42,8 +42,8 @@ object ChargedProjectileIndicatorRenderer : HudElement, ClientTickEvents.EndLeve
         ClientPlayConnectionEvents.DISCONNECT.register(this)
     }
 
-    override fun render(
-        graphics: GuiGraphics,
+    override fun extractRenderState(
+        graphics: GuiGraphicsExtractor,
         deltaTracker: DeltaTracker
     ) {
         if (displayTicks <= 0) return
