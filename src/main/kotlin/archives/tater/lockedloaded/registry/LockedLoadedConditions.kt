@@ -1,8 +1,6 @@
 package archives.tater.lockedloaded.registry
 
 import archives.tater.lockedloaded.LockedLoaded
-import archives.tater.lockedloaded.condition.BreakingTimeProvider
-import archives.tater.lockedloaded.condition.CanPickUpLoot
 import archives.tater.lockedloaded.condition.SingletonLootCondition
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Registry
@@ -25,7 +23,5 @@ object LockedLoadedConditions {
 
 
     fun init() {
-        Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, LockedLoaded.id("breaking_time"), BreakingTimeProvider.CODEC)
-        register("can_pick_up_loot", CanPickUpLoot.CODEC)
     }
 }
