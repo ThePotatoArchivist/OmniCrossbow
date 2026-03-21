@@ -1,0 +1,30 @@
+{
+  "required": true,
+  "package": "archives.tater.lockedloaded.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "HoneyBlockInvoker",
+    "ProjectileWeaponItemMixin",
+    "ThrownTridentMixin",
+    "enchantmenteffect.cooldown.CrossbowItemMixin",
+    "enchantmenteffect.firedcount.CrossbowItemMixin",
+    "enchantmenteffect.ignoreowner.AbstractArrowMixin",
+    "enchantmenteffect.loadmultiple.CrossbowItemMixin",
+    "enchantmenteffect.loadmultiple.ItemMixin",
+    "enchantmenteffect.loadmultiple.ProjectileWeaponItemMixin",
+    "enchantmenteffect.ricochet.AbstractArrowMixin",
+    "enchantmenteffect.spin.CrossbowItemMixin",
+    "enchantmenteffect.spin.LivingEntityMixin",
+    "enchantmenteffect.uncertainty.ProjectileWeaponItemMixin",
+    "enchantmenteffect.velocity.ProjectileWeaponItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "archives.tater.lockedloaded.mixin.client",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ChargeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
+    "enchantmenteffect.spin.HumanoidModelMixin",
+    "enchantmenteffect.spin.ItemInHandLayerMixin",
+    "enchantmenteffect.spin.ItemInHandRendererMixin",
+    "enchantmenteffect.spin.LocalPlayerMixin"
+  ]
+}

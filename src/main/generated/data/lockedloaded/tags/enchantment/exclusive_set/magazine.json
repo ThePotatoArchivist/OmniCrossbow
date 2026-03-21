@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:exclusive_set/crossbow",
+    "minecraft:quick_charge",
+    "lockedloaded:pump_charge",
+    "lockedloaded:sharpshooting",
+    "lockedloaded:multichambered"
+  ]
+}

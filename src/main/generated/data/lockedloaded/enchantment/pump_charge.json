@@ -1,0 +1,59 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.lockedloaded.pump_charge"
+  },
+  "effects": {
+    "lockedloaded:charged_projectile_indicator": {
+      "max_projectiles": 8.0
+    },
+    "lockedloaded:load_multiple": {
+      "max_projectiles": 8.0
+    },
+    "lockedloaded:projectile_uncertainty": [
+      {
+        "effect": {
+          "projectile_count": {
+            "type": "minecraft:add",
+            "value": {
+              "type": "minecraft:linear",
+              "base": 2.0,
+              "per_level_above_first": 2.0
+            }
+          }
+        }
+      }
+    ],
+    "lockedloaded:projectile_velocity": [
+      {
+        "effect": {
+          "type": "minecraft:multiply",
+          "factor": 0.5
+        }
+      }
+    ],
+    "minecraft:projectile_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 2.0
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#lockedloaded:exclusive_set/pump_charge",
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 20,
+    "per_level_above_first": 0
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/crossbow",
+  "weight": 1
+}

@@ -1,0 +1,45 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.lockedloaded.multichambered"
+  },
+  "effects": {
+    "lockedloaded:charged_projectile_indicator": {
+      "max_projectiles": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 2.0
+      }
+    },
+    "lockedloaded:load_multiple": {
+      "max_projectiles": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 2.0
+      }
+    },
+    "lockedloaded:projectile_fired_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 1.0
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#lockedloaded:exclusive_set/multichambered",
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 0
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 20
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/crossbow",
+  "weight": 4
+}

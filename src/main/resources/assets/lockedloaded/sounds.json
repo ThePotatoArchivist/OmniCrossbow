@@ -1,0 +1,14 @@
+{
+  "item.crossbow.spin": {
+    "sounds": [
+      {"name": "lockedloaded:spin", "volume": 0.2}
+    ]
+  },
+  "entity.arrow.ricochet": {
+    "sounds": [
+      {"name": "lockedloaded:ricochet1", "volume": 3.0},
+      {"name": "lockedloaded:ricochet3", "volume": 3.0},
+      {"name": "lockedloaded:ricochet4", "volume": 3.0}
+    ]
+  }
+}

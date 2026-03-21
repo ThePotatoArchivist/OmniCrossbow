@@ -1,0 +1,80 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.lockedloaded.magazine"
+  },
+  "effects": {
+    "lockedloaded:charged_projectile_indicator": {
+      "max_projectiles": {
+        "type": "minecraft:linear",
+        "base": 4.0,
+        "per_level_above_first": 4.0
+      }
+    },
+    "lockedloaded:crossbow_cooldown": [
+      {
+        "effect": {
+          "type": "minecraft:add",
+          "value": 0.5
+        }
+      }
+    ],
+    "lockedloaded:projectile_fired_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 1.0
+        }
+      }
+    ],
+    "lockedloaded:projectile_uncertainty": [
+      {
+        "effect": {
+          "projectile_count": {
+            "type": "minecraft:add",
+            "value": {
+              "type": "minecraft:linear",
+              "base": 0.5,
+              "per_level_above_first": 0.5
+            }
+          }
+        }
+      }
+    ],
+    "minecraft:crossbow_charge_time": {
+      "type": "minecraft:add",
+      "value": {
+        "type": "minecraft:linear",
+        "base": 2.0,
+        "per_level_above_first": 2.0
+      }
+    },
+    "minecraft:projectile_count": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": {
+            "type": "minecraft:linear",
+            "base": 4.0,
+            "per_level_above_first": 4.0
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#lockedloaded:exclusive_set/magazine",
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 0
+  },
+  "max_level": 4,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 20
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/crossbow",
+  "weight": 1
+}

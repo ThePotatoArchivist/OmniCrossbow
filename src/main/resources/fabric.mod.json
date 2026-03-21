@@ -1,43 +1,43 @@
 {
 	"schemaVersion": 1,
-	"id": "omnicrossbow",
+	"id": "lockedloaded",
 	"version": "${version}",
-	"name": "OmniCrossbow",
-	"description": "Shoot any item from a crossbow!",
+	"name": "Locked & Loaded",
+	"description": "Gun-inspired crossbow enchantments",
 	"authors": [
 		"ThePotatoArchivist"
 	],
 	"contact": {
-		"homepage": "https://modrinth.com/project/omni-crossbow",
-		"sources": "https://github.com/ThePotatoArchivist/OmniCrossbow/"
+		"homepage": "https://modrinth.com/project/locked-n-loaded",
+		"sources": "https://github.com/ThePotatoArchivist/LockedLoaded/"
 	},
 	"license": "LGPL-3.0-or-later",
-	"icon": "assets/omnicrossbow/icon.png",
+	"icon": "assets/lockedloaded/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "archives.tater.omnicrossbow.OmniCrossbow",
+				"value": "archives.tater.lockedloaded.LockedLoaded",
 				"adapter": "kotlin"
 			}
 		],
 		"client": [
 			{
-				"value": "archives.tater.omnicrossbow.OmniCrossbowClient",
+				"value": "archives.tater.lockedloaded.LockedLoadedClient",
 				"adapter": "kotlin"
 			}
 		],
 		"fabric-datagen": [
 			{
-				"value": "archives.tater.omnicrossbow.OmniCrossbowDataGenerator",
+				"value": "archives.tater.lockedloaded.LockedLoadedDataGenerator",
 				"adapter": "kotlin"
 			}
 		]
 	},
 	"mixins": [
-		"omnicrossbow.mixins.json",
+		"lockedloaded.mixins.json",
 		{
-			"config": "omnicrossbow.client.mixins.json",
+			"config": "lockedloaded.client.mixins.json",
 			"environment": "client"
 		}
 	],

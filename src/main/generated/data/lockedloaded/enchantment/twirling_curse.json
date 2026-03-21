@@ -1,0 +1,23 @@
+{
+  "anvil_cost": 8,
+  "description": {
+    "translate": "enchantment.lockedloaded.twirling_curse"
+  },
+  "effects": {
+    "lockedloaded:crossbow_spin": 20.0
+  },
+  "max_cost": {
+    "base": 50,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 25,
+    "per_level_above_first": 0
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#minecraft:enchantable/crossbow",
+  "weight": 1
+}
