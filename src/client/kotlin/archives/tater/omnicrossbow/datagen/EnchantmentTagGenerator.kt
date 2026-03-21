@@ -28,7 +28,6 @@ class EnchantmentTagGenerator(
         }
         buildTag(EnchantmentTags.CROSSBOW_EXCLUSIVE) {
             +OmniCrossbowEnchantments.MAGAZINE
-            +OmniCrossbowEnchantments.OMNI
             +OmniCrossbowEnchantments.SHARPSHOOTING
         }
         buildTag(OmniCrossbowEnchantments.MAGAZINE_EXCLUSIVE) {

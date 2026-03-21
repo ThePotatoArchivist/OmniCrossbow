@@ -1,7 +1,0 @@
-{
-  "items": "minecraft:crossbow",
-  "projectile_action": {
-    "type": "omnicrossbow:spawn_projectile",
-    "entity": "omnicrossbow:crossbow"
-  }
-}

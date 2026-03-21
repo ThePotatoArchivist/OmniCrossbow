@@ -9,19 +9,10 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "EndCrystalModelMixin",
-    "ModelBakeryMixin",
     "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
     "enchantmenteffect.spin.HumanoidModelMixin",
     "enchantmenteffect.spin.ItemInHandLayerMixin",
     "enchantmenteffect.spin.ItemInHandRendererMixin",
-    "enchantmenteffect.spin.LocalPlayerMixin",
-    "endereye.CameraMixin",
-    "endereye.ClientChunkCacheStorageMixin",
-    "endereye.GameRendererMixin",
-    "endereye.GuiMixin",
-    "endereye.LevelRendererMixin",
-    "endereye.LocalPlayerMixin",
-    "endereye.MouseHandlerMixin"
+    "enchantmenteffect.spin.LocalPlayerMixin"
   ]
 }

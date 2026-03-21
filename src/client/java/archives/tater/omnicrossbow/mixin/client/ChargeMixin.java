@@ -15,7 +15,7 @@ public class ChargeMixin {
 			method = "get(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/world/entity/LivingEntity;ILnet/minecraft/world/item/ItemDisplayContext;)Lnet/minecraft/world/item/CrossbowItem$ChargeType;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/component/ChargedProjectiles;contains(Lnet/minecraft/world/item/Item;)Z")
 	)
-	private boolean init(ChargedProjectiles instance, Item item, Operation<Boolean> original) {
+	private boolean showFirstProjectile(ChargedProjectiles instance, Item item, Operation<Boolean> original) {
 		return instance.items().getFirst().is(item);
 	}
 }

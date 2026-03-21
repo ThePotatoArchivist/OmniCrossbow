@@ -1,7 +1,0 @@
-{
-  "ignore_gravity_aiming": true,
-  "items": "minecraft:fishing_rod",
-  "keep_projectile_loaded": true,
-  "projectile_action": "omnicrossbow:grapple_fishing_hook",
-  "shoot_sound": "minecraft:entity.fishing_bobber.throw"
-}

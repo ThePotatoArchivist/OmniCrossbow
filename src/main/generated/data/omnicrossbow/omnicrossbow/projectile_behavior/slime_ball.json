@@ -1,7 +1,0 @@
-{
-  "items": "minecraft:slime_ball",
-  "projectile_action": {
-    "type": "omnicrossbow:spawn_projectile",
-    "entity": "omnicrossbow:slimeball"
-  }
-}

@@ -12,7 +12,6 @@ object OmniCrossbowEnchantments {
     @JvmField val MULTICHAMBERED = of("multichambered")
     @JvmField val PUMP_CHARGE = of("pump_charge")
     @JvmField val MAGAZINE = of("magazine")
-    @JvmField val OMNI = of("omni")
     @JvmField val SHARPSHOOTING = of("sharpshooting")
     @JvmField val TWIRLING_CURSE = of("twirling_curse")
 

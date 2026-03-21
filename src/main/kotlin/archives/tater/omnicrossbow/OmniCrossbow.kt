@@ -17,18 +17,10 @@ object OmniCrossbow : ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-		OmniCrossbowRegistries.init()
-		OmniCrossbowBuiltinRegistries.init()
-		OmniCrossbowProjectileActions.init()
-		OmniCrossbowImpactActions.init()
 		OmniCrossbowEnchantmentEffects.init()
 		OmniCrossbowAttachments.init()
 		OmniCrossbowComponents.init()
 		OmniCrossbowConditions.init()
-		OmniCrossbowBlocks.init()
-		OmniCrossbowEntityDataSerializers.init()
-		OmniCrossbowEntities.init()
 		OmniCrossbowSounds.init()
-		OmniCrossbowNetworking.init()
 	}
 }

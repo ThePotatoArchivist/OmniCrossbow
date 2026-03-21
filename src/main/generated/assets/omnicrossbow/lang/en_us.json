@@ -1,17 +1,7 @@
 {
-  "death.attack.omnicrossbow.beacon": "%s had a bad time at the hands of %s",
-  "death.attack.omnicrossbow.beacon.item": "%s had a bad time at the hands of %s using %s",
-  "death.attack.omnicrossbow.fire_beam": "%s was caramelized by %s",
-  "death.attack.omnicrossbow.fire_beam.item": "%s was caramelized by %s using %s",
-  "death.attack.omnicrossbow.fire_projectile": "%s was flambéed by %s",
-  "death.attack.omnicrossbow.fire_projectile.item": "%s was flambéed by %s using %s",
-  "death.attack.omnicrossbow.sonic_boom": "%s was obliterated by a sonically-charged shriek from %s",
-  "death.attack.omnicrossbow.sonic_boom.item": "%s was obliterated by a sonically-charged shriek from %s using %s",
   "enchantment.omnicrossbow.magazine": "Magazine",
   "enchantment.omnicrossbow.multichambered": "Multichambered",
-  "enchantment.omnicrossbow.omni": "Omni",
   "enchantment.omnicrossbow.pump_charge": "Pump Charge",
   "enchantment.omnicrossbow.sharpshooting": "Sharpshooting",
-  "enchantment.omnicrossbow.twirling_curse": "Curse of Twirling",
-  "omnicrossbow.endereye.beginview": "Press %s to stop observing"
+  "enchantment.omnicrossbow.twirling_curse": "Curse of Twirling"
 }

@@ -1,9 +1,0 @@
-{
-  "items": {
-    "predicates": {
-      "minecraft:entity_data": {}
-    }
-  },
-  "projectile_action": "omnicrossbow:spawn_entity/from_entity_data",
-  "velocity_scale": 0.5
-}

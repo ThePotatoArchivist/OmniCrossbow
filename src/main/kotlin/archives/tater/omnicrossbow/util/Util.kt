@@ -2,7 +2,6 @@
 
 package archives.tater.omnicrossbow.util
 
-import archives.tater.omnicrossbow.network.ParticleBeamPayload
 import com.llamalad7.mixinextras.sugar.ref.LocalRef
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
@@ -21,8 +20,6 @@ import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
 import net.minecraft.util.RandomSource
 import net.minecraft.util.context.ContextKeySet
@@ -130,13 +127,6 @@ fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, pr
 
 fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double): List<Entity> =
     getEntitiesPierced(level, start, stop, margin, null, null)
-
-fun ServerLevel.sendParticleBeam(payload: ParticleBeamPayload) {
-    val packet = ClientboundCustomPayloadPacket(payload)
-
-    for (player in players())
-        sendParticles(player, false, payload.start.x, payload.start.y, payload.start.z, packet)
-}
 
 fun camelCaseToSnakeCase(str: String) = str.replace(Regex("[a-z][A-Z]"), "$1_$2").lowercase()
 

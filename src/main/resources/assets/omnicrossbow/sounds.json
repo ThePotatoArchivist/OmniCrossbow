@@ -10,15 +10,5 @@
       {"name": "omnicrossbow:ricochet3", "volume": 3.0},
       {"name": "omnicrossbow:ricochet4", "volume": 3.0}
     ]
-  },
-  "item.crossbow.beacon_charge": {
-    "sounds": [
-      "omnicrossbow:beacon_charge"
-    ]
-  },
-  "item.crossbow.beacon_fire": {
-    "sounds": [
-      "omnicrossbow:beacon_fire"
-    ]
   }
 }

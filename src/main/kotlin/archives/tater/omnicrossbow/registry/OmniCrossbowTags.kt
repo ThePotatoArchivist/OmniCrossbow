@@ -13,17 +13,5 @@ object OmniCrossbowTags {
     fun ofEntity(path: String) = of(Registries.ENTITY_TYPE, path)
 
 
-    @JvmField val BUILTIN_PROJECTILES = ofItem("builtin_projectiles")
 
-    @JvmField val HAS_PREFERRED_TOOL = ofBlock("has_preferred_tool")
-
-    @JvmField val CAN_ALWAYS_EQUIP = ofEntity("can_always_equip")
-
-    @JvmField val EXTRA_BEACON_DAMAGE = ofEntity("extra_beacon_damage")
-
-    @JvmField val UNCAPPED_BEACON_DAMAGE = ofEntity("uncapped_beacon_damage")
-
-    @JvmField val GRAPPLE_UNMOVEABLE = ofEntity("grapple_unmoveable")
-
-    @JvmField val NON_FEEDABLE = ofEntity("non_feedable")
 }

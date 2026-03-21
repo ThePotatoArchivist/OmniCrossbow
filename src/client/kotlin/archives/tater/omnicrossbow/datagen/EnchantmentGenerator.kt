@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow.datagen
 
-import archives.tater.omnicrossbow.enchantment.Ammo
 import archives.tater.omnicrossbow.enchantment.ChargedProjectileIndicator
 import archives.tater.omnicrossbow.enchantment.LoadMultiple
 import archives.tater.omnicrossbow.enchantment.ProjectileUncertainty
@@ -81,19 +80,6 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             withEffect(OmniCrossbowEnchantmentEffects.PROJECTILE_UNCERTAINTY, ProjectileUncertainty(projectileCount = AddValue(LevelBasedValue.perLevel(0.5f))))
             withEffect(OmniCrossbowEnchantmentEffects.CROSSBOW_COOLDOWN, AddValue(LevelBasedValue.constant(0.5f)))
             withSpecialEffect(EnchantmentEffectComponents.CROSSBOW_CHARGE_TIME, AddValue(LevelBasedValue.perLevel(2f)))
-        }
-
-        register(OmniCrossbowEnchantments.OMNI, definition(
-            crossbowEnchantable,
-            1,
-            1,
-            constantCost(20),
-            constantCost(50),
-            8,
-            EquipmentSlotGroup.MAINHAND
-        )) {
-            exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
-            withSpecialEffect(OmniCrossbowEnchantmentEffects.AMMO, listOf(Ammo.anyItem()))
         }
 
         register(OmniCrossbowEnchantments.SHARPSHOOTING, definition(

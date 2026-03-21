@@ -7,7 +7,3 @@ operator fun <T: Any> FabricRenderState.get(key: RenderStateDataKey<T>): T? = ge
 operator fun <T: Any> FabricRenderState.set(key: RenderStateDataKey<T>, value: T?) {
     setData(key, value)
 }
-
-fun <T: Any> FabricRenderState.getOrCreate(key: RenderStateDataKey<T>, create: () -> T): T = get(key) ?: create().also {
-    this[key] = it
-}
