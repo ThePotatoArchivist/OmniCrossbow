@@ -11,7 +11,6 @@ import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.Abstra
 import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge;
 import net.minecraft.world.level.Level;
 
-@SuppressWarnings("UnstableApiUsage")
 @Mixin(WindCharge.class)
 public abstract class WindChargeMixin extends AbstractWindCharge {
     public WindChargeMixin(EntityType<? extends AbstractWindCharge> type, Level level) {

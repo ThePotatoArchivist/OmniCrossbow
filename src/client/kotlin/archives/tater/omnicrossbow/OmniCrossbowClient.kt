@@ -19,7 +19,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
@@ -45,7 +45,7 @@ object OmniCrossbowClient : ClientModInitializer {
 	fun isCrossbow(id: Identifier?): Boolean = BuiltInRegistries.ITEM.getValue(id) is CrossbowItem
 
 	@JvmStatic
-	fun renderEyeVignette(graphics: GuiGraphics, location: Identifier) {
+	fun renderEyeVignette(graphics: GuiGraphicsExtractor, location: Identifier) {
 		if (spyEye == null || Minecraft.getInstance().options.cameraType != CameraType.FIRST_PERSON) return
 
 		graphics.blit(RenderPipelines.GUI_NAUSEA_OVERLAY, location, 0, 0, 0.0F, 0.0F, graphics.guiWidth(), graphics.guiHeight(), graphics.guiWidth(), graphics.guiHeight(), 0xFF71AC49u.toInt());
@@ -81,6 +81,10 @@ object OmniCrossbowClient : ClientModInitializer {
 			val spyEye = spyEye ?: return@register
 			if (spyEye.isRemoved || spyEye.level() != minecraft.level) {
 				this.spyEye = null
+				with (Minecraft.getInstance().gameRenderer.mainCamera) {
+					if (entity() == spyEye)
+						setEntity(minecraft.player!!)
+				}
 				lastEyeInput = Vec3.ZERO
 				return@register
 			}
@@ -132,8 +136,11 @@ object OmniCrossbowClient : ClientModInitializer {
 		}
 
 		ClientPlayNetworking.registerGlobalReceiver(ViewSpyEyePayload.TYPE) { (entityId), context ->
-			spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
-			context.player().displayClientMessage(Component.translatable(EYE_HINT, context.client().options.keyShift.translatedKeyMessage), true)
+			val spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
+			this.spyEye = spyEye
+			if (spyEye != null)
+				Minecraft.getInstance().gameRenderer.mainCamera.setEntity(spyEye)
+			context.player().sendOverlayMessage(Component.translatable(EYE_HINT, context.client().options.keyShift.translatedKeyMessage))
 		}
 	}
 }

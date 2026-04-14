@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.state.FishingHookRenderState
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
-import net.minecraft.client.renderer.state.CameraRenderState
+import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.resources.Identifier
 import net.minecraft.util.Mth.*
 import net.minecraft.world.entity.HumanoidArm
@@ -63,12 +63,13 @@ class GrappleFishingHookRenderer(context: EntityRendererProvider.Context) :
 
     private fun getHandPos(owner: LivingEntity, swing: Float, partialTicks: Float): Vec3 {
         val invert = if (getHoldingArm(owner) == HumanoidArm.RIGHT) 1 else -1
-        if (this.entityRenderDispatcher.options.cameraType.isFirstPerson && owner === Minecraft.getInstance().player
+        if (entityRenderDispatcher.options.cameraType.isFirstPerson && owner === Minecraft.getInstance().player
         ) {
-            val viewBobbingScale: Double = 960.0 / this.entityRenderDispatcher.options.fov().get()
-            val viewVec: Vec3 = this.entityRenderDispatcher
+            val fov = entityRenderDispatcher.options.fov().get()
+            val viewBobbingScale: Double = 960.0 / fov
+            val viewVec: Vec3 = entityRenderDispatcher
                 .camera!!
-                .getNearPlane()
+                .getNearPlane(fov.toFloat())
                 .getPointOnPlane(invert * 0.525f, -0.1f)
                 .scale(viewBobbingScale)
                 .yRot(swing * 0.5f)
@@ -78,7 +79,7 @@ class GrappleFishingHookRenderer(context: EntityRendererProvider.Context) :
             val ownerYRot = lerp(partialTicks, owner.yBodyRotO, owner.yBodyRot) * DEG_TO_RAD
             val sin = sin(ownerYRot.toDouble()).toDouble()
             val cos = cos(ownerYRot.toDouble()).toDouble()
-            val playerScale = owner.getScale()
+            val playerScale = owner.scale
             val rightOffset = invert * 0.35 * playerScale
             val forwardOffset = 0.8 * playerScale
             val yOffset = if (owner.isCrouching) -0.1875f else 0.0f

@@ -17,6 +17,7 @@ import net.minecraft.core.Holder
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.valueproviders.IntProvider
+import net.minecraft.util.valueproviders.IntProviders
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
@@ -97,7 +98,7 @@ data class ProjectileBehavior(
 
         companion object {
             val CODEC: Codec<Delay> = RecordCodecBuilder.create { it.group(
-                IntProvider.NON_NEGATIVE_CODEC.fieldOf("ticks").forGetter(Delay::ticks),
+                IntProviders.NON_NEGATIVE_CODEC.fieldOf("ticks").forGetter(Delay::ticks),
                 SoundEvent.CODEC.optionalFieldOf("charge_sound").forGetter(Delay::chargeSound)
             ).apply(it, ::Delay) }
         }

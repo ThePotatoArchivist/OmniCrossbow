@@ -20,7 +20,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.level.Level;
 
-@SuppressWarnings("UnstableApiUsage")
 @Mixin(CrossbowItem.class)
 public class CrossbowItemMixin {
     @ModifyExpressionValue(

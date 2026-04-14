@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.util.valueproviders.ConstantFloat
 import net.minecraft.util.valueproviders.FloatProvider
+import net.minecraft.util.valueproviders.FloatProviders
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.HitResult
 
@@ -44,8 +45,8 @@ data class PlaySound(
 
         val CODEC: MapCodec<PlaySound> = RecordCodecBuilder.mapCodec { it.group(
             SoundEvent.CODEC.fieldOf("sound_event").forGetter(PlaySound::soundEvent),
-            FloatProvider.codec(0f, Float.MAX_VALUE).optionalFieldOf("volume", ONE).forGetter(PlaySound::volume),
-            FloatProvider.codec(0f, Float.MAX_VALUE).optionalFieldOf("pitch", ONE).forGetter(PlaySound::pitch),
+            FloatProviders.codec(0f, Float.MAX_VALUE).optionalFieldOf("volume", ONE).forGetter(PlaySound::volume),
+            FloatProviders.codec(0f, Float.MAX_VALUE).optionalFieldOf("pitch", ONE).forGetter(PlaySound::pitch),
         ).apply(it, ::PlaySound) }
     }
 }

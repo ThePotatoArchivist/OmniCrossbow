@@ -18,7 +18,6 @@ public abstract class ProjectileMixin extends Entity {
         super(type, level);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @ModifyVariable(
             method = "shoot",
             at = @At("HEAD"),

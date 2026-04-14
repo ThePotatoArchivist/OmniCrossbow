@@ -2,7 +2,7 @@ package archives.tater.omnicrossbow.datagen
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack.RegistryDependentFactory
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
-import net.minecraft.client.renderer.block.model.ItemTransform
+import net.minecraft.client.resources.model.cuboid.ItemTransform
 import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry

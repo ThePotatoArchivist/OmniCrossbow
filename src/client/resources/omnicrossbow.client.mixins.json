@@ -5,7 +5,6 @@
   "client": [
     "EndCrystalModelMixin",
     "ModelBakeryMixin",
-    "endereye.CameraMixin",
     "endereye.ClientChunkCacheStorageMixin",
     "endereye.GameRendererMixin",
     "endereye.GuiMixin",

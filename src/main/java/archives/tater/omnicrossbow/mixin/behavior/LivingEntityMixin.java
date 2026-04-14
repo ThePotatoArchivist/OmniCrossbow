@@ -18,7 +18,6 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, level);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Inject(
             method = "tick",
             at = @At("TAIL")

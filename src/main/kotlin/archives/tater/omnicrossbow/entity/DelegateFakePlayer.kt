@@ -34,7 +34,7 @@ class DelegateFakePlayer(level: ServerLevel, val stack: ItemStack, val owner: Li
         private fun createGameProfile(owner: LivingEntity?, stack: ItemStack) = if (owner == null) {
             GameProfile(DEFAULT_UUID, "flying ${stack.hoverName.string}")
         } else {
-            GameProfile(owner.uuid, "${stack.hoverName.string} shot by ${owner.displayName?.string}")
+            GameProfile(owner.uuid, "${stack.hoverName.string} shot by ${owner.displayName.string}")
         }
 
         @Suppress("CAST_NEVER_SUCCEEDS")

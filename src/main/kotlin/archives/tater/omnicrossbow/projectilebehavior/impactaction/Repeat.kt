@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.valueproviders.IntProvider
+import net.minecraft.util.valueproviders.IntProviders
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.phys.HitResult
 
@@ -28,7 +29,7 @@ data class Repeat(val times: IntProvider, val action: ImpactAction) : ImpactActi
 
     companion object {
         val CODEC: MapCodec<Repeat> = RecordCodecBuilder.mapCodec { it.group(
-            IntProvider.NON_NEGATIVE_CODEC.fieldOf("times").forGetter(Repeat::times),
+            IntProviders.NON_NEGATIVE_CODEC.fieldOf("times").forGetter(Repeat::times),
             ImpactAction.CODEC.fieldOf("action").forGetter(Repeat::action)
         ).apply(it, ::Repeat) }
     }

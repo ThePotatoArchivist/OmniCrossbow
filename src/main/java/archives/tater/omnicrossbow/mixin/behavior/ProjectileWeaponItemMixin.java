@@ -41,7 +41,6 @@ import static archives.tater.omnicrossbow.util.OmniUtil.getOrSet;
 
 @Mixin(ProjectileWeaponItem.class)
 public class ProjectileWeaponItemMixin {
-    @SuppressWarnings({"UnstableApiUsage"})
     @WrapOperation(
             method = "shoot",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectile(Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Ljava/util/function/Consumer;)Lnet/minecraft/world/entity/projectile/Projectile;")

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 @Mixin(Gui.class)
@@ -21,10 +21,10 @@ public class GuiMixin {
     private static Identifier VIGNETTE_LOCATION;
 
     @Inject(
-            method = "renderCameraOverlays",
+            method = "extractCameraOverlays",
             at = @At("TAIL")
     )
-    private void renderEyeOverlay(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void renderEyeOverlay(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         OmniCrossbowClient.renderEyeVignette(graphics, VIGNETTE_LOCATION);
     }
 }

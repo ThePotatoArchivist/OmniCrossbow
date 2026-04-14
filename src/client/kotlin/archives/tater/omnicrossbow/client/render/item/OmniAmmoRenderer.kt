@@ -6,24 +6,23 @@ import com.mojang.serialization.MapCodec
 import net.minecraft.client.Minecraft
 import net.minecraft.client.data.models.model.ItemModelUtils
 import net.minecraft.client.renderer.SubmitNodeCollector
-import net.minecraft.client.renderer.block.model.ItemTransform
 import net.minecraft.client.renderer.item.*
 import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem
 import net.minecraft.client.renderer.item.properties.numeric.CrossbowPull
 import net.minecraft.client.renderer.special.SpecialModelRenderer
+import net.minecraft.client.resources.model.cuboid.ItemTransform
 import net.minecraft.core.component.DataComponents
 import net.minecraft.util.Mth.PI
-import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import org.joml.Vector3fc
+import java.util.*
 import java.util.function.Consumer
 
 class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelRenderer<OmniAmmoRenderer.State> {
     override fun submit(
         argument: State?,
-        type: ItemDisplayContext,
         poseStack: PoseStack,
         submitNodeCollector: SubmitNodeCollector,
         lightCoords: Int,
@@ -79,11 +78,11 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
         val transform: ItemTransform,
     )
 
-    object Unbaked : SpecialModelRenderer.Unbaked {
-        override fun bake(context: SpecialModelRenderer.BakingContext): SpecialModelRenderer<*> =
+    object Unbaked : SpecialModelRenderer.Unbaked<State> {
+        override fun bake(context: SpecialModelRenderer.BakingContext): SpecialModelRenderer<State> =
             OmniAmmoRenderer(Minecraft.getInstance().itemModelResolver)
 
-        override fun type(): MapCodec<out SpecialModelRenderer.Unbaked> = CODEC
+        override fun type(): MapCodec<out SpecialModelRenderer.Unbaked<State>> = CODEC
 
         val CODEC: MapCodec<Unbaked> = MapCodec.unit(this)
     }
@@ -99,12 +98,12 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
             else -> null
         }
 
-        private fun findDefault(model: ItemModel.Unbaked): BlockModelWrapper.Unbaked? = when (model) {
+        private fun findDefault(model: ItemModel.Unbaked): CuboidItemModelWrapper.Unbaked? = when (model) {
             is RangeSelectItemModel.Unbaked -> findDefault(model.fallback.orElseGet { model.entries.first().model })
             is SelectItemModel.Unbaked -> findDefault(model.fallback.orElseGet { model.unbakedSwitch.cases.first().model })
             is ConditionalItemModel.Unbaked -> findDefault(model.onFalse)
             is CompositeModel.Unbaked -> findDefault(model.models.first())
-            is BlockModelWrapper.Unbaked -> model
+            is CuboidItemModelWrapper.Unbaked -> model
             else -> null
         }
 
@@ -114,7 +113,7 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
             return ItemModelUtils.conditional(IsOmniAmmo,
                 ItemModelUtils.composite(
                     pulling,
-                    SpecialModelWrapper.Unbaked(reference.model, Unbaked)
+                    SpecialModelWrapper.Unbaked(reference.model, Optional.empty(), Unbaked)
                 ),
                 model,
             )

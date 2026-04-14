@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.valueproviders.IntProvider
+import net.minecraft.util.valueproviders.IntProviders
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -48,7 +49,7 @@ data class ProjectileSpray private constructor(
     companion object {
         val CODEC: MapCodec<ProjectileSpray> = RecordCodecBuilder.mapCodec { it.group(
             EntityType.CODEC.fieldOf("entity").forGetter(ProjectileSpray::type),
-            IntProvider.NON_NEGATIVE_CODEC.fieldOf("count").forGetter(ProjectileSpray::count),
+            IntProviders.NON_NEGATIVE_CODEC.fieldOf("count").forGetter(ProjectileSpray::count),
             ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("uncertainty").forGetter(ProjectileSpray::uncertainty)
         ).apply(it, ::ProjectileSpray) }
 
