@@ -3,19 +3,8 @@
   "package": "archives.tater.omnicrossbow.mixin.client",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "ChargeMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "mixins": [
     "EndCrystalModelMixin",
     "ModelBakeryMixin",
-    "enchantmenteffect.spin.ArmedEntityRenderStateMixin",
-    "enchantmenteffect.spin.HumanoidModelMixin",
-    "enchantmenteffect.spin.ItemInHandLayerMixin",
-    "enchantmenteffect.spin.ItemInHandRendererMixin",
-    "enchantmenteffect.spin.LocalPlayerMixin",
     "endereye.CameraMixin",
     "endereye.ClientChunkCacheStorageMixin",
     "endereye.GameRendererMixin",
@@ -23,5 +12,8 @@
     "endereye.LevelRendererMixin",
     "endereye.LocalPlayerMixin",
     "endereye.MouseHandlerMixin"
-  ]
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

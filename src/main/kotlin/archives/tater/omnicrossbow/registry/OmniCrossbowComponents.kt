@@ -7,8 +7,6 @@ import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.world.item.component.ChargedProjectiles
-import net.minecraft.world.item.component.UseEffects
 
 object OmniCrossbowComponents {
 
@@ -24,11 +22,7 @@ object OmniCrossbowComponents {
         if (cache) cacheEncoding()
     }
 
-    @JvmField
-    val ADDITIONAL_CHARGED_PROJECTILES = register("additional_charged_projectiles", ChargedProjectiles.CODEC, ChargedProjectiles.STREAM_CODEC)
 
-    @JvmField
-    val SPIN_CROSSBOW_USAGE = UseEffects(true, false, 1f)
 
     fun init() {
 

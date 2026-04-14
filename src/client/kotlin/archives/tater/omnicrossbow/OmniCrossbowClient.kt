@@ -1,7 +1,6 @@
 package archives.tater.omnicrossbow
 
 import archives.tater.omnicrossbow.client.render.AmmoPosition
-import archives.tater.omnicrossbow.client.render.ChargedProjectileIndicatorRenderer
 import archives.tater.omnicrossbow.client.render.entity.BeaconLaserRenderer
 import archives.tater.omnicrossbow.client.render.entity.EmberRenderer
 import archives.tater.omnicrossbow.client.render.entity.EndCrystalProjectileRenderer
@@ -33,7 +32,6 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.CrossbowItem
-import net.minecraft.world.item.Items
 import net.minecraft.world.phys.Vec3
 
 object OmniCrossbowClient : ClientModInitializer {
@@ -55,8 +53,6 @@ object OmniCrossbowClient : ClientModInitializer {
 
 	override fun onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		ChargedProjectileIndicatorRenderer.register()
-
 		EntityRenderers.register(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE, ::ThrownItemRenderer) // TODO temporary
 		EntityRenderers.register(OmniCrossbowEntities.SLIME_BALL, ::ThrownItemRenderer)
 		EntityRenderers.register(OmniCrossbowEntities.MAGMA_CREAM, ::ThrownItemRenderer)

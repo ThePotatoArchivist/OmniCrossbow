@@ -7,11 +7,6 @@
   "death.attack.omnicrossbow.fire_projectile.item": "%s was flambéed by %s using %s",
   "death.attack.omnicrossbow.sonic_boom": "%s was obliterated by a sonically-charged shriek from %s",
   "death.attack.omnicrossbow.sonic_boom.item": "%s was obliterated by a sonically-charged shriek from %s using %s",
-  "enchantment.omnicrossbow.magazine": "Magazine",
-  "enchantment.omnicrossbow.multichambered": "Multichambered",
   "enchantment.omnicrossbow.omni": "Omni",
-  "enchantment.omnicrossbow.pump_charge": "Pump Charge",
-  "enchantment.omnicrossbow.sharpshooting": "Sharpshooting",
-  "enchantment.omnicrossbow.twirling_curse": "Curse of Twirling",
   "omnicrossbow.endereye.beginview": "Press %s to stop observing"
 }

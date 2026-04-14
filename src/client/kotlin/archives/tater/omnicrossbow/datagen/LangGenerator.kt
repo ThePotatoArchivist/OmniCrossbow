@@ -19,12 +19,7 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
             item?.let { translationBuilder.add("death.attack.$msgId.item", it) }
         }
 
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.MULTICHAMBERED, "Multichambered")
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.PUMP_CHARGE, "Pump Charge")
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.MAGAZINE, "Magazine")
         translationBuilder.addEnchantment(OmniCrossbowEnchantments.OMNI, "Omni")
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.SHARPSHOOTING, "Sharpshooting")
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.TWIRLING_CURSE, "Curse of Twirling")
         add(OmniCrossbowDamageTypes.FIRE_BEAM,
             normal = "%s was caramelized by %s",
             item = "%s was caramelized by %s using %s",

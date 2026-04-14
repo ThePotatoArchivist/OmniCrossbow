@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.enchantment.Enchantment
-import net.minecraft.world.item.enchantment.Enchantments
 import java.util.concurrent.CompletableFuture
 
 class EnchantmentTagGenerator(
@@ -23,32 +22,11 @@ class EnchantmentTagGenerator(
     }
 
     override fun addTags(registries: HolderLookup.Provider) {
-        buildTag(EnchantmentTags.NON_TREASURE) {
-            +OmniCrossbowEnchantments.MULTICHAMBERED
-        }
         buildTag(EnchantmentTags.CROSSBOW_EXCLUSIVE) {
-            +OmniCrossbowEnchantments.MAGAZINE
             +OmniCrossbowEnchantments.OMNI
-            +OmniCrossbowEnchantments.SHARPSHOOTING
         }
-        buildTag(OmniCrossbowEnchantments.MAGAZINE_EXCLUSIVE) {
-            +EnchantmentTags.CROSSBOW_EXCLUSIVE
-            +Enchantments.QUICK_CHARGE
-            +OmniCrossbowEnchantments.PUMP_CHARGE
-            +OmniCrossbowEnchantments.SHARPSHOOTING
-            +OmniCrossbowEnchantments.MULTICHAMBERED
-        }
-        buildTag(OmniCrossbowEnchantments.MULTICHAMBERED_EXCLUSIVE) {
-            +Enchantments.QUICK_CHARGE
-            +Enchantments.MULTISHOT
-            +OmniCrossbowEnchantments.PUMP_CHARGE
-        }
-        buildTag(OmniCrossbowEnchantments.PUMP_CHARGE_EXCLUSIVE) {
-            +Enchantments.PIERCING
-            +Enchantments.MULTISHOT
-        }
-        buildTag(EnchantmentTags.CURSE) {
-            +OmniCrossbowEnchantments.TWIRLING_CURSE
+        buildTag(EnchantmentTags.TREASURE) {
+            +OmniCrossbowEnchantments.OMNI
         }
     }
 
