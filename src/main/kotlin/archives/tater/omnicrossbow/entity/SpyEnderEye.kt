@@ -1,6 +1,5 @@
 package archives.tater.omnicrossbow.entity
 
-import archives.tater.omnicrossbow.EntityNullFix
 import archives.tater.omnicrossbow.network.SpyEyeInputPayload
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
 import archives.tater.omnicrossbow.util.lookAtAngle
@@ -16,10 +15,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.damagesource.DamageSource
-import net.minecraft.world.entity.EntityDimensions
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.MoverType
-import net.minecraft.world.entity.Pose
+import net.minecraft.world.entity.*
 import net.minecraft.world.entity.projectile.ItemSupplier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -30,7 +26,7 @@ import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
-class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullFix(type, level), ItemSupplier {
+class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : Entity(type, level), ItemSupplier {
 
     var owner: ServerPlayer? = null
         private set
@@ -49,8 +45,7 @@ class SpyEnderEye(type: EntityType<out SpyEnderEye>, level: Level) : EntityNullF
     constructor(player: ServerPlayer) : this(OmniCrossbowEntities.SPY_ENDER_EYE, player.level()) {
         setPos(player.x, player.eyeY - 0.1, player.z)
         owner = player
-        val fakePlayer = EyeFakePlayer(player)
-        this.fakePlayer = fakePlayer
+        fakePlayer = EyeFakePlayer(player)
     }
 
     override fun tick() {
