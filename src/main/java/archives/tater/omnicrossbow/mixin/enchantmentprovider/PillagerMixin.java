@@ -34,5 +34,6 @@ public abstract class PillagerMixin extends AbstractIllager {
         var crossbow = new ItemStack(Items.CROSSBOW);
         EnchantmentHelper.enchantItemFromProvider(crossbow, level.registryAccess(), OmniCrossbowEnchantments.RAID_PILLAGER_FINAL_WAVE_UNIQUE, level.getCurrentDifficultyAt(this.blockPosition()), this.getRandom());
         setItemSlot(EquipmentSlot.MAINHAND, crossbow);
+        setDropChance(EquipmentSlot.MAINHAND, 1f);
     }
 }

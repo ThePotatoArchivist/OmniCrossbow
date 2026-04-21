@@ -23,7 +23,6 @@ class DamageTagGenerator(
 
     override fun addTags(registries: HolderLookup.Provider) {
         buildTag(DamageTypeTags.BYPASSES_COOLDOWN) {
-            forceAddTag(DamageTypeTags.IS_PROJECTILE)
             add(OmniCrossbowDamageTypes.BEACON)
         }
         buildTag(DamageTypeTags.NO_KNOCKBACK) {
