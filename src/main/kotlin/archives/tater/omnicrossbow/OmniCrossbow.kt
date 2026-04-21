@@ -30,5 +30,6 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowEntities.init()
 		OmniCrossbowSounds.init()
 		OmniCrossbowNetworking.init()
+		OmniCrossbowLoot.init()
 	}
 }

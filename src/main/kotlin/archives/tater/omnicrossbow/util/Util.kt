@@ -14,7 +14,6 @@ import net.minecraft.advancements.criterion.MinMaxBounds
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.core.RegistryCodecs
-import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
@@ -25,14 +24,12 @@ import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
 import net.minecraft.util.RandomSource
-import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import io.netty.buffer.ByteBuf
@@ -42,15 +39,6 @@ import java.util.function.Predicate
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import kotlin.reflect.KProperty1
-
-inline fun <T: Any, U: Any> getFirstEnchantmentComponent(stack: ItemStack, type: DataComponentType<T>, combine: (T, Int) -> U): U? {
-    if (stack.isEmpty) return null
-    for ((enchantment, level) in stack.enchantments.entrySet())
-        return combine(enchantment.value().effects()[type] ?: continue, level)
-    return null
-}
-
-val EMPTY_ITEM_PREDICATE = ItemPredicate {  }
 
 val NON_NEGATIVE_DOUBLE: Codec<Double> = Codec.doubleRange(0.0, Double.MAX_VALUE)
 
@@ -90,12 +78,6 @@ val BLOCK_STATE_SHORT_CODEC: Codec<BlockState> = Codec.either(
     { either -> either.map({ it.defaultBlockState() }, { it }) },
     { if (it == it.block.defaultBlockState()) Either.left(it.block) else Either.right(it) }
 )
-
-/**
- * @see net.minecraft.world.item.enchantment.EnchantmentEffectComponents.validatedListCodec
- */
-fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<List<T>> =
-    elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))
 
 fun <T: Any> Codec<Holder<T>>.valueCodec(registry: Registry<T>): Codec<T> = xmap(
     { it.value() },
@@ -175,9 +157,6 @@ fun getXRotForAngle(angle: Vector3f): Float = atan2(angle.y, sqrt(angle.x * angl
 fun Entity.lookAtAngle(angle: Vec3) {
     lookAtAngle(angle.toVector3f())
 }
-
-fun getYRotForAngle(angle: Vec3) = getYRotForAngle(angle.toVector3f())
-fun getXRotForAngle(angle: Vec3) = getXRotForAngle(angle.toVector3f())
 
 fun LivingEntity.giveOrDrop(stack: ItemStack) {
     if ((this as? Player)?.inventory?.add(stack) == true) return

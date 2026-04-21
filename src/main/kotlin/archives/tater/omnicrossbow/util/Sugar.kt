@@ -26,11 +26,17 @@ import net.minecraft.world.entity.EntityReference
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.Property
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootParams
+import net.minecraft.world.level.storage.loot.LootPool
+import net.minecraft.world.level.storage.loot.LootTable
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem
+import net.minecraft.world.level.storage.loot.entries.LootItem
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -60,6 +66,24 @@ fun DataComponentMatchers.Builder.hasAny(type: DataComponentType<*>) {
 
 fun EntityPredicate(init: EntityPredicate.Builder.() -> Unit): EntityPredicate = EntityPredicate.Builder.entity().apply(init).build()
 
+fun lootTable(init: LootTable.Builder.() -> Unit): LootTable.Builder =
+    LootTable.lootTable().apply(init)
+
+fun LootTable(init: LootTable.Builder.() -> Unit): LootTable =
+    lootTable(init).build()
+
+fun LootTable.Builder.pool(init: LootPool.Builder.() -> Unit) {
+    pool(LootPool.lootPool().apply(init).build())
+}
+
+fun LootPool.Builder.item(item: ItemLike, init: LootPoolSingletonContainer.Builder<*>.() -> Unit = {}) {
+    add(LootItem.lootTableItem(item).apply(init))
+}
+
+fun LootPool.Builder.empty(weight: Int) {
+    add(EmptyLootItem.emptyItem().setWeight(weight))
+}
+
 fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootParams.Builder.() -> Unit): LootContext =
     LootParams.Builder(level)
         .apply(init)
@@ -70,11 +94,6 @@ fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootPara
 fun ContextKeySet(init: ContextKeySet.Builder.() -> Unit): ContextKeySet = ContextKeySet.Builder().apply(init).build()
 
 operator fun <T: Any> LootContext.get(key: ContextKey<T>): T = getParameter(key)
-
-typealias McUnit = net.minecraft.util.Unit
-
-fun <T, U> ifNotNull(value: T?, transform: (T) -> U) = value?.let(transform)
-infix fun <T> T?.orElse(value: () -> T) = this ?: value()
 
 fun <T: Any> Codec<T>.singleOrList(): Codec<List<T>> = ExtraCodecs.compactListCodec(this)
 
