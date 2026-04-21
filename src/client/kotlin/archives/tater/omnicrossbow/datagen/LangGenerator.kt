@@ -8,9 +8,17 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider
 import net.minecraft.core.HolderLookup
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.damagesource.DamageType
+import net.minecraft.world.item.enchantment.Enchantment
 import java.util.concurrent.CompletableFuture
 
 class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFuture<HolderLookup.Provider>) : FabricLanguageProvider(packOutput, registryLookup) {
+
+    fun TranslationBuilder.addEnchantment(enchantment: ResourceKey<Enchantment>, name: String, description: String) {
+        addEnchantment(enchantment, name)
+        add(enchantment.identifier().toLanguageKey("enchantment", "description"), "An enchantment that $description")
+        add(enchantment.identifier().toLanguageKey("enchantment", "desc"), description.replaceFirstChar { it.uppercase() })
+    }
+
     override fun generateTranslations(registryLookup: HolderLookup.Provider, translationBuilder: TranslationBuilder) {
         fun add(key: ResourceKey<DamageType>, normal: String? = null, player: String? = null, item: String? = null) {
             val msgId = registryLookup.getOrThrow(key).value().msgId
@@ -19,7 +27,8 @@ class LangGenerator(packOutput: FabricPackOutput, registryLookup: CompletableFut
             item?.let { translationBuilder.add("death.attack.$msgId.item", it) }
         }
 
-        translationBuilder.addEnchantment(OmniCrossbowEnchantments.OMNI, "Omni")
+        translationBuilder.addEnchantment(OmniCrossbowEnchantments.OMNI, "Omni", "lets you shoot any item from the Crossbow")
+
         add(OmniCrossbowDamageTypes.FIRE_BEAM,
             normal = "%s was caramelized by %s",
             item = "%s was caramelized by %s using %s",

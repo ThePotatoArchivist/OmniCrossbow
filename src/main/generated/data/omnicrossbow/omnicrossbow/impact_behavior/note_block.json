@@ -139,7 +139,6 @@
               },
               {
                 "type": "omnicrossbow:play_sound",
-                "pitch": 1.0,
                 "sound_event": "minecraft:block.note_block.harp"
               },
               {

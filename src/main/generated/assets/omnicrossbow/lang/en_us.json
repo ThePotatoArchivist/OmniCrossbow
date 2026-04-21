@@ -8,5 +8,7 @@
   "death.attack.omnicrossbow.sonic_boom": "%s was obliterated by a sonically-charged shriek from %s",
   "death.attack.omnicrossbow.sonic_boom.item": "%s was obliterated by a sonically-charged shriek from %s using %s",
   "enchantment.omnicrossbow.omni": "Omni",
+  "enchantment.omnicrossbow.omni.desc": "Lets you shoot any item from the Crossbow",
+  "enchantment.omnicrossbow.omni.description": "An enchantment that lets you shoot any item from the Crossbow",
   "omnicrossbow.endereye.beginview": "Press %s to stop observing"
 }
