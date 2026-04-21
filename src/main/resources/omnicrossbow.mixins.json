@@ -27,6 +27,8 @@
     "behavior.access.ThrownTridentAccessor",
     "enchantmenteffect.ammo.MonsterMixin",
     "enchantmenteffect.ammo.PlayerMixin",
+    "enchantmentprovider.PillagerMixin",
+    "enchantmentprovider.RaidAccessor",
     "endereye.ChunkMapMixin",
     "endereye.ChunkMapTrackedEntityMixin",
     "grapplehook.LivingEntityMixin"
