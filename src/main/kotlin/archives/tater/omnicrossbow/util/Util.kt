@@ -24,12 +24,14 @@ import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
 import net.minecraft.util.RandomSource
+import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import io.netty.buffer.ByteBuf
@@ -78,6 +80,13 @@ val BLOCK_STATE_SHORT_CODEC: Codec<BlockState> = Codec.either(
     { either -> either.map({ it.defaultBlockState() }, { it }) },
     { if (it == it.block.defaultBlockState()) Either.left(it.block) else Either.right(it) }
 )
+
+/**
+ * @see net.minecraft.world.item.enchantment.EnchantmentEffectComponents.validatedListCodec
+ */
+fun <T : Validatable> validatedListCodec(elementCodec: Codec<T>, paramSet: ContextKeySet): Codec<List<T>> =
+    elementCodec.listOf().validate(Validatable.listValidatorForContext<T>(paramSet))
+
 
 fun <T: Any> Codec<Holder<T>>.valueCodec(registry: Registry<T>): Codec<T> = xmap(
     { it.value() },

@@ -37,6 +37,7 @@ import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem
 import net.minecraft.world.level.storage.loot.entries.LootItem
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
+import net.minecraft.world.level.storage.loot.entries.TagEntry.expandTag
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -80,6 +81,10 @@ fun LootPool.Builder.item(item: ItemLike, init: LootPoolSingletonContainer.Build
     add(LootItem.lootTableItem(item).apply(init))
 }
 
+fun LootPool.Builder.tag(tag: TagKey<Item>, init: LootPoolSingletonContainer.Builder<*>.() -> Unit = {}) {
+    add(expandTag(tag).apply(init))
+}
+
 fun LootPool.Builder.empty(weight: Int) {
     add(EmptyLootItem.emptyItem().setWeight(weight))
 }
@@ -94,6 +99,8 @@ fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootPara
 fun ContextKeySet(init: ContextKeySet.Builder.() -> Unit): ContextKeySet = ContextKeySet.Builder().apply(init).build()
 
 operator fun <T: Any> LootContext.get(key: ContextKey<T>): T = getParameter(key)
+
+typealias McUnit = net.minecraft.util.Unit
 
 fun <T: Any> Codec<T>.singleOrList(): Codec<List<T>> = ExtraCodecs.compactListCodec(this)
 

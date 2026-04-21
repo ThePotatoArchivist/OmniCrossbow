@@ -2,24 +2,7 @@
   "action": {
     "type": "omnicrossbow:any_of",
     "actions": [
-      {
-        "type": "omnicrossbow:conditional",
-        "condition": {
-          "type": "omnicrossbow:check_loot_condition",
-          "condition": {
-            "condition": "minecraft:inverted",
-            "term": {
-              "condition": "minecraft:match_tool",
-              "predicate": {
-                "predicates": {
-                  "minecraft:intangible_projectile": {}
-                }
-              }
-            }
-          }
-        },
-        "on_success": "omnicrossbow:use_item"
-      },
+      "omnicrossbow:use_item",
       {
         "type": "omnicrossbow:damage"
       }

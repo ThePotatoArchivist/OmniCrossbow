@@ -4,10 +4,46 @@
     "translate": "enchantment.omnicrossbow.omni"
   },
   "effects": {
-    "omnicrossbow:ammo": [
+    "omnicrossbow:allow_any_projectile": [
       {
-        "held": true,
-        "items": true
+        "effect": {}
+      }
+    ],
+    "omnicrossbow:default_projectile": [
+      {
+        "effect": {
+          "pools": [
+            {
+              "bonus_rolls": 0.0,
+              "entries": [
+                {
+                  "type": "minecraft:tag",
+                  "expand": true,
+                  "name": "omnicrossbow:mob_random_ammo"
+                }
+              ],
+              "functions": [
+                {
+                  "components": {
+                    "minecraft:intangible_projectile": {}
+                  },
+                  "function": "minecraft:set_components"
+                }
+              ],
+              "rolls": 1.0
+            }
+          ]
+        },
+        "requirements": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:player"
+            }
+          }
+        }
       }
     ]
   },

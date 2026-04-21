@@ -17,5 +17,32 @@ class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: Completab
             +Items.FIREWORK_ROCKET
             // Modded ammo will go here
         }
+        with(valueLookupBuilder(OmniCrossbowTags.MOB_RANDOM_AMMO)) {
+            +Items.FIRE_CHARGE
+            +Items.WITHER_SKELETON_SKULL
+            +Items.BLAZE_POWDER
+            +Items.SLIME_BALL
+            +Items.MAGMA_CREAM
+            +Items.ENDER_PEARL
+            +Items.COBWEB
+            +Items.SNOWBALL
+            +Items.EGG
+            +Items.HONEY_BOTTLE
+            +Items.BREEZE_ROD
+            +Items.WIND_CHARGE
+            +Items.AMETHYST_SHARD
+            +Items.GUNPOWDER
+            +Items.SALMON_BUCKET
+            +Items.CARVED_PUMPKIN
+            +Items.DIRT
+            +Items.WOODEN_SWORD
+            +Items.BRICK
+            +Items.IRON_SHOVEL
+            +Items.STONE_SPEAR
+            +Items.DAMAGED_ANVIL
+            +Items.CHORUS_FRUIT
+            +Items.EXPERIENCE_BOTTLE
+            +Items.TRIDENT
+        }
     }
 }
