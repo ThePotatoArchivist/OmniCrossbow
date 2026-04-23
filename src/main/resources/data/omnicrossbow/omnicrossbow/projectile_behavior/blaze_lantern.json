@@ -1,0 +1,15 @@
+{
+  "items": "netherarchives:blaze_lantern",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity": "netherarchives:blaze_lantern"
+  },
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "netherarchives"
+      ]
+    }
+  ]
+}

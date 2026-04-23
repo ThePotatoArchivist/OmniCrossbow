@@ -1,0 +1,15 @@
+{
+  "items": "#kitchenprojectiles:throwable_knives",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_projectile",
+    "entity": "kitchenprojectiles:knife"
+  },
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "kitchenprojectiles"
+      ]
+    }
+  ]
+}
