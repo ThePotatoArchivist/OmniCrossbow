@@ -17,6 +17,9 @@ class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: Completab
             +Items.FIREWORK_ROCKET
             // Modded ammo will go here
         }
+        with (valueLookupBuilder(OmniCrossbowTags.CREATIVE_INTANGIBLE_PROJECTILES)) {
+            +OmniCrossbowTags.BUILTIN_PROJECTILES
+        }
         with(valueLookupBuilder(OmniCrossbowTags.MOB_RANDOM_AMMO)) {
             +Items.FIRE_CHARGE
             +Items.WITHER_SKELETON_SKULL

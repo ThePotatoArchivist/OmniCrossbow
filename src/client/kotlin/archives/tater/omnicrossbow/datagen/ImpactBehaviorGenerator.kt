@@ -86,6 +86,19 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             }, behavior)
         }
 
+        val lootNotIntangible = invert(toolMatches(itemPredicateBuilder {
+            withComponents {
+                hasAny(DataComponents.INTANGIBLE_PROJECTILE)
+            }
+        }))
+
+        val notIntangible = CheckLootCondition(lootNotIntangible)
+
+        fun ifNotIntangible(action: ImpactAction) = Conditional(
+            condition = notIntangible,
+            onSuccess = action
+        )
+
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
 
         register(Items.MILK_BUCKET, OmniCrossbowImpactActions.CONSUME_ITEM)
@@ -170,7 +183,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(ItemTags.LIGHTNING_RODS, SideEffect(
             main = AnyOf(
                 OmniCrossbowImpactActions.IS_ENTITY,
-                OmniCrossbowImpactActions.USE_ITEM,
+                AllOf(
+                    notIntangible,
+                    OmniCrossbowImpactActions.USE_ITEM,
+                ),
             ),
             secondary = Conditional(
                 condition = BlockOffset(
@@ -260,14 +276,17 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register(DataComponents.EQUIPPABLE, Conditional(
-            condition = CheckLootCondition(anyOf(
-                hasProperties(
-                    LootContext.EntityTarget.TARGET_ENTITY,
-                    EntityPredicate {
-                        entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
-                    }
-                ),
-                CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
+            condition = CheckLootCondition(allOf(
+                lootNotIntangible,
+                anyOf(
+                    hasProperties(
+                        LootContext.EntityTarget.TARGET_ENTITY,
+                        EntityPredicate {
+                            entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
+                        }
+                    ),
+                    CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
+                )
             )),
             onSuccess = OmniCrossbowImpactActions.EQUIP
         ))
@@ -288,7 +307,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register("any", ItemPredicate {}, AnyOf(
-            OmniCrossbowImpactActions.USE_ITEM,
+            ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
             Damage()
         ))
     }
