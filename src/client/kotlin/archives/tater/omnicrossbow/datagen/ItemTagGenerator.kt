@@ -23,6 +23,7 @@ class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: Completab
         with(valueLookupBuilder(OmniCrossbowTags.MOB_RANDOM_AMMO)) {
             +Items.FIRE_CHARGE
             +Items.WITHER_SKELETON_SKULL
+            +Items.BLAZE_ROD
             +Items.BLAZE_POWDER
             +Items.SLIME_BALL
             +Items.MAGMA_CREAM
