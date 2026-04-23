@@ -16,9 +16,11 @@ import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.item.enchantment.Enchantment.*
 import net.minecraft.world.level.storage.loot.LootContext.EntityTarget
+import net.minecraft.world.level.storage.loot.functions.FilteredFunction
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction.setComponent
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition.hasProperties
+import java.util.*
 
 object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> {
     override fun run(registry: BootstrapContext<Enchantment>) {
@@ -46,7 +48,13 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
             withEffect(OmniCrossbowEnchantmentEffects.DEFAULT_PROJECTILE, LootTable {
                 pool {
                     tag(OmniCrossbowTags.MOB_RANDOM_AMMO)
-                    apply(setComponent(DataComponents.INTANGIBLE_PROJECTILE, McUnit.INSTANCE))
+                    apply(FilteredFunction.filtered(ItemPredicate {
+                        of(items, OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)
+                    }).apply {
+                        onFail(Optional.of(
+                            setComponent(DataComponents.INTANGIBLE_PROJECTILE, McUnit.INSTANCE).build()
+                        ))
+                    })
                 }
             }, invert(hasProperties(EntityTarget.THIS, EntityPredicate {
                 of(entities, EntityType.PLAYER)

@@ -86,17 +86,22 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             }, behavior)
         }
 
-        val lootNotIntangible = invert(toolMatches(itemPredicateBuilder {
+        val lootIntangible = toolMatches(itemPredicateBuilder {
             withComponents {
                 hasAny(DataComponents.INTANGIBLE_PROJECTILE)
             }
-        }))
+        })
+
+        val lootNotIntangible = invert(lootIntangible)
+
+        val intangible = CheckLootCondition(lootIntangible)
 
         val notIntangible = CheckLootCondition(lootNotIntangible)
 
-        fun ifNotIntangible(action: ImpactAction) = Conditional(
-            condition = notIntangible,
-            onSuccess = action
+        fun ifNotIntangible(action: ImpactAction, otherwise: ImpactAction = OmniCrossbowImpactActions.PASS) = Conditional(
+            condition = intangible,
+            onSuccess = otherwise,
+            onFail = action,
         )
 
         register(Items.GUNPOWDER, AllOf(Explode(ConstantFloat.of(1f), fire = true), OmniCrossbowImpactActions.SHRINK))
@@ -136,7 +141,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(Items.NOTE_BLOCK, SideEffect(
             main = Conditional(
                 condition = OmniCrossbowImpactActions.IS_BLOCK,
-                onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+                onSuccess = ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
                 onFail = Damage()
             ),
             secondary = AllOf(
@@ -153,7 +158,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(Items.BELL, SideEffect(
             main = Conditional(
                 condition = OmniCrossbowImpactActions.IS_BLOCK,
-                onSuccess = OmniCrossbowImpactActions.USE_ITEM,
+                onSuccess = ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
                 onFail = Damage()
             ),
             secondary = PlaySound(soundHolder(SoundEvents.BELL_BLOCK))
@@ -183,10 +188,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         register(ItemTags.LIGHTNING_RODS, SideEffect(
             main = AnyOf(
                 OmniCrossbowImpactActions.IS_ENTITY,
-                AllOf(
-                    notIntangible,
-                    OmniCrossbowImpactActions.USE_ITEM,
-                ),
+                ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
             ),
             secondary = Conditional(
                 condition = BlockOffset(
@@ -207,9 +209,12 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register(ConventionalItemTags.BUCKETS, AnyOf(
-            OmniCrossbowImpactActions.USE_ITEM,
-            OmniCrossbowImpactActions.USE_BUCKET,
+        register(ConventionalItemTags.BUCKETS, ifNotIntangible(
+            action = AnyOf(
+                OmniCrossbowImpactActions.USE_ITEM,
+                OmniCrossbowImpactActions.USE_BUCKET,
+            ),
+            otherwise = ImpactAction.None
         ))
 
         register(DataComponents.FIREWORK_EXPLOSION, SideEffect(
@@ -307,7 +312,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register("any", ItemPredicate {}, AnyOf(
-            ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
+            ifNotIntangible(
+                action = OmniCrossbowImpactActions.USE_ITEM,
+                otherwise = ImpactAction.None,
+            ),
             Damage()
         ))
     }

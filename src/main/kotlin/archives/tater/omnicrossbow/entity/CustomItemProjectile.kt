@@ -1,6 +1,7 @@
 package archives.tater.omnicrossbow.entity
 
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.ImpactAction
+import archives.tater.omnicrossbow.util.contains
 import net.minecraft.core.component.DataComponents
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityType
@@ -26,5 +27,5 @@ class CustomItemProjectile(type: EntityType<out CustomItemProjectile>, level: Le
         discard()
     }
 
-    private fun isItemIntangible(): Boolean = item.remove(DataComponents.INTANGIBLE_PROJECTILE) != null
+    private fun isItemIntangible(): Boolean = DataComponents.INTANGIBLE_PROJECTILE in item
 }

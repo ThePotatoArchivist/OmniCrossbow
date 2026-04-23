@@ -19,6 +19,8 @@ object OmniCrossbowTags {
 
     @JvmField val MOB_RANDOM_AMMO = ofItem("mob_random_ammo")
 
+    @JvmField val MOB_NON_INTANGIBLE_AMMO = ofItem("mob_non_intangible_ammo")
+
     @JvmField val HAS_PREFERRED_TOOL = ofBlock("has_preferred_tool")
 
     @JvmField val CAN_ALWAYS_EQUIP = ofEntity("can_always_equip")

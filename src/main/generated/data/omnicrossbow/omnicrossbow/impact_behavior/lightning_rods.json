@@ -6,24 +6,20 @@
       "actions": [
         "omnicrossbow:is_entity",
         {
-          "type": "omnicrossbow:all_of",
-          "actions": [
-            {
-              "type": "omnicrossbow:check_loot_condition",
-              "condition": {
-                "condition": "minecraft:inverted",
-                "term": {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "predicates": {
-                      "minecraft:intangible_projectile": {}
-                    }
-                  }
+          "type": "omnicrossbow:conditional",
+          "condition": {
+            "type": "omnicrossbow:check_loot_condition",
+            "condition": {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "predicates": {
+                  "minecraft:intangible_projectile": {}
                 }
               }
-            },
-            "omnicrossbow:use_item"
-          ]
+            }
+          },
+          "on_fail": "omnicrossbow:use_item",
+          "on_success": "omnicrossbow:pass"
         }
       ]
     },

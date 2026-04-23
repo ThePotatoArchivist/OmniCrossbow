@@ -7,7 +7,22 @@
       "on_fail": {
         "type": "omnicrossbow:damage"
       },
-      "on_success": "omnicrossbow:use_item"
+      "on_success": {
+        "type": "omnicrossbow:conditional",
+        "condition": {
+          "type": "omnicrossbow:check_loot_condition",
+          "condition": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:intangible_projectile": {}
+              }
+            }
+          }
+        },
+        "on_fail": "omnicrossbow:use_item",
+        "on_success": "omnicrossbow:pass"
+      }
     },
     "secondary": {
       "type": "omnicrossbow:all_of",

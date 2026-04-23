@@ -1,10 +1,24 @@
 {
   "action": {
-    "type": "omnicrossbow:any_of",
-    "actions": [
-      "omnicrossbow:use_item",
-      "omnicrossbow:use_bucket"
-    ]
+    "type": "omnicrossbow:conditional",
+    "condition": {
+      "type": "omnicrossbow:check_loot_condition",
+      "condition": {
+        "condition": "minecraft:match_tool",
+        "predicate": {
+          "predicates": {
+            "minecraft:intangible_projectile": {}
+          }
+        }
+      }
+    },
+    "on_fail": {
+      "type": "omnicrossbow:any_of",
+      "actions": [
+        "omnicrossbow:use_item",
+        "omnicrossbow:use_bucket"
+      ]
+    }
   },
   "items": "#c:buckets"
 }

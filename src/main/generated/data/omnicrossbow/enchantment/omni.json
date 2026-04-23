@@ -24,10 +24,16 @@
               ],
               "functions": [
                 {
-                  "components": {
-                    "minecraft:intangible_projectile": {}
+                  "function": "minecraft:filtered",
+                  "item_filter": {
+                    "items": "#omnicrossbow:mob_non_intangible_ammo"
                   },
-                  "function": "minecraft:set_components"
+                  "on_fail": {
+                    "components": {
+                      "minecraft:intangible_projectile": {}
+                    },
+                    "function": "minecraft:set_components"
+                  }
                 }
               ],
               "rolls": 1.0

@@ -47,5 +47,12 @@ class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: Completab
             +Items.EXPERIENCE_BOTTLE
             +Items.TRIDENT
         }
+        with (valueLookupBuilder(OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)) {
+            +Items.DIRT
+            +Items.COBWEB
+            +Items.DAMAGED_ANVIL
+            +Items.CARVED_PUMPKIN
+            +Items.BRICK
+        }
     }
 }
