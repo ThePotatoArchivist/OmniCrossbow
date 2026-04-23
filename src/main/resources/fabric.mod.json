@@ -47,5 +47,8 @@
 		"java": ">=25",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
+	},
+	"recommends": {
+		"lockedloaded": "*"
 	}
 }
