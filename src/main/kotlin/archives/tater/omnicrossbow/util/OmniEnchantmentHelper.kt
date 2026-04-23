@@ -31,13 +31,6 @@ inline fun <T: Any, U: Any> getFirstActiveEnchantmentComponent(stack: ItemStack,
 fun <T: Any> hasActiveEnchantmentComponent(stack: ItemStack, type: DataComponentType<List<ConditionalEffect<T>>>, filterData: (Int) -> LootContext) =
     getFirstActiveEnchantmentComponent(stack, type, filterData) { effect, _ -> effect } != null
 
-fun anyProjectileAllowed(weapon: ItemStack, level: ServerLevel, entity: Entity) = hasActiveEnchantmentComponent(
-        weapon,
-        OmniCrossbowEnchantmentEffects.ALLOW_ANY_PROJECTILE
-    ) {
-    enchantmentLevel: Int -> Enchantment.entityContext(level, enchantmentLevel, entity, entity.position())
-}
-
 fun getDefaultProjectile(heldWeapon: ItemStack, level: ServerLevel, entity: Entity): ItemStack? {
     var result: ItemStack? = null
     EnchantmentHelper.runIterationOnItem(heldWeapon) { enchantment, enchantmentLevel ->

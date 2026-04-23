@@ -1,4 +1,4 @@
-package archives.tater.omnicrossbow.mixin;
+package archives.tater.omnicrossbow.mixin.enchantmenteffect.anyprojectile;
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags;
 
