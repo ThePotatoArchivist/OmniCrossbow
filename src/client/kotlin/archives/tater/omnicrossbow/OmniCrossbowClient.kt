@@ -70,9 +70,9 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ModelLoadingPlugin.register { context ->
 			context.modifyItemModelBeforeBake().register { model, context ->
-				if (isCrossbow(context.itemId())) {
+				if (isCrossbow(context.itemId()))
 					OmniAmmoRenderer.wrapModel(model)
-				} else
+				else
 					model
 			}
 		}

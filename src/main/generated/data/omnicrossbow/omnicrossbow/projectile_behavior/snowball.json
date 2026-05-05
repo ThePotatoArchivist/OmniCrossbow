@@ -3,5 +3,6 @@
   "projectile_action": {
     "type": "omnicrossbow:spawn_projectile",
     "entity": "omnicrossbow:freezing_snowball"
-  }
+  },
+  "velocity_scale": 3.0
 }
