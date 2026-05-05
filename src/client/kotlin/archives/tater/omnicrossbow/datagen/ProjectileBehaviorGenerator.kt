@@ -21,6 +21,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
@@ -77,7 +78,7 @@ class ProjectileBehaviorGenerator(
         register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), ignoreGravityAiming = true))
         register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), ignoreGravityAiming = true, remainder = true))
         register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.WITHER_SHOOT), ignoreGravityAiming = true))
-        register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityType.TRIDENT), shootSound = SoundEvents.TRIDENT_THROW))
+        register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityType.TRIDENT, CompoundTag()), shootSound = SoundEvents.TRIDENT_THROW))
 
         register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
         register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))

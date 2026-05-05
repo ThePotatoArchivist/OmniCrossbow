@@ -25,7 +25,6 @@
     "behavior.access.MobInvoker",
     "behavior.access.PlayerInvoker",
     "behavior.access.ProjectileAccessor",
-    "behavior.access.ThrownTridentAccessor",
     "enchantmenteffect.anyprojectile.ProjectileUserMixin",
     "enchantmenteffect.defaultprojectile.ProjectileUserMixin",
     "enchantmentprovider.PillagerMixin",

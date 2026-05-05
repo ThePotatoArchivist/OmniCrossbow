@@ -1,13 +1,15 @@
 package archives.tater.omnicrossbow.projectilebehavior.projectileaction
 
 import archives.tater.omnicrossbow.mixin.behavior.access.AbstractArrowAccessor
-import archives.tater.omnicrossbow.mixin.behavior.access.ThrownTridentAccessor
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments
 import archives.tater.omnicrossbow.util.contains
+import archives.tater.omnicrossbow.util.merge
 import archives.tater.omnicrossbow.util.set
+import com.mojang.logging.LogUtils
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.component.DataComponents
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.EntitySpawnReason
@@ -15,10 +17,11 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow
-import net.minecraft.world.entity.projectile.arrow.ThrownTrident
 import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile
 import net.minecraft.world.item.ItemStack
+import org.slf4j.Logger
+import java.util.*
 
 fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
     fun createProjectile(
@@ -30,7 +33,10 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
 
     @ConsistentCopyVisibility
     @JvmRecord
-    data class Direct private constructor(val type: EntityType<*>) : SpawnProjectile<Projectile>, ProjectileAction.Inline {
+    data class Direct private constructor(
+        val type: EntityType<*>,
+        val nbt: Optional<CompoundTag> = Optional.empty()
+    ) : SpawnProjectile<Projectile>, ProjectileAction.Inline {
 
         override fun createProjectile(
             level: ServerLevel,
@@ -49,10 +55,8 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
                 if (DataComponents.INTANGIBLE_PROJECTILE in projectile)
                     pickup = AbstractArrow.Pickup.CREATIVE_ONLY
             }
-            (this as? ThrownTrident)?.apply {
-                this as ThrownTridentAccessor
-                entityData[ThrownTridentAccessor.getID_LOYALTY()] = invokeGetLoyaltyFromItem(projectile)
-                entityData[ThrownTridentAccessor.getID_FOIL()] = projectile.hasFoil()
+            nbt.ifPresent {
+                merge(LOGGER, it)
             }
         }
 
@@ -60,12 +64,15 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
 
         companion object {
             val CODEC: MapCodec<Direct> = RecordCodecBuilder.mapCodec { it.group(
-                EntityType.CODEC.fieldOf("entity").forGetter(Direct::type)
+                EntityType.CODEC.fieldOf("entity").forGetter(Direct::type),
+                CompoundTag.CODEC.optionalFieldOf("nbt").forGetter(Direct::nbt),
             ).apply(it, ::Direct) }
 
-            fun of(type: EntityType<out Projectile>) = Direct(type)
+            private val LOGGER: Logger = LogUtils.getLogger();
 
-            operator fun invoke(type: EntityType<out Projectile>) = of(type)
+            fun of(type: EntityType<out Projectile>, nbt: CompoundTag? = null) = Direct(type, Optional.ofNullable(nbt))
+
+            operator fun invoke(type: EntityType<out Projectile>, nbt: CompoundTag? = null) = of(type, nbt)
         }
     }
 

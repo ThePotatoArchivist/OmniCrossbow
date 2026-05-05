@@ -4,6 +4,7 @@ import archives.tater.omnicrossbow.mixin.behavior.access.FallingBlockEntityAcces
 import archives.tater.omnicrossbow.mixin.behavior.access.FallingBlockInvoker
 import archives.tater.omnicrossbow.mixin.behavior.access.ItemEntityAccessor
 import archives.tater.omnicrossbow.util.contains
+import archives.tater.omnicrossbow.util.merge
 import com.mojang.logging.LogUtils
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.TagValueInput
 import net.minecraft.world.level.storage.TagValueOutput
 import net.minecraft.world.phys.Vec3
+import org.slf4j.Logger
 import java.util.*
 
 fun interface SpawnEntity<T: Entity> : Delegated {
@@ -60,15 +62,27 @@ fun interface SpawnEntity<T: Entity> : Delegated {
     }
 
     @JvmRecord
-    data class Direct(val entityType: EntityType<*>) : SpawnEntity<Entity>, ProjectileAction.Inline {
+    data class Direct(val entityType: EntityType<*>, val nbt: Optional<CompoundTag> = Optional.empty()) : SpawnEntity<Entity>, ProjectileAction.Inline {
+
+        constructor(entityType: EntityType<*>, nbt: CompoundTag?) : this(entityType, Optional.ofNullable(nbt))
 
         override fun getType(projectile: ItemStack): EntityType<*> = entityType
+
+        override fun Entity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
+            nbt.ifPresent {
+                merge(LOGGER, it)
+            }
+        }
 
         override val codec: MapCodec<out Direct> get() = CODEC
 
         companion object {
-            val CODEC: MapCodec<Direct> = EntityType.CODEC.fieldOf("entity")
-                .xmap(::Direct, Direct::entityType)
+            val CODEC: MapCodec<Direct> = RecordCodecBuilder.mapCodec { it.group(
+                EntityType.CODEC.fieldOf("entity").forGetter(Direct::entityType),
+                CompoundTag.CODEC.optionalFieldOf("nbt").forGetter(Direct::nbt),
+            ).apply(it, ::Direct) }
+
+            private val LOGGER: Logger = LogUtils.getLogger();
         }
     }
 

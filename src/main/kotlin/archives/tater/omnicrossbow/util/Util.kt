@@ -19,10 +19,13 @@ import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
+import net.minecraft.util.ProblemReporter
+import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.RandomSource
 import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
@@ -31,11 +34,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.TagValueInput
+import net.minecraft.world.level.storage.TagValueOutput
 import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import io.netty.buffer.ByteBuf
 import org.joml.Vector3f
+import org.slf4j.Logger
 import java.util.*
 import java.util.function.Predicate
 import kotlin.math.atan2
@@ -170,4 +176,16 @@ fun Entity.lookAtAngle(angle: Vec3) {
 fun LivingEntity.giveOrDrop(stack: ItemStack) {
     if ((this as? Player)?.inventory?.add(stack) == true) return
     drop(stack, false, false)
+}
+
+fun Entity.merge(reporter: ProblemReporter, nbt: CompoundTag) {
+    val entityData = TagValueOutput.createWithContext(reporter, registryAccess())
+    saveWithoutId(entityData)
+    load(TagValueInput.create(reporter, registryAccess(), entityData.buildResult()))
+}
+
+fun Entity.merge(logger: Logger, nbt: CompoundTag) {
+    ScopedCollector(problemPath(), logger).use {
+        merge(it, nbt)
+    }
 }
