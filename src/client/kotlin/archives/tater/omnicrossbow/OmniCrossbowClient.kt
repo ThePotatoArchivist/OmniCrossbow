@@ -9,6 +9,7 @@ import archives.tater.omnicrossbow.client.render.item.OmniAmmoRenderer
 import archives.tater.omnicrossbow.entity.SpyEnderEye
 import archives.tater.omnicrossbow.network.*
 import archives.tater.omnicrossbow.registry.OmniCrossbowEntities
+import archives.tater.omnicrossbow.util.createConfigToml
 import archives.tater.omnicrossbow.util.minus
 import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.times
@@ -41,6 +42,8 @@ object OmniCrossbowClient : ClientModInitializer {
 	var lastEyeInput: Vec3 = Vec3.ZERO
 	const val EYE_HINT = "omnicrossbow.endereye.beginview"
 
+	val CONFIG = createConfigToml<OmniCrossbowClientConfig>("omnicrossbow_client")
+
 	@JvmStatic
 	fun isCrossbow(id: Identifier?): Boolean = BuiltInRegistries.ITEM.getValue(id) is CrossbowItem
 
@@ -70,7 +73,7 @@ object OmniCrossbowClient : ClientModInitializer {
 
 		ModelLoadingPlugin.register { context ->
 			context.modifyItemModelBeforeBake().register { model, context ->
-				if (isCrossbow(context.itemId())) {
+				if (CONFIG.renderAmmo && isCrossbow(context.itemId())) {
 					OmniAmmoRenderer.wrapModel(model)
 				} else
 					model

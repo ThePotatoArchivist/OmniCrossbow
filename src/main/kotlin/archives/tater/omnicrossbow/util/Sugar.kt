@@ -4,6 +4,7 @@ package archives.tater.omnicrossbow.util
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
+import net.fabricmc.loader.api.FabricLoader
 import com.mojang.serialization.Codec
 import net.minecraft.advancements.criterion.DataComponentMatchers
 import net.minecraft.advancements.criterion.EntityPredicate
@@ -39,6 +40,8 @@ import net.minecraft.world.level.storage.loot.entries.LootItem
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.entries.TagEntry.expandTag
 import net.minecraft.world.phys.Vec3
+import folk.sisby.kaleido.api.WrappedConfig
+import java.nio.file.Path
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KMutableProperty0
@@ -138,3 +141,14 @@ inline operator fun <reified E: Entity> KMutableProperty0<EntityReference<E>?>.s
 
 inline fun <reified E: Entity, T: Any> defineSynchedEntityData(type: EntityDataSerializer<T>): EntityDataAccessor<T> =
     SynchedEntityData.defineId(E::class.java, type)
+
+inline fun <reified Config: WrappedConfig> createConfigToml(
+    id: String,
+    familyId: String = "",
+    configPath: Path = FabricLoader.getInstance().configDir,
+): Config = WrappedConfig.createToml(
+    configPath,
+    familyId,
+    id,
+    Config::class.java
+)
