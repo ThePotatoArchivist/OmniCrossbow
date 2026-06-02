@@ -11,13 +11,15 @@ import archives.tater.omnicrossbow.util.*
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
+import net.minecraft.advancements.criterion.*
 import net.minecraft.advancements.criterion.BlockPredicate.Builder.block
-import net.minecraft.advancements.criterion.EntityTypePredicate
-import net.minecraft.advancements.criterion.ItemPredicate
 import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.HolderSet
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.component.predicates.AttributeModifiersPredicate
+import net.minecraft.core.component.predicates.DataComponentPredicates
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -31,6 +33,7 @@ import net.minecraft.util.valueproviders.ConstantInt
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
@@ -47,6 +50,7 @@ import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
 import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
 import net.minecraft.world.phys.Vec3
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: CompletableFuture<HolderLookup.Provider>) :
@@ -163,7 +167,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             main = Conditional(
                 condition = OmniCrossbowImpactActions.IS_BLOCK,
                 onSuccess = ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
-                onFail = Damage()
+                onFail = Damage(1f)
             ),
             secondary = AllOf(
                 Repeat(ConstantInt.of(5), SelectRandom((-12..24).map {
@@ -180,7 +184,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             main = Conditional(
                 condition = OmniCrossbowImpactActions.IS_BLOCK,
                 onSuccess = ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
-                onFail = Damage()
+                onFail = Damage(1f)
             ),
             secondary = PlaySound(soundHolder(SoundEvents.BELL_BLOCK))
         ))
@@ -337,7 +341,29 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 action = OmniCrossbowImpactActions.USE_ITEM,
                 otherwise = ImpactAction.None,
             ),
-            Damage()
+            Conditional(
+                condition = CheckLootCondition(toolMatches(itemPredicateBuilder {
+                    withComponents {
+                        partial(DataComponentPredicates.ATTRIBUTE_MODIFIERS, AttributeModifiersPredicate(Optional.of(
+                            CollectionPredicate(
+                                Optional.of(CollectionContentsPredicate.of(
+                                    AttributeModifiersPredicate.EntryPredicate(
+                                        Optional.of(HolderSet.direct(Attributes.ATTACK_DAMAGE)),
+                                        Optional.of(Item.BASE_ATTACK_DAMAGE_ID),
+                                        MinMaxBounds.Doubles.atLeast(0.0),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                    )
+                                )),
+                                Optional.empty(),
+                                Optional.empty(),
+                            )
+                        )))
+                    }
+                })),
+                onSuccess = MeleeDamage(),
+                onFail = Damage(1f)
+            )
         ))
     }
 

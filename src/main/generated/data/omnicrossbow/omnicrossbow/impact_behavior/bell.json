@@ -5,7 +5,8 @@
       "type": "omnicrossbow:conditional",
       "condition": "omnicrossbow:is_block",
       "on_fail": {
-        "type": "omnicrossbow:damage"
+        "type": "omnicrossbow:damage",
+        "amount": 1.0
       },
       "on_success": {
         "type": "omnicrossbow:conditional",

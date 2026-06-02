@@ -7,7 +7,7 @@
         "omnicrossbow:is_block",
         {
           "type": "omnicrossbow:damage",
-          "base_attack_damage": 8.0
+          "amount": 8.0
         }
       ]
     },

@@ -18,7 +18,37 @@
         "on_fail": "omnicrossbow:use_item"
       },
       {
-        "type": "omnicrossbow:damage"
+        "type": "omnicrossbow:conditional",
+        "condition": {
+          "type": "omnicrossbow:check_loot_condition",
+          "condition": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:attribute_modifiers": {
+                  "modifiers": {
+                    "contains": [
+                      {
+                        "amount": {
+                          "min": 0.0
+                        },
+                        "attribute": "minecraft:attack_damage",
+                        "id": "minecraft:base_attack_damage"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "on_fail": {
+          "type": "omnicrossbow:damage",
+          "amount": 1.0
+        },
+        "on_success": {
+          "type": "omnicrossbow:melee_damage"
+        }
       }
     ]
   },
