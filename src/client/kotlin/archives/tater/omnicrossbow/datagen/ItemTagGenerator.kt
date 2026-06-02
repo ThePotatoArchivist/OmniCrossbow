@@ -47,6 +47,8 @@ class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: Completab
             +Items.CHORUS_FRUIT
             +Items.EXPERIENCE_BOTTLE
             +Items.TRIDENT
+            +Items.INK_SAC
+            +Items.GLOW_BERRIES
         }
         with (valueLookupBuilder(OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)) {
             +Items.DIRT

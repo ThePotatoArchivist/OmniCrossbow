@@ -6,7 +6,7 @@
       "effects": [
         {
           "duration": 200,
-          "id": "minecraft:glowing",
+          "id": "minecraft:blindness",
           "show_icon": true
         }
       ]
@@ -21,14 +21,11 @@
         },
         {
           "type": "omnicrossbow:play_sound",
-          "sound_event": "minecraft:item.glow_ink_sac.use"
+          "sound_event": "minecraft:entity.squid.squirt"
         },
         "omnicrossbow:shrink"
       ]
     }
   },
-  "items": [
-    "minecraft:glowstone_dust",
-    "minecraft:glow_berries"
-  ]
+  "items": "minecraft:ink_sac"
 }

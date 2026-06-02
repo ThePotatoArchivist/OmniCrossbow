@@ -1,0 +1,46 @@
+{
+  "action": {
+    "type": "omnicrossbow:side_effect",
+    "main": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:apply_effects",
+          "effects": [
+            {
+              "duration": 200,
+              "id": "minecraft:glowing",
+              "show_icon": true
+            }
+          ]
+        },
+        {
+          "type": "omnicrossbow:apply_effects",
+          "effects": [
+            {
+              "duration": 200,
+              "id": "minecraft:blindness",
+              "show_icon": true
+            }
+          ]
+        }
+      ]
+    },
+    "secondary": {
+      "type": "omnicrossbow:all_of",
+      "actions": [
+        {
+          "type": "omnicrossbow:item_particle",
+          "count": 8,
+          "speed": 0.1
+        },
+        {
+          "type": "omnicrossbow:play_sound",
+          "sound_event": "minecraft:entity.glow_squid.squirt"
+        },
+        "omnicrossbow:shrink"
+      ]
+    }
+  },
+  "items": "minecraft:glow_ink_sac"
+}
