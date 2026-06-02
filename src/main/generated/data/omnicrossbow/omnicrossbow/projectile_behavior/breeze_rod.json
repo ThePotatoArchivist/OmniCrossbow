@@ -9,6 +9,7 @@
     "knockback": 5.0,
     "margin": 2.0,
     "particle": {
+      "count": 1,
       "particle": "minecraft:gust_emitter_small"
     },
     "particle_step": 2.0

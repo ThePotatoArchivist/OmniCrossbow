@@ -10,7 +10,7 @@ import net.minecraft.util.ExtraCodecs
 @JvmRecord
 data class ParticleConfig(
     val particle: ParticleOptions,
-    val count: Int = 1,
+    val count: Int = 0,
     val dx: Double = 0.0,
     val dy: Double = 0.0,
     val dz: Double = 0.0,
@@ -19,7 +19,7 @@ data class ParticleConfig(
     companion object {
         val MAP_CODEC: MapCodec<ParticleConfig> = RecordCodecBuilder.mapCodec { it.group(
             PARTICLE_OPTIONS_SHORT_CODEC.fieldOf(ParticleConfig::particle),
-            ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf(ParticleConfig::count, 1),
+            ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf(ParticleConfig::count, 0),
             NON_NEGATIVE_DOUBLE.optionalFieldOf(ParticleConfig::dx, 0.0),
             NON_NEGATIVE_DOUBLE.optionalFieldOf(ParticleConfig::dy, 0.0),
             NON_NEGATIVE_DOUBLE.optionalFieldOf(ParticleConfig::dz, 0.0),

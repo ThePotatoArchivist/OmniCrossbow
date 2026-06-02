@@ -20,6 +20,11 @@
           "speed": 0.1
         },
         {
+          "type": "omnicrossbow:show_particle",
+          "particle": "minecraft:glow_squid_ink",
+          "speed": 0.1
+        },
+        {
           "type": "omnicrossbow:play_sound",
           "sound_event": "minecraft:entity.squid.squirt"
         },

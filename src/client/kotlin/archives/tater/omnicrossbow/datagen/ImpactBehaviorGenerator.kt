@@ -149,6 +149,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             ),
             secondary = AllOf(
                 itemParticle,
+                ShowParticle(ParticleConfig(ParticleTypes.SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
                 PlaySound(soundHolder(SoundEvents.GLOW_SQUID_SQUIRT)),
                 OmniCrossbowImpactActions.SHRINK,
             )
@@ -158,6 +159,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             main = ApplyEffects(MobEffectInstance(MobEffects.BLINDNESS, 10 * 20)),
             secondary = AllOf(
                 itemParticle,
+                ShowParticle(ParticleConfig(ParticleTypes.GLOW_SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
                 PlaySound(soundHolder(SoundEvents.SQUID_SQUIRT)),
                 OmniCrossbowImpactActions.SHRINK,
             )
