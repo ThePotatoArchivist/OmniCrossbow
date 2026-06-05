@@ -31,13 +31,16 @@ import net.minecraft.util.context.ContextKeySet
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.entity.projectile.ProjectileUtil
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.TagValueInput
 import net.minecraft.world.level.storage.TagValueOutput
 import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
 import io.netty.buffer.ByteBuf
 import org.joml.Vector3f
@@ -104,29 +107,26 @@ inline fun <reified B: A, A> Codec<B>.narrow(crossinline error: (A) -> String): 
     { if (it is B) DataResult.success(it) else DataResult.error { error(it) } }
 )
 
+fun getEntityHitsPierced(
+    level: Level,
+    start: Vec3,
+    stop: Vec3,
+    margin: Double,
+    except: Entity,
+    predicate: Predicate<Entity> = Predicate { true }
+): Collection<EntityHitResult> {
+    val areaBox = AABB(start, stop).inflate(margin)
+    return ProjectileUtil.getManyEntityHitResult(level, except, start, stop, areaBox, predicate, margin.toFloat(), ClipContext.Block.COLLIDER, false)
+}
+
 fun getEntitiesPierced(
     level: Level,
     start: Vec3,
     stop: Vec3,
     margin: Double,
-    except: Entity?,
-    predicate: Predicate<Entity>?
-): List<Entity> {
-    val areaBox = AABB(start, stop).inflate(margin)
-    return level.getEntities(except, areaBox, { entity ->
-        val box = entity.boundingBox.inflate(margin + entity.pickRadius)
-        (box.contains(start) || box.clip(start, stop).isPresent) && predicate?.test(entity) != false
-    })
-}
-
-fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, except: Entity?): List<Entity> =
-    getEntitiesPierced(level, start, stop, margin, except, null)
-
-fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double, predicate: Predicate<Entity>?): List<Entity> =
-    getEntitiesPierced(level, start, stop, margin, null, predicate)
-
-fun getEntitiesPierced(level: Level, start: Vec3, stop: Vec3, margin: Double): List<Entity> =
-    getEntitiesPierced(level, start, stop, margin, null, null)
+    except: Entity,
+    predicate: Predicate<Entity> = Predicate { true }
+) = getEntityHitsPierced(level, start, stop, margin, except, predicate).map { it.entity }
 
 fun ServerLevel.sendParticleBeam(payload: ParticleBeamPayload) {
     val packet = ClientboundCustomPayloadPacket(payload)

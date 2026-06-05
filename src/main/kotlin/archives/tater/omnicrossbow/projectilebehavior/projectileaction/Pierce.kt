@@ -65,7 +65,7 @@ data class Pierce(
                 entity.hurtServer(level, DamageSource(
                     damageType.orElse(
                         level.registryAccess().getOrThrow(DamageTypes.GENERIC)
-                    ),
+                    )!!,
                     shooter
                 ), damage)
             if (knockback > 0)
