@@ -124,7 +124,9 @@ class ProjectileBehaviorGenerator(
 
         register(Items.FEATHER, ProjectileBehavior(SpawnEntity.Item, velocityScale = 0.3f))
 
-        register(Items.POINTED_DRIPSTONE, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
+        register("speleothems", ItemPredicate {
+            of (items, Items.POINTED_DRIPSTONE, Items.SULFUR_SPIKE)
+        }, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
             .setValue(PointedDripstoneBlock.THICKNESS, SpeleothemThickness.TIP_MERGE),
             damagePerDistance = 6f,

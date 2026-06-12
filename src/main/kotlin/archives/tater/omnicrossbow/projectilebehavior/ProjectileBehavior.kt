@@ -22,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.FallingBlock
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
@@ -83,7 +84,9 @@ data class ProjectileBehavior(
 
     fun getRemainder(projectile: ItemStack): ItemStack? = remainder.map(
         { if (it) when (val item = projectile.item) {
-            is MobBucketItem -> item.content.bucket.defaultInstance
+            is MobBucketItem -> item.content
+                .run { if (isSame(Fluids.EMPTY)) Items.BUCKET else bucket }
+                .defaultInstance
             else -> projectile.craftingRemainder?.create()
         } else null },
         { it.create() }
