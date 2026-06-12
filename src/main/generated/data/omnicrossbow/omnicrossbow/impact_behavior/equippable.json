@@ -28,8 +28,11 @@
                 }
               },
               {
-                "condition": "omnicrossbow:can_pick_up_loot",
-                "entity": "target_entity"
+                "condition": "minecraft:entity_properties",
+                "entity": "target_entity",
+                "predicate": {
+                  "omnicrossbow:can_pick_up_loot": {}
+                }
               }
             ]
           }

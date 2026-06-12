@@ -326,7 +326,12 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                             entityType(EntityTypePredicate.of(entities, OmniCrossbowTags.CAN_ALWAYS_EQUIP))
                         }
                     ),
-                    CanPickUpLoot(LootContext.EntityTarget.TARGET_ENTITY)
+                    hasProperties(
+                        LootContext.EntityTarget.TARGET_ENTITY,
+                        EntityPredicate {
+                            put(CanPickUpLoot.CODEC, CanPickUpLoot)
+                        }
+                    )
                 )
             )),
             onSuccess = OmniCrossbowImpactActions.EQUIP

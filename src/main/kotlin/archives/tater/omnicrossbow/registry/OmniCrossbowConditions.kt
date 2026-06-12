@@ -47,6 +47,6 @@ object OmniCrossbowConditions {
 
     fun init() {
         Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)
-        register("can_pick_up_loot", CanPickUpLoot.CODEC)
+        Registry.register(BuiltInRegistries.ENTITY_SUB_PREDICATE_TYPE, OmniCrossbow.id("can_pick_up_loot"), CanPickUpLoot.CODEC)
     }
 }

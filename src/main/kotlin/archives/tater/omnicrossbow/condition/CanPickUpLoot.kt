@@ -1,26 +1,16 @@
 package archives.tater.omnicrossbow.condition
 
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
-import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.util.context.ContextKey
+import net.minecraft.advancements.predicates.entity.EntitySubPredicate
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.level.storage.loot.LootContext
-import net.minecraft.world.level.storage.loot.LootContext.EntityTarget
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
+import net.minecraft.world.phys.Vec3
 
-@JvmRecord
-data class CanPickUpLoot(val entity: EntityTarget) : LootItemCondition, LootItemCondition.Builder {
-    override fun codec(): MapCodec<out LootItemCondition> = CODEC
+data object CanPickUpLoot : EntitySubPredicate {
+    override fun matches(entity: Entity, level: ServerLevel, position: Vec3?): Boolean =
+        (entity as? LivingEntity)?.canPickUpLoot() == true
 
-    override fun test(context: LootContext): Boolean = (entity[context] as? LivingEntity)?.canPickUpLoot() == true
-
-    override fun getReferencedContextParams(): Set<ContextKey<*>> = setOf(entity.contextParam())
-
-    override fun build(): LootItemCondition = this
-
-    companion object {
-        val CODEC: MapCodec<CanPickUpLoot> = RecordCodecBuilder.mapCodec { it.group(
-            EntityTarget.CODEC.fieldOf("entity").forGetter(CanPickUpLoot::entity)
-        ).apply(it, ::CanPickUpLoot) }
-    }
+    val CODEC: Codec<CanPickUpLoot> = MapCodec.unitCodec(this)
 }
