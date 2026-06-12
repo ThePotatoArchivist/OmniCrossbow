@@ -4,7 +4,7 @@ import archives.tater.omnicrossbow.util.ITEM_PREDICATE_SHORT_CODEC
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.advancements.criterion.ItemPredicate
+import net.minecraft.advancements.predicates.ItemPredicate
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.HolderSet
 import net.minecraft.core.Registry
@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import java.util.Comparator.comparingInt
 import java.util.stream.Stream
+import kotlin.comparisons.then
 import kotlin.jvm.optionals.getOrNull
 
 @JvmRecord

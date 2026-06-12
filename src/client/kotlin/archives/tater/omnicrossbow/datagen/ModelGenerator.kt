@@ -8,7 +8,7 @@ import net.minecraft.client.data.models.ItemModelGenerators
 
 class ModelGenerator(output: FabricPackOutput) : FabricModelProvider(output) {
     override fun generateBlockStateModels(blockModelGenerators: BlockModelGenerators) {
-        blockModelGenerators.createRotatableColumn(OmniCrossbowBlocks.HONEY_SLICK)
+        blockModelGenerators.createRotatableColumn(OmniCrossbowBlocks.HONEY_SLICK.value())
     }
 
     override fun generateItemModels(itemModelGenerators: ItemModelGenerators) {

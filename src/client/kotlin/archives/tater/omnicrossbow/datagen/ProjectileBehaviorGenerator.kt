@@ -13,7 +13,7 @@ import archives.tater.omnicrossbow.util.hasAny
 import archives.tater.omnicrossbow.util.withComponents
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
-import net.minecraft.advancements.criterion.ItemPredicate
+import net.minecraft.advancements.predicates.ItemPredicate
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentType
@@ -27,13 +27,13 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantInt
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.PointedDripstoneBlock
-import net.minecraft.world.level.block.state.properties.DripstoneThickness
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness
 import java.util.concurrent.CompletableFuture
 
 class ProjectileBehaviorGenerator(
@@ -70,18 +70,18 @@ class ProjectileBehaviorGenerator(
             }, behavior)
         }
 
-        register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EGG)))
-        register(Items.ENDER_PEARL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.ENDER_PEARL)))
-        register(Items.EXPERIENCE_BOTTLE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.EXPERIENCE_BOTTLE)))
-        register(Items.SPLASH_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SPLASH_POTION)))
-        register(Items.LINGERING_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityType.LINGERING_POTION)))
-        register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityType.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), ignoreGravityAiming = true))
-        register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityType.DRAGON_FIREBALL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), ignoreGravityAiming = true, remainder = true))
-        register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityType.WITHER_SKULL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.WITHER_SHOOT), ignoreGravityAiming = true))
-        register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityType.TRIDENT, CompoundTag()), shootSound = SoundEvents.TRIDENT_THROW))
+        register(ItemTags.EGGS, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.EGG)))
+        register(Items.ENDER_PEARL, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.ENDER_PEARL)))
+        register(Items.EXPERIENCE_BOTTLE, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.EXPERIENCE_BOTTLE)))
+        register(Items.SPLASH_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.SPLASH_POTION)))
+        register(Items.LINGERING_POTION, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.LINGERING_POTION)))
+        register(Items.FIRE_CHARGE, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.SMALL_FIREBALL), 0.03f, shootSound = soundHolder(SoundEvents.BLAZE_SHOOT), ignoreGravityAiming = true))
+        register(Items.DRAGON_BREATH, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.DRAGON_FIREBALL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.ENDER_DRAGON_SHOOT), ignoreGravityAiming = true, remainder = true))
+        register(Items.WITHER_SKELETON_SKULL, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.WITHER_SKULL), 0.03f, cooldownTicks = 2 * 20, shootSound = soundHolder(SoundEvents.WITHER_SHOOT), ignoreGravityAiming = true))
+        register(Items.TRIDENT, ProjectileBehavior(SpawnProjectile.Direct(EntityTypes.TRIDENT, CompoundTag()), shootSound = SoundEvents.TRIDENT_THROW))
 
-        register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityType.ARMOR_STAND)))
-        register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityType.TNT)))
+        register(Items.ARMOR_STAND, ProjectileBehavior(SpawnEntity.Direct(EntityTypes.ARMOR_STAND)))
+        register(Items.TNT, ProjectileBehavior(SpawnEntity.Direct(EntityTypes.TNT)))
         register(ItemTags.BOATS, ProjectileBehavior(OmniCrossbowProjectileActions.SPAWN_BOAT, 0.5f))
 
         register(Items.SNOWBALL, ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.FREEZING_SNOWBALL)))
@@ -126,7 +126,7 @@ class ProjectileBehaviorGenerator(
 
         register(Items.POINTED_DRIPSTONE, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
             .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
-            .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP_MERGE),
+            .setValue(PointedDripstoneBlock.THICKNESS, SpeleothemThickness.TIP_MERGE),
             damagePerDistance = 6f,
             damageMax = 40,
         ), velocityScale = 0.7f))

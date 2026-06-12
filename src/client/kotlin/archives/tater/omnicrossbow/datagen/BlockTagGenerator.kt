@@ -12,13 +12,13 @@ class BlockTagGenerator(output: FabricPackOutput, registryLookupFuture: Completa
     FabricTagsProvider.BlockTagsProvider(output, registryLookupFuture) {
 
     override fun addTags(registries: HolderLookup.Provider) {
-        with (valueLookupBuilder(OmniCrossbowTags.HAS_PREFERRED_TOOL)) {
+        with (builder(OmniCrossbowTags.HAS_PREFERRED_TOOL)) {
             +BlockTags.MINEABLE_WITH_PICKAXE
             +BlockTags.MINEABLE_WITH_AXE
             +BlockTags.MINEABLE_WITH_SHOVEL
             +BlockTags.MINEABLE_WITH_HOE
         }
-        with (valueLookupBuilder(BlockTags.INSIDE_STEP_SOUND_BLOCKS)) {
+        with (builder(BlockTags.INSIDE_STEP_SOUND_BLOCKS)) {
             +OmniCrossbowBlocks.HONEY_SLICK
         }
     }

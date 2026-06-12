@@ -84,7 +84,7 @@ object OmniCrossbowClient : ClientModInitializer {
 			val spyEye = spyEye ?: return@register
 			if (spyEye.isRemoved || spyEye.level() != minecraft.level) {
 				this.spyEye = null
-				with (Minecraft.getInstance().gameRenderer.mainCamera) {
+				with (Minecraft.getInstance().gameRenderer.mainCamera()) {
 					if (entity() == spyEye)
 						setEntity(minecraft.player!!)
 				}
@@ -142,7 +142,7 @@ object OmniCrossbowClient : ClientModInitializer {
 			val spyEye = context.client().level!!.getEntity(entityId) as? SpyEnderEye
 			this.spyEye = spyEye
 			if (spyEye != null)
-				Minecraft.getInstance().gameRenderer.mainCamera.setEntity(spyEye)
+				Minecraft.getInstance().gameRenderer.mainCamera().setEntity(spyEye)
 			context.player().sendOverlayMessage(Component.translatable(EYE_HINT, context.client().options.keyShift.translatedKeyMessage))
 		}
 	}

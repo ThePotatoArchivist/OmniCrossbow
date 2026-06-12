@@ -8,12 +8,14 @@ import archives.tater.omnicrossbow.util.set
 import com.mojang.logging.LogUtils
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.Holder
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow
@@ -73,6 +75,8 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
             fun of(type: EntityType<out Projectile>, nbt: CompoundTag? = null) = Direct(type, Optional.ofNullable(nbt))
 
             operator fun invoke(type: EntityType<out Projectile>, nbt: CompoundTag? = null) = of(type, nbt)
+
+            operator fun invoke(type: Holder<EntityType<out Projectile>>, nbt: CompoundTag? = null) = of(type.value(), nbt)
         }
     }
 
@@ -83,7 +87,7 @@ fun interface SpawnProjectile<T: Projectile> : ProjectileAction {
             shooter: LivingEntity,
             weapon: ItemStack,
             projectile: ItemStack
-        ): WindCharge = WindCharge(EntityType.WIND_CHARGE, level).apply {
+        ): WindCharge = WindCharge(EntityTypes.WIND_CHARGE, level).apply {
             setPos(shooter.x, shooter.eyeY - 0.1, shooter.z)
             owner = shooter
             this[OmniCrossbowAttachments.WIND_CHARGE_EXPLOSION_RADIUS] = explosionRadius

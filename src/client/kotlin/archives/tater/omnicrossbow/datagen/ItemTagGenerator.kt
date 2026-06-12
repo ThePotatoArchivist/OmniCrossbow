@@ -4,58 +4,59 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
 import net.minecraft.core.HolderLookup
+import net.minecraft.references.BlockItemIds
+import net.minecraft.references.ItemIds
 import net.minecraft.tags.ItemTags
-import net.minecraft.world.item.Items
 import java.util.concurrent.CompletableFuture
 
 class ItemTagGenerator(output: FabricPackOutput, registryLookupFuture: CompletableFuture<HolderLookup.Provider>) :
     FabricTagsProvider.ItemTagsProvider(output, registryLookupFuture) {
 
     override fun addTags(registries: HolderLookup.Provider) {
-        with (valueLookupBuilder(OmniCrossbowTags.BUILTIN_PROJECTILES)) {
+        with (builder(OmniCrossbowTags.BUILTIN_PROJECTILES)) {
             +ItemTags.ARROWS
-            +Items.FIREWORK_ROCKET
+            +ItemIds.FIREWORK_ROCKET
             // Modded ammo will go here
         }
-        with (valueLookupBuilder(OmniCrossbowTags.CREATIVE_INTANGIBLE_PROJECTILES)) {
+        with (builder(OmniCrossbowTags.CREATIVE_INTANGIBLE_PROJECTILES)) {
             +OmniCrossbowTags.BUILTIN_PROJECTILES
         }
-        with(valueLookupBuilder(OmniCrossbowTags.MOB_RANDOM_AMMO)) {
-            +Items.FIRE_CHARGE
-            +Items.WITHER_SKELETON_SKULL
-            +Items.BLAZE_ROD
-            +Items.BLAZE_POWDER
-            +Items.SLIME_BALL
-            +Items.MAGMA_CREAM
-            +Items.ENDER_PEARL
-            +Items.COBWEB
-            +Items.SNOWBALL
-            +Items.EGG
-            +Items.HONEY_BOTTLE
-            +Items.BREEZE_ROD
-            +Items.WIND_CHARGE
-            +Items.AMETHYST_SHARD
-            +Items.GUNPOWDER
-            +Items.SALMON_BUCKET
-            +Items.CARVED_PUMPKIN
-            +Items.DIRT
-            +Items.WOODEN_SWORD
-            +Items.BRICK
-            +Items.IRON_SHOVEL
-            +Items.STONE_SPEAR
-            +Items.DAMAGED_ANVIL
-            +Items.CHORUS_FRUIT
-            +Items.EXPERIENCE_BOTTLE
-            +Items.TRIDENT
-            +Items.INK_SAC
-            +Items.GLOW_BERRIES
+        with(builder(OmniCrossbowTags.MOB_RANDOM_AMMO)) {
+            +ItemIds.FIRE_CHARGE
+            +BlockItemIds.WITHER_SKELETON_SKULL
+            +ItemIds.BLAZE_ROD
+            +ItemIds.BLAZE_POWDER
+            +ItemIds.SLIME_BALL
+            +ItemIds.MAGMA_CREAM
+            +ItemIds.ENDER_PEARL
+            +BlockItemIds.COBWEB
+            +ItemIds.SNOWBALL
+            +ItemIds.EGG
+            +ItemIds.HONEY_BOTTLE
+            +ItemIds.BREEZE_ROD
+            +ItemIds.WIND_CHARGE
+            +ItemIds.AMETHYST_SHARD
+            +ItemIds.GUNPOWDER
+            +ItemIds.SALMON_BUCKET
+            +BlockItemIds.CARVED_PUMPKIN
+            +BlockItemIds.DIRT
+            +ItemIds.WOODEN_SWORD
+            +ItemIds.BRICK
+            +ItemIds.IRON_SHOVEL
+            +ItemIds.STONE_SPEAR
+            +BlockItemIds.DAMAGED_ANVIL
+            +ItemIds.CHORUS_FRUIT
+            +ItemIds.EXPERIENCE_BOTTLE
+            +ItemIds.TRIDENT
+            +ItemIds.INK_SAC
+            +BlockItemIds.GLOW_BERRY_CROP
         }
-        with (valueLookupBuilder(OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)) {
-            +Items.DIRT
-            +Items.COBWEB
-            +Items.DAMAGED_ANVIL
-            +Items.CARVED_PUMPKIN
-            +Items.BRICK
+        with (builder(OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)) {
+            +BlockItemIds.DIRT
+            +BlockItemIds.COBWEB
+            +BlockItemIds.DAMAGED_ANVIL
+            +BlockItemIds.CARVED_PUMPKIN
+            +ItemIds.BRICK
         }
     }
 }

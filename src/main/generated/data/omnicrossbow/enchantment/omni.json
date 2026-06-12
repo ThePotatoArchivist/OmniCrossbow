@@ -14,7 +14,6 @@
         "effect": {
           "pools": [
             {
-              "bonus_rolls": 0.0,
               "entries": [
                 {
                   "type": "minecraft:tag",
@@ -46,7 +45,7 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "type": "minecraft:player"
+              "minecraft:entity_type": "minecraft:player"
             }
           }
         }

@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.resources.Identifier;
 
-@Mixin(Gui.class)
-public class GuiMixin {
+@Mixin(Hud.class)
+public class HudMixin {
     @Shadow
     @Final
     private static Identifier VIGNETTE_LOCATION;

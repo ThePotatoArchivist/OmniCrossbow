@@ -7,8 +7,8 @@
     "ModelBakeryMixin",
     "endereye.ClientChunkCacheStorageMixin",
     "endereye.GameRendererMixin",
-    "endereye.GuiMixin",
-    "endereye.LevelRendererMixin",
+    "endereye.HudMixin",
+    "endereye.LevelExtractorMixin",
     "endereye.LocalPlayerMixin",
     "endereye.MouseHandlerMixin"
   ],

@@ -14,10 +14,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.ProblemReporter
-import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
@@ -95,7 +92,7 @@ fun interface SpawnEntity<T: Entity> : Delegated {
         constructor(state: BlockState, damagePerDistance: Float, damageMax: Int)
             : this(state, Optional.of(HurtsEntities(damagePerDistance, damageMax)))
 
-        override fun getType(projectile: ItemStack): EntityType<out FallingBlockEntity> = EntityType.FALLING_BLOCK
+        override fun getType(projectile: ItemStack): EntityType<out FallingBlockEntity> = EntityTypes.FALLING_BLOCK
 
         override fun FallingBlockEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
             this as FallingBlockEntityAccessor
@@ -143,7 +140,7 @@ fun interface SpawnEntity<T: Entity> : Delegated {
     }
 
     data object Item : Singleton(), SpawnEntity<ItemEntity> {
-        override fun getType(projectile: ItemStack): EntityType<out ItemEntity> = EntityType.ITEM
+        override fun getType(projectile: ItemStack): EntityType<out ItemEntity> = EntityTypes.ITEM
 
         override fun ItemEntity.process(shooter: LivingEntity, weapon: ItemStack, projectile: ItemStack) {
             this as ItemEntityAccessor

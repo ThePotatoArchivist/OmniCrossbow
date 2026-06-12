@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.projectilebehavior.impactaction
 
 import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.util.ParticleConfig
+import archives.tater.omnicrossbow.util.center
 import archives.tater.omnicrossbow.util.plus
 import archives.tater.omnicrossbow.util.sendParticles
 import com.mojang.serialization.MapCodec

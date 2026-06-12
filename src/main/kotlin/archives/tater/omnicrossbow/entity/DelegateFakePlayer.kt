@@ -50,7 +50,7 @@ class DelegateFakePlayer(level: ServerLevel, val stack: ItemStack, val owner: Li
                 eyeHeight = 0f
                 deltaMovement = projectile.deltaMovement
                 setItemInHand(InteractionHand.MAIN_HAND, projectile.item)
-                invokeCollectEquipmentChanges()
+                invokeDetectEquipmentUpdates()
                 setAttackStrengthTicker(Int.MAX_VALUE)
             }
 

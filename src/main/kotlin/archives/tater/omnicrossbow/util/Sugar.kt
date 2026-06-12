@@ -6,12 +6,13 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
 import net.fabricmc.loader.api.FabricLoader
 import com.mojang.serialization.Codec
-import net.minecraft.advancements.criterion.DataComponentMatchers
-import net.minecraft.advancements.criterion.EntityPredicate
-import net.minecraft.advancements.criterion.ItemPredicate
+import net.minecraft.advancements.predicates.DataComponentMatchers
+import net.minecraft.advancements.predicates.ItemPredicate
+import net.minecraft.advancements.predicates.entity.EntityPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderSet
 import net.minecraft.core.TypedInstance
+import net.minecraft.core.Vec3i
 import net.minecraft.core.component.DataComponentHolder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -152,3 +153,5 @@ inline fun <reified Config: WrappedConfig> createConfigToml(
     id,
     Config::class.java
 )
+
+val Vec3i.center get() = Vec3.atCenterOf(this)

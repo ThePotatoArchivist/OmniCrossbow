@@ -8,9 +8,9 @@ import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.advancements.criterion.DataComponentMatchers
-import net.minecraft.advancements.criterion.ItemPredicate
-import net.minecraft.advancements.criterion.MinMaxBounds
+import net.minecraft.advancements.predicates.DataComponentMatchers
+import net.minecraft.advancements.predicates.ItemPredicate
+import net.minecraft.advancements.predicates.MinMaxBounds
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
 import net.minecraft.core.RegistryCodecs

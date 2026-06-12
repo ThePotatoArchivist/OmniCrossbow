@@ -24,7 +24,7 @@
                 "condition": "minecraft:entity_properties",
                 "entity": "target_entity",
                 "predicate": {
-                  "type": "#omnicrossbow:can_always_equip"
+                  "minecraft:entity_type": "#omnicrossbow:can_always_equip"
                 }
               },
               {

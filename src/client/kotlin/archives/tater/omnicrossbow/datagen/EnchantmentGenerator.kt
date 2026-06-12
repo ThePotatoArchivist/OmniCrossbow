@@ -11,7 +11,7 @@ import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.ItemTags
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.item.enchantment.Enchantment
 import net.minecraft.world.item.enchantment.Enchantment.*
@@ -57,7 +57,7 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
                     })
                 }
             }, invert(hasProperties(EntityTarget.THIS, EntityPredicate {
-                of(entities, EntityType.PLAYER)
+                of(entities, EntityTypes.PLAYER)
             })))
         }
     }

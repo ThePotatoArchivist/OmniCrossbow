@@ -3,7 +3,7 @@ package archives.tater.omnicrossbow.condition
 import archives.tater.omnicrossbow.util.singleOrList
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.advancements.criterion.MinMaxBounds
+import net.minecraft.advancements.predicates.MinMaxBounds
 import net.minecraft.core.Holder
 import net.minecraft.core.component.DataComponentGetter
 import net.minecraft.core.component.DataComponents

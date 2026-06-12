@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.Identifier
+import net.minecraft.tags.BlockItemTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.Items
@@ -145,7 +146,7 @@ class AmmoPositionGenerator(
             translation = Vector3f(-3 / 16f, 3 / 16f, 1 / 16f),
             scale = Vector3f(2f),
         ) {
-            +ItemTags.LIGHTNING_RODS
+            +BlockItemTags.LIGHTNING_RODS
         }
         add(
             translation = Vector3f(-4 / 16f, 3 / 16f, 1 / 16f),

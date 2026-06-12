@@ -13,6 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
+import net.minecraft.tags.BlockItemTagId
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.Item
@@ -78,9 +79,11 @@ object AmmoPosition : ResourceManagerReloadListener {
         class ItemListBuilder(private val values: MutableList<Either<Item, TagKey<Item>>>) {
             fun add(item: Item) { values.add(Either.left(item)) }
             fun add(tag: TagKey<Item>) { values.add(Either.right(tag)) }
+            fun add(tag: BlockItemTagId) { add(tag.item) }
 
             operator fun Item.unaryPlus() { add(this) }
             operator fun TagKey<Item>.unaryPlus() { add(this) }
+            operator fun BlockItemTagId.unaryPlus() { add(this) }
         }
 
         companion object {

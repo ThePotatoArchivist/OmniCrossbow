@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.tags.TagAppender
-import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.DamageTypeTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.damagesource.DamageType
@@ -17,52 +16,52 @@ class DamageTagGenerator(
     registryLookupFuture: CompletableFuture<HolderLookup.Provider>
 ) : FabricTagsProvider<DamageType>(output, Registries.DAMAGE_TYPE, registryLookupFuture) {
 
-    private fun buildTag(tag: TagKey<DamageType>, block: TagAppender<ResourceKey<DamageType>, DamageType>.() -> Unit) {
+    private fun buildTag(tag: TagKey<DamageType>, block: TagAppender<DamageType>.() -> Unit) {
         builder(tag).block()
     }
 
     override fun addTags(registries: HolderLookup.Provider) {
         buildTag(DamageTypeTags.BYPASSES_COOLDOWN) {
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.NO_KNOCKBACK) {
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.NO_IMPACT) {
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.IS_FIRE) {
-            add(OmniCrossbowDamageTypes.FIRE_BEAM)
-            add(OmniCrossbowDamageTypes.FIRE_PROJECTILE)
+            +OmniCrossbowDamageTypes.FIRE_BEAM
+            +OmniCrossbowDamageTypes.FIRE_PROJECTILE
         }
         buildTag(DamageTypeTags.IS_PROJECTILE) {
-            add(OmniCrossbowDamageTypes.FIRE_PROJECTILE)
+            +OmniCrossbowDamageTypes.FIRE_PROJECTILE
         }
         buildTag(DamageTypeTags.BYPASSES_SHIELD) {
-            add(OmniCrossbowDamageTypes.FIRE_BEAM)
+            +OmniCrossbowDamageTypes.FIRE_BEAM
         }
         buildTag(DamageTypeTags.IGNITES_ARMOR_STANDS) {
-            add(OmniCrossbowDamageTypes.FIRE_BEAM)
-            add(OmniCrossbowDamageTypes.FIRE_PROJECTILE)
+            +OmniCrossbowDamageTypes.FIRE_BEAM
+            +OmniCrossbowDamageTypes.FIRE_PROJECTILE
         }
         buildTag(DamageTypeTags.PANIC_CAUSES) {
-            add(OmniCrossbowDamageTypes.FIRE_BEAM)
-            add(OmniCrossbowDamageTypes.FIRE_PROJECTILE)
-            add(OmniCrossbowDamageTypes.SONIC_BOOM)
+            +OmniCrossbowDamageTypes.FIRE_BEAM
+            +OmniCrossbowDamageTypes.FIRE_PROJECTILE
+            +OmniCrossbowDamageTypes.SONIC_BOOM
         }
         buildTag(DamageTypeTags.BYPASSES_ARMOR) {
-            add(OmniCrossbowDamageTypes.SONIC_BOOM)
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.SONIC_BOOM
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.BYPASSES_ENCHANTMENTS) {
-            add(OmniCrossbowDamageTypes.SONIC_BOOM)
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.SONIC_BOOM
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.BYPASSES_EFFECTS) {
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.BEACON
         }
         buildTag(DamageTypeTags.BYPASSES_INVULNERABILITY) {
-            add(OmniCrossbowDamageTypes.BEACON)
+            +OmniCrossbowDamageTypes.BEACON
         }
     }
 

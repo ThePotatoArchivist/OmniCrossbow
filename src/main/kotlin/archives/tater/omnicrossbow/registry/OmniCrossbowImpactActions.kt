@@ -7,10 +7,7 @@ import archives.tater.omnicrossbow.mixin.behavior.access.MobInvoker
 import archives.tater.omnicrossbow.network.FireworksPayload
 import archives.tater.omnicrossbow.network.HaircutPayload
 import archives.tater.omnicrossbow.projectilebehavior.impactaction.*
-import archives.tater.omnicrossbow.util.contains
-import archives.tater.omnicrossbow.util.get
-import archives.tater.omnicrossbow.util.isOf
-import archives.tater.omnicrossbow.util.set
+import archives.tater.omnicrossbow.util.*
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.Direction

@@ -11,7 +11,7 @@
             "condition": "minecraft:entity_properties",
             "entity": "target_entity",
             "predicate": {
-              "type": "#omnicrossbow:non_feedable"
+              "minecraft:entity_type": "#omnicrossbow:non_feedable"
             }
           }
         }

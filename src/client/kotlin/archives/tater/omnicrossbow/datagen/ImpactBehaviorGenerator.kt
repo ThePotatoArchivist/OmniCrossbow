@@ -11,9 +11,13 @@ import archives.tater.omnicrossbow.util.*
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags
-import net.minecraft.advancements.criterion.*
-import net.minecraft.advancements.criterion.BlockPredicate.Builder.block
-import net.minecraft.advancements.criterion.LocationPredicate.Builder.location
+import net.minecraft.advancements.predicates.BlockPredicate.Builder.block
+import net.minecraft.advancements.predicates.CollectionContentsPredicate
+import net.minecraft.advancements.predicates.CollectionPredicate
+import net.minecraft.advancements.predicates.ItemPredicate
+import net.minecraft.advancements.predicates.LocationPredicate.Builder.location
+import net.minecraft.advancements.predicates.MinMaxBounds
+import net.minecraft.advancements.predicates.entity.EntityTypePredicate
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.HolderSet
 import net.minecraft.core.component.DataComponentType
@@ -25,14 +29,15 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.tags.BlockItemTagId
+import net.minecraft.tags.BlockItemTags
 import net.minecraft.tags.BlockTags
-import net.minecraft.tags.ItemTags
 import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.ConstantFloat
 import net.minecraft.util.valueproviders.ConstantInt
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
-import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -76,6 +81,10 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
 
         fun register(tag: TagKey<Item>, behavior: ImpactAction) {
             register(tag.location.path, ItemPredicate { of(items, tag) }, behavior)
+        }
+
+        fun register(tag: BlockItemTagId, behavior: ImpactAction) {
+            register(tag.item, behavior)
         }
 
         fun register(item: ItemLike, behavior: ImpactAction) {
@@ -204,7 +213,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
         ))
 
         register(Items.HONEY_BOTTLE, SideEffect(
-            main = PlaceBlock(OmniCrossbowBlocks.HONEY_SLICK),
+            main = PlaceBlock(OmniCrossbowBlocks.HONEY_SLICK.value()),
             secondary = AllOf(
                 PlaySound(soundHolder(SoundEvents.GLASS_BREAK)),
                 itemParticle,
@@ -212,7 +221,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             )
         ))
 
-        register(ItemTags.LIGHTNING_RODS, SideEffect(
+        register(BlockItemTags.LIGHTNING_RODS, SideEffect(
             main = AnyOf(
                 OmniCrossbowImpactActions.IS_ENTITY,
                 ifNotIntangible(OmniCrossbowImpactActions.USE_ITEM),
@@ -227,7 +236,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                 ),
                 onSuccess = AllOf(
                     BlockOffset(
-                        SummonEntity(EntityType.LIGHTNING_BOLT, onTarget = true),
+                        SummonEntity(EntityTypes.LIGHTNING_BOLT, onTarget = true),
                         direction = 1,
                         y = 1
                     ),
@@ -348,15 +357,17 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                     withComponents {
                         partial(DataComponentPredicates.ATTRIBUTE_MODIFIERS, AttributeModifiersPredicate(Optional.of(
                             CollectionPredicate(
-                                Optional.of(CollectionContentsPredicate.of(
-                                    AttributeModifiersPredicate.EntryPredicate(
-                                        Optional.of(HolderSet.direct(Attributes.ATTACK_DAMAGE)),
-                                        Optional.of(Item.BASE_ATTACK_DAMAGE_ID),
-                                        MinMaxBounds.Doubles.atLeast(0.0),
-                                        Optional.empty(),
-                                        Optional.empty(),
+                                Optional.of(
+                                    CollectionContentsPredicate.of(
+                                        AttributeModifiersPredicate.EntryPredicate(
+                                            Optional.of(HolderSet.direct(Attributes.ATTACK_DAMAGE)),
+                                            Optional.of(Item.BASE_ATTACK_DAMAGE_ID),
+                                            MinMaxBounds.Doubles.atLeast(0.0),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                        )
                                     )
-                                )),
+                                ),
                                 Optional.empty(),
                                 Optional.empty(),
                             )

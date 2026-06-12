@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 
 object OmniCrossbowBlocks {
-    private fun register(key: ResourceKey<Block>, block: (BlockBehaviour.Properties) -> Block, properties: BlockBehaviour.Properties): Block =
-        Registry.register(BuiltInRegistries.BLOCK, key, block(properties.apply {
+    private fun register(key: ResourceKey<Block>, block: (BlockBehaviour.Properties) -> Block, properties: BlockBehaviour.Properties) =
+        Registry.registerForHolder(BuiltInRegistries.BLOCK, key, block(properties.apply {
             setId(key)
         }))
 

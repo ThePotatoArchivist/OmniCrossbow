@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.tags.TagAppender
-import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.EnchantmentTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.enchantment.Enchantment
@@ -17,7 +16,7 @@ class EnchantmentTagGenerator(
     registryLookupFuture: CompletableFuture<HolderLookup.Provider>
 ) : FabricTagsProvider<Enchantment>(output, Registries.ENCHANTMENT, registryLookupFuture) {
 
-    private fun buildTag(tag: TagKey<Enchantment>, block: TagAppender<ResourceKey<Enchantment>, Enchantment>.() -> Unit) {
+    private fun buildTag(tag: TagKey<Enchantment>, block: TagAppender<Enchantment>.() -> Unit) {
         builder(tag).block()
     }
 
