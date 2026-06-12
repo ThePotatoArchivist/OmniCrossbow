@@ -1,0 +1,19 @@
+{
+  "items": "minecraft:sulfur_spike",
+  "projectile_action": {
+    "type": "omnicrossbow:spawn_entity/falling_block",
+    "block": {
+      "Name": "minecraft:sulfur_spike",
+      "Properties": {
+        "thickness": "tip_merge",
+        "vertical_direction": "down",
+        "waterlogged": "false"
+      }
+    },
+    "hurts_entities": {
+      "damage_max": 40,
+      "damage_per_distance": 6.0
+    }
+  },
+  "velocity_scale": 0.7
+}

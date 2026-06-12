@@ -2,7 +2,6 @@ package archives.tater.omnicrossbow
 
 import archives.tater.omnicrossbow.registry.*
 import net.fabricmc.api.ModInitializer
-import org.spongepowered.asm.mixin.MixinEnvironment
 import net.minecraft.resources.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -32,7 +31,5 @@ object OmniCrossbow : ModInitializer {
 		OmniCrossbowSounds.init()
 		OmniCrossbowNetworking.init()
 		OmniCrossbowLoot.init()
-
-		MixinEnvironment.getCurrentEnvironment().audit();
 	}
 }

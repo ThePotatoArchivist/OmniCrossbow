@@ -32,7 +32,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.PointedDripstoneBlock
+import net.minecraft.world.level.block.SpeleothemBlock
 import net.minecraft.world.level.block.state.properties.SpeleothemThickness
 import java.util.concurrent.CompletableFuture
 
@@ -124,11 +124,16 @@ class ProjectileBehaviorGenerator(
 
         register(Items.FEATHER, ProjectileBehavior(SpawnEntity.Item, velocityScale = 0.3f))
 
-        register("speleothems", ItemPredicate {
-            of (items, Items.POINTED_DRIPSTONE, Items.SULFUR_SPIKE)
-        }, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
-            .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
-            .setValue(PointedDripstoneBlock.THICKNESS, SpeleothemThickness.TIP_MERGE),
+        register(Items.POINTED_DRIPSTONE, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState()
+            .setValue(SpeleothemBlock.TIP_DIRECTION, Direction.DOWN)
+            .setValue(SpeleothemBlock.THICKNESS, SpeleothemThickness.TIP_MERGE),
+            damagePerDistance = 6f,
+            damageMax = 40,
+        ), velocityScale = 0.7f))
+
+        register(Items.SULFUR_SPIKE, ProjectileBehavior(SpawnEntity.FallingBlock(Blocks.SULFUR_SPIKE.defaultBlockState()
+            .setValue(SpeleothemBlock.TIP_DIRECTION, Direction.DOWN)
+            .setValue(SpeleothemBlock.THICKNESS, SpeleothemThickness.TIP_MERGE),
             damagePerDistance = 6f,
             damageMax = 40,
         ), velocityScale = 0.7f))
