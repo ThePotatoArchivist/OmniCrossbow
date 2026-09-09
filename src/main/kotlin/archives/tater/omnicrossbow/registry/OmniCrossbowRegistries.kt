@@ -30,7 +30,7 @@ object OmniCrossbowRegistries {
     @JvmField val IMPACT_BEHAVIOR = of<ItemFiltered<ImpactAction>>("impact_behavior")
 
     fun init() {
-        DynamicRegistries.register(PROJECTILE_BEHAVIOR, ProjectileBehavior.ITEM_FILTERED_CODEC)
-        DynamicRegistries.register(IMPACT_BEHAVIOR, ImpactAction.ITEM_FILTERED_CODEC)
+        DynamicRegistries.registerReloadable(PROJECTILE_BEHAVIOR, ProjectileBehavior.ITEM_FILTERED_CODEC)
+        DynamicRegistries.registerReloadable(IMPACT_BEHAVIOR, ImpactAction.ITEM_FILTERED_CODEC)
     }
 }

@@ -14,13 +14,13 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Holder
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.util.valueproviders.IntProvider
 import net.minecraft.util.valueproviders.IntProviders
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.*
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.FallingBlock
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.Vec3
@@ -171,8 +171,8 @@ data class ProjectileBehavior(
         } ?: ProjectileBehavior(SpawnProjectile.Direct(OmniCrossbowEntities.CUSTOM_ITEM_PROJECTILE))
 
         @JvmStatic
-        fun getBehavior(level: Level, projectile: ItemStack): ProjectileBehavior =
-            ItemFiltered.getFirst(level.registryAccess(), OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, projectile)
+        fun getBehavior(level: ServerLevel, projectile: ItemStack): ProjectileBehavior =
+            ItemFiltered.getFirst(level.server.reloadableRegistries().lookup(), OmniCrossbowRegistries.PROJECTILE_BEHAVIOR, projectile)
                 ?: run { getFallback(projectile.item) }
     }
 }

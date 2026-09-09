@@ -11,7 +11,6 @@ import com.mojang.serialization.MapCodec
 import net.minecraft.core.registries.codec.RegistryCodecs
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 import net.minecraft.world.phys.HitResult
 import java.util.stream.Stream
 
@@ -47,7 +46,7 @@ fun interface ImpactAction {
         @JvmField
         val ITEM_FILTERED_CODEC = ItemFiltered.createCodec(CODEC.fieldOf("action"))
 
-        fun streamMatching(level: Level, stack: ItemStack): Stream<ImpactAction> =
-            ItemFiltered.streamMatching(level.registryAccess(), OmniCrossbowRegistries.IMPACT_BEHAVIOR, stack)
+        fun streamMatching(level: ServerLevel, stack: ItemStack): Stream<ImpactAction> =
+            ItemFiltered.streamMatching(level.server.reloadableRegistries().lookup(), OmniCrossbowRegistries.IMPACT_BEHAVIOR, stack)
     }
 }
