@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "HoneyBlockInvoker",
-    "enchantmenteffect.anyprojectile.ProjectileWeaponItemMixin",
     "ThrownTridentMixin",
     "behavior.CrossbowItemMixin",
     "behavior.DamageSourceMixin",
@@ -26,12 +25,14 @@
     "behavior.access.PlayerInvoker",
     "behavior.access.ProjectileAccessor",
     "enchantmenteffect.anyprojectile.ProjectileUserMixin",
+    "enchantmenteffect.anyprojectile.ProjectileWeaponItemMixin",
     "enchantmenteffect.defaultprojectile.ProjectileUserMixin",
     "enchantmentprovider.PillagerMixin",
     "enchantmentprovider.RaidAccessor",
     "endereye.ChunkMapMixin",
     "endereye.ChunkMapTrackedEntityMixin",
-    "grapplehook.LivingEntityMixin"
+    "grapplehook.LivingEntityMixin",
+    "loot.ResourceManagerRegistryLoadTaskMixin"
   ],
   "injectors": {
     "defaultRequire": 1

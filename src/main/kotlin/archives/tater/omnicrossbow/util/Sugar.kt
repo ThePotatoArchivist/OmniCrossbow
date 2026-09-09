@@ -5,7 +5,6 @@ package archives.tater.omnicrossbow.util
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
 import net.fabricmc.loader.api.FabricLoader
-import org.spongepowered.asm.util.Annotations.getParameter
 import com.mojang.serialization.Codec
 import net.minecraft.advancements.predicates.DataComponentMatchers
 import net.minecraft.advancements.predicates.ItemPredicate
@@ -160,3 +159,5 @@ inline fun <reified Config: WrappedConfig> createConfigToml(
 val Vec3i.center get() = Vec3.atCenterOf(this)
 
 fun <T> Stream<T>.toMutableList(): MutableList<T> = collect(Collectors.toList())
+
+operator fun <T> ScopedValue<T>.getValue(thisRef: Any?, property: KProperty<*>): T? = if (isBound) get() else null
