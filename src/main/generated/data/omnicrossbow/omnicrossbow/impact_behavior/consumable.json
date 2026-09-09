@@ -6,9 +6,9 @@
       "condition": {
         "type": "omnicrossbow:check_loot_condition",
         "condition": {
-          "condition": "minecraft:inverted",
+          "type": "minecraft:inverted",
           "term": {
-            "condition": "minecraft:entity_properties",
+            "type": "minecraft:entity_properties",
             "entity": "target_entity",
             "predicate": {
               "minecraft:entity_type": "#omnicrossbow:non_feedable"
@@ -36,7 +36,7 @@
       "condition": {
         "type": "omnicrossbow:check_loot_condition",
         "condition": {
-          "condition": "minecraft:match_tool",
+          "type": "minecraft:match_tool",
           "predicate": {
             "predicates": {
               "omnicrossbow:consumable": {

@@ -111,7 +111,7 @@ object OmniCrossbowClient : ClientModInitializer {
 			val projectile = context.player().level().getEntity(id) as? ThrowableItemProjectile ?: return@registerGlobalReceiver
 			val explosion = projectile.item[DataComponents.FIREWORK_EXPLOSION] ?: return@registerGlobalReceiver
 			val movement = projectile.deltaMovement
-			context.player().level().createFireworks(projectile.x, projectile.y, projectile.z, movement.x, movement.y, movement.z, listOf(explosion))
+			context.player().level().createFireworks(projectile.x, projectile.y, projectile.z, movement.x, movement.y, movement.z, listOf(explosion), true)
 		}
 
 		ClientPlayNetworking.registerGlobalReceiver(ParticleBeamPayload.TYPE) { (particle, start, end, step, randomness, countPerPos, dx, dy, dz, speed), context ->

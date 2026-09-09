@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.util.Mth.*
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CrossbowItem
 import net.minecraft.world.phys.Vec3
 import java.lang.Math.PI
@@ -30,7 +31,7 @@ class GrappleFishingHookRenderer(context: EntityRendererProvider.Context) :
     override fun extractRenderState(entity: GrappleFishingHook, state: FishingHookRenderState, partialTicks: Float) {
         super.extractRenderState(entity, state, partialTicks)
         state.lineOriginOffset = (entity.owner as? LivingEntity)?.let {
-            val swing = it.getAttackAnim(partialTicks)
+            val swing = (it as? Player)?.getSwingAnimation(partialTicks) ?: 0f
             val swingAngle = sin(sqrt(swing) * PI)
             val playerPos = getHandPos(it, swingAngle, partialTicks)
             val hookPos = entity.getPosition(partialTicks).add(0.0, 0.25, 0.0)

@@ -4,18 +4,18 @@
     "condition": {
       "type": "omnicrossbow:check_loot_condition",
       "condition": {
-        "condition": "minecraft:any_of",
+        "type": "minecraft:any_of",
         "terms": [
           {
-            "condition": "omnicrossbow:tool_suitable_for_block"
+            "type": "omnicrossbow:tool_suitable_for_block"
           },
           {
-            "condition": "minecraft:all_of",
+            "type": "minecraft:all_of",
             "terms": [
               {
-                "condition": "minecraft:inverted",
+                "type": "minecraft:inverted",
                 "term": {
-                  "condition": "minecraft:location_check",
+                  "type": "minecraft:location_check",
                   "predicate": {
                     "block": {
                       "blocks": "#omnicrossbow:has_preferred_tool"
@@ -24,8 +24,8 @@
                 }
               },
               {
-                "condition": "minecraft:value_check",
-                "range": {
+                "type": "minecraft:float_value_check",
+                "test": {
                   "max": 20.0
                 },
                 "value": {
@@ -35,10 +35,10 @@
             ]
           },
           {
-            "condition": "minecraft:all_of",
+            "type": "minecraft:all_of",
             "terms": [
               {
-                "condition": "minecraft:location_check",
+                "type": "minecraft:location_check",
                 "predicate": {
                   "block": {
                     "blocks": "#minecraft:leaves"
@@ -46,7 +46,7 @@
                 }
               },
               {
-                "condition": "minecraft:match_tool",
+                "type": "minecraft:match_tool",
                 "predicate": {
                   "items": "#c:tools/shear"
                 }

@@ -1,12 +1,12 @@
 package archives.tater.omnicrossbow.datagen
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowDamageTypes
-import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.SingleRegistryBootstrap
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.world.damagesource.DamageEffects
 import net.minecraft.world.damagesource.DamageType
 
-object DamageTypeGenerator : RegistrySetBuilder.RegistryBootstrap<DamageType>  {
+object DamageTypeGenerator : SingleRegistryBootstrap<DamageType> {
     override fun run(registry: BootstrapContext<DamageType>) {
         registry[OmniCrossbowDamageTypes.FIRE_BEAM] = DamageType(
             "omnicrossbow.fire_beam",

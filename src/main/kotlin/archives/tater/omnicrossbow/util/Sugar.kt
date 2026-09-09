@@ -5,6 +5,7 @@ package archives.tater.omnicrossbow.util
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
 import net.fabricmc.loader.api.FabricLoader
+import org.spongepowered.asm.util.Annotations.getParameter
 import com.mojang.serialization.Codec
 import net.minecraft.advancements.predicates.DataComponentMatchers
 import net.minecraft.advancements.predicates.ItemPredicate
@@ -38,12 +39,14 @@ import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem
 import net.minecraft.world.level.storage.loot.entries.LootItem
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.entries.TagEntry.expandTag
+import net.minecraft.world.level.storage.loot.entries.UniformContainerBase
 import net.minecraft.world.phys.Vec3
 import folk.sisby.kaleido.api.WrappedConfig
 import java.nio.file.Path
 import java.util.*
+import java.util.stream.Collectors
+import java.util.stream.Stream
 import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
@@ -81,11 +84,11 @@ fun LootTable.Builder.pool(init: LootPool.Builder.() -> Unit) {
     pool(LootPool.lootPool().apply(init).build())
 }
 
-fun LootPool.Builder.item(item: ItemLike, init: LootPoolSingletonContainer.Builder<*>.() -> Unit = {}) {
+fun LootPool.Builder.item(item: ItemLike, init: UniformContainerBase.Builder<*>.() -> Unit = {}) {
     add(LootItem.lootTableItem(item).apply(init))
 }
 
-fun LootPool.Builder.tag(tag: TagKey<Item>, init: LootPoolSingletonContainer.Builder<*>.() -> Unit = {}) {
+fun LootPool.Builder.tag(tag: HolderSet<Item>, init: UniformContainerBase.Builder<*>.() -> Unit = {}) {
     add(expandTag(tag).apply(init))
 }
 
@@ -102,7 +105,7 @@ fun LootContext(level: ServerLevel, contextKeySet: ContextKeySet, init: LootPara
 
 fun ContextKeySet(init: ContextKeySet.Builder.() -> Unit): ContextKeySet = ContextKeySet.Builder().apply(init).build()
 
-operator fun <T: Any> LootContext.get(key: ContextKey<T>): T = getParameter(key)
+operator fun <T: Any> LootContext.get(key: ContextKey<T>): T? = getOptional(key)
 
 typealias McUnit = net.minecraft.util.Unit
 
@@ -155,3 +158,5 @@ inline fun <reified Config: WrappedConfig> createConfigToml(
 )
 
 val Vec3i.center get() = Vec3.atCenterOf(this)
+
+fun <T> Stream<T>.toMutableList(): MutableList<T> = collect(Collectors.toList())

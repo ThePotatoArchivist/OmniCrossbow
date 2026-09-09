@@ -3,8 +3,8 @@
   "projectile_action": {
     "type": "omnicrossbow:spawn_entity/falling_block",
     "block": {
-      "Name": "minecraft:sulfur_spike",
-      "Properties": {
+      "id": "minecraft:sulfur_spike",
+      "properties": {
         "thickness": "tip_merge",
         "vertical_direction": "down",
         "waterlogged": "false"

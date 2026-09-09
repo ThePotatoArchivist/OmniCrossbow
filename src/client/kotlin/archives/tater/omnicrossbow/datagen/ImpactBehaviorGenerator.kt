@@ -18,6 +18,7 @@ import net.minecraft.advancements.predicates.ItemPredicate
 import net.minecraft.advancements.predicates.LocationPredicate.Builder.location
 import net.minecraft.advancements.predicates.MinMaxBounds
 import net.minecraft.advancements.predicates.entity.EntityTypePredicate
+import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.HolderSet
 import net.minecraft.core.component.DataComponentType
@@ -44,17 +45,19 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Blocks.COBWEB
 import net.minecraft.world.level.block.NoteBlock
-import net.minecraft.world.level.storage.loot.IntRange
+import net.minecraft.world.level.storage.loot.FloatRangePredicate
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
+import net.minecraft.world.level.storage.loot.predicates.FloatValueCheck
+import net.minecraft.world.level.storage.loot.predicates.IntValueCheck.hasValue
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition.hasProperties
 import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
-import net.minecraft.world.level.storage.loot.predicates.ValueCheckCondition.hasValue
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
 import net.minecraft.world.phys.Vec3
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.FloatRange
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -275,7 +278,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
                         invert(checkLocation(location().setBlock(
                             block().of(blocks, OmniCrossbowTags.HAS_PREFERRED_TOOL)
                         ))),
-                        hasValue(BreakingTimeProvider, IntRange.upperBound(20))
+                        FloatValueCheck.hasValue(Holder.direct(BreakingTimeProvider), FloatRangePredicate.upperBound(20f))
                     ),
                     allOf(
                         checkLocation(location().setBlock(block().of(blocks, BlockTags.LEAVES))),

@@ -11,7 +11,7 @@
             {
               "type": "omnicrossbow:check_loot_condition",
               "condition": {
-                "condition": "omnicrossbow:replaceable_at_origin"
+                "type": "omnicrossbow:replaceable_at_origin"
               }
             }
           ]

@@ -95,7 +95,7 @@ class GrappleFishingHook(type: EntityType<out Projectile>, level: Level) : Proje
             owner.level() != this.level()
             || distanceToSqr(owner) > MAX_DISTANCE * MAX_DISTANCE
             || InteractionHand.entries.none { hand ->
-                owner.getItemInHand(hand)[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.any { ItemStack.matches(it, projectileItem) } == true
+                owner.getItemInHand(hand)[DataComponents.CHARGED_PROJECTILES]?.itemCopies()?.anyMatch { ItemStack.matches(it, projectileItem) } == true
             })) {
             discard()
             return

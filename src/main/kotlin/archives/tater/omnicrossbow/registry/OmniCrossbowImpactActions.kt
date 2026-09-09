@@ -26,6 +26,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.RecipeType
@@ -108,7 +109,7 @@ object OmniCrossbowImpactActions {
         val stack = projectile.item
         if (!stack.isDamageableItem) return@register false
         stack.hurtAndBreak(1, level, null) {
-            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, it), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
+            level.sendParticles(ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromStack(it)), hit.location.x, hit.location.y, hit.location.z, 8, 0.0, 0.0, 0.0, 0.1)
         }
         true
     }

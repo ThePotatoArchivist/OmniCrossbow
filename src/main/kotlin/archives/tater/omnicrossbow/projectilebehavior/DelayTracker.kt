@@ -2,6 +2,7 @@ package archives.tater.omnicrossbow.projectilebehavior
 
 import archives.tater.omnicrossbow.registry.OmniCrossbowAttachments
 import archives.tater.omnicrossbow.util.removeFirst
+import archives.tater.omnicrossbow.util.toMutableList
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.LivingEntity

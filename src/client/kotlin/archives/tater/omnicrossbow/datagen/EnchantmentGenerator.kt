@@ -4,9 +4,10 @@ import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantmentEffects
 import archives.tater.omnicrossbow.registry.OmniCrossbowEnchantments
 import archives.tater.omnicrossbow.registry.OmniCrossbowTags
 import archives.tater.omnicrossbow.util.*
-import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.Holder
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
+import net.minecraft.core.registries.SingleRegistryBootstrap
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.tags.EnchantmentTags
@@ -20,9 +21,8 @@ import net.minecraft.world.level.storage.loot.functions.FilteredFunction
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction.setComponent
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition.hasProperties
-import java.util.*
 
-object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> {
+object EnchantmentGenerator : SingleRegistryBootstrap<Enchantment> {
     override fun run(registry: BootstrapContext<Enchantment>) {
         val items = registry.lookup(Registries.ITEM)
         val enchantments = registry.lookup(Registries.ENCHANTMENT)
@@ -45,18 +45,16 @@ object EnchantmentGenerator : RegistrySetBuilder.RegistryBootstrap<Enchantment> 
         )) {
             exclusiveWith(enchantments.getOrThrow(EnchantmentTags.CROSSBOW_EXCLUSIVE))
             withEffect(OmniCrossbowEnchantmentEffects.ALLOW_ANY_PROJECTILE, McUnit.INSTANCE)
-            withEffect(OmniCrossbowEnchantmentEffects.DEFAULT_PROJECTILE, LootTable {
+            withEffect(OmniCrossbowEnchantmentEffects.DEFAULT_PROJECTILE, Holder.direct(LootTable {
                 pool {
-                    tag(OmniCrossbowTags.MOB_RANDOM_AMMO)
+                    tag(registry.lookup(Registries.ITEM).getOrThrow(OmniCrossbowTags.MOB_RANDOM_AMMO))
                     apply(FilteredFunction.filtered(ItemPredicate {
                         of(items, OmniCrossbowTags.MOB_NON_INTANGIBLE_AMMO)
                     }).apply {
-                        onFail(Optional.of(
-                            setComponent(DataComponents.INTANGIBLE_PROJECTILE, McUnit.INSTANCE).build()
-                        ))
+                        onFail(setComponent(DataComponents.INTANGIBLE_PROJECTILE, McUnit.INSTANCE).build())
                     })
                 }
-            }, invert(hasProperties(EntityTarget.THIS, EntityPredicate {
+            }), invert(hasProperties(EntityTarget.THIS, EntityPredicate {
                 of(entities, EntityTypes.PLAYER)
             })))
         }

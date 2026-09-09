@@ -35,7 +35,7 @@ class OmniAmmoRenderer(val itemModelResolver: ItemModelResolver) : SpecialModelR
         poseStack.translate(0.5f, 0.5f, 0.5f)
         argument.transform.apply(false, poseStack.last())
         poseStack.translate(0.5f, 0.5f, 0.5f)
-        poseStack.mulPose(Quaternionf().rotationXYZ(0f, PI, 0f))
+        poseStack.rotate(Quaternionf().rotationXYZ(0f, PI, 0f))
         argument.stack.submit(poseStack, submitNodeCollector, lightCoords, overlayCoords, outlineColor)
         poseStack.popPose()
     }

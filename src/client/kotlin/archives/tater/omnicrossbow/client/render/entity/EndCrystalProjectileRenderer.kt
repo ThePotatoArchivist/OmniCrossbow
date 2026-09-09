@@ -47,8 +47,7 @@ class EndCrystalProjectileRenderer(context: EntityRendererProvider.Context) :
             RENDER_TYPE,
             state.lightCoords,
             OverlayTexture.NO_OVERLAY,
-            state.outlineColor,
-            null
+            state.outlineColor
         )
         poseStack.popPose()
         super.submit(state, poseStack, submitNodeCollector, camera)
@@ -59,7 +58,8 @@ class EndCrystalProjectileRenderer(context: EntityRendererProvider.Context) :
         culler: Frustum,
         camX: Double,
         camY: Double,
-        camZ: Double
+        camZ: Double,
+        partialTicks: Float
     ): Boolean = true
 
     class Model(root: ModelPart) : EndCrystalModel(root)

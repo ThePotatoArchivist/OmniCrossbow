@@ -6,7 +6,7 @@ import archives.tater.omnicrossbow.util.narrow
 import archives.tater.omnicrossbow.util.valueCodec
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
-import net.minecraft.resources.RegistryFileCodec
+import net.minecraft.core.registries.codec.RegistryCodecs
 
 interface ProjectileAction {
 
@@ -23,7 +23,7 @@ interface ProjectileAction {
             .dispatch(Inline::codec) { it }
 
         @JvmField
-        val CODEC: Codec<ProjectileAction> = RegistryFileCodec.create(
+        val CODEC: Codec<ProjectileAction> = RegistryCodecs.holder(
             OmniCrossbowRegistries.PROJECTILE_ACTION,
             INLINE_CODEC.narrow { "Cannot serialize builtin action" }
         ).valueCodec(OmniCrossbowBuiltinRegistries.PROJECTILE_ACTION)

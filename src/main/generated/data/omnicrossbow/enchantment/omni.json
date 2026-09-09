@@ -18,31 +18,29 @@
                 {
                   "type": "minecraft:tag",
                   "expand": true,
-                  "name": "omnicrossbow:mob_random_ammo"
+                  "items": "#omnicrossbow:mob_random_ammo"
                 }
               ],
-              "functions": [
-                {
-                  "function": "minecraft:filtered",
-                  "item_filter": {
-                    "items": "#omnicrossbow:mob_non_intangible_ammo"
-                  },
-                  "on_fail": {
-                    "components": {
-                      "minecraft:intangible_projectile": {}
-                    },
-                    "function": "minecraft:set_components"
+              "modifier": {
+                "type": "minecraft:filtered",
+                "item_filter": {
+                  "items": "#omnicrossbow:mob_non_intangible_ammo"
+                },
+                "on_fail": {
+                  "type": "minecraft:set_components",
+                  "components": {
+                    "minecraft:intangible_projectile": {}
                   }
                 }
-              ],
-              "rolls": 1.0
+              },
+              "rolls": 1
             }
           ]
         },
         "requirements": {
-          "condition": "minecraft:inverted",
+          "type": "minecraft:inverted",
           "term": {
-            "condition": "minecraft:entity_properties",
+            "type": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
               "minecraft:entity_type": "minecraft:player"

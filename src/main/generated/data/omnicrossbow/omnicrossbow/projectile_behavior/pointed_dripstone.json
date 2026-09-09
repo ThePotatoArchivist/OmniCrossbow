@@ -3,8 +3,8 @@
   "projectile_action": {
     "type": "omnicrossbow:spawn_entity/falling_block",
     "block": {
-      "Name": "minecraft:pointed_dripstone",
-      "Properties": {
+      "id": "minecraft:pointed_dripstone",
+      "properties": {
         "thickness": "tip_merge",
         "vertical_direction": "down",
         "waterlogged": "false"

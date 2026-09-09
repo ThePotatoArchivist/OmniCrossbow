@@ -10,7 +10,7 @@
           "condition": {
             "type": "omnicrossbow:check_loot_condition",
             "condition": {
-              "condition": "minecraft:match_tool",
+              "type": "minecraft:match_tool",
               "predicate": {
                 "predicates": {
                   "minecraft:intangible_projectile": {}
@@ -30,16 +30,16 @@
         "action": {
           "type": "omnicrossbow:check_loot_condition",
           "condition": {
-            "condition": "minecraft:all_of",
+            "type": "minecraft:all_of",
             "terms": [
               {
-                "condition": "minecraft:location_check",
+                "type": "minecraft:location_check",
                 "predicate": {
                   "can_see_sky": true
                 }
               },
               {
-                "condition": "minecraft:weather_check",
+                "type": "minecraft:weather_check",
                 "thundering": true
               }
             ]

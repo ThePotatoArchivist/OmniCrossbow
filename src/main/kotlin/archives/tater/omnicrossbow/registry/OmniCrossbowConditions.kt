@@ -29,14 +29,15 @@ object OmniCrossbowConditions {
         register(path, SingletonLootCondition(*keys, test = test))
 
     val TOOL_SUITABLE_FOR_BLOCK = register("tool_suitable_for_block", LootContextParams.BLOCK_STATE, LootContextParams.TOOL) {
-        val state = it.getOptionalParameter(LootContextParams.BLOCK_STATE) ?: return@register false
+        val state = it[LootContextParams.BLOCK_STATE] ?: return@register false
         it[LootContextParams.TOOL]
-            .get(DataComponents.TOOL)
+            ?.get(DataComponents.TOOL)
             ?.isCorrectForDrops(state) == true
     }
 
     val REPLACEABLE_AT_ORIGIN = register("replaceable_at_origin", LootContextParams.BLOCK_STATE, LootContextParams.ORIGIN) {
-        it.level[BlockPos.containing(it[LootContextParams.ORIGIN])].canBeReplaced()
+        val pos = it[LootContextParams.ORIGIN] ?: return@register false
+        it.level[BlockPos.containing(pos)].canBeReplaced()
     }
 
     val CONSUMABLE_PREDICATE: DataComponentPredicate.ConcreteType<ConsumablePredicate> = Registry.register(
@@ -45,8 +46,7 @@ object OmniCrossbowConditions {
         DataComponentPredicate.ConcreteType(ConsumablePredicate.CODEC)
     )
 
-    fun init() {
-        Registry.register(BuiltInRegistries.LOOT_NUMBER_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)
+    fun init() {Registry.registerForHolder(BuiltInRegistries.CONTEXT_FLOAT_PROVIDER_TYPE, OmniCrossbow.id("breaking_time"), BreakingTimeProvider.CODEC)
         Registry.register(BuiltInRegistries.ENTITY_SUB_PREDICATE_TYPE, OmniCrossbow.id("can_pick_up_loot"), CanPickUpLoot.CODEC)
     }
 }

@@ -39,7 +39,7 @@ fun getDefaultProjectile(heldWeapon: ItemStack, level: ServerLevel, entity: Enti
             enchantment.value().getEffects(OmniCrossbowEnchantmentEffects.DEFAULT_PROJECTILE),
             filterData
         ) { table ->
-            table.getRandomItems(filterData) { result = it }
+            table.value().getRandomItems(filterData) { result = it }
         }
     }
     return result

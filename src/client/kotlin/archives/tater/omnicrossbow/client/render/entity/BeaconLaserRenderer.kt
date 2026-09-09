@@ -27,7 +27,7 @@ class BeaconLaserRenderer(context: EntityRendererProvider.Context) : EntityRende
         state.xRot = entity.getXRot(partialTicks)
     }
 
-    override fun shouldRender(entity: BeaconLaser, culler: Frustum, camX: Double, camY: Double, camZ: Double): Boolean = true
+    override fun shouldRender(entity: BeaconLaser, culler: Frustum, camX: Double, camY: Double, camZ: Double, partialTicks: Float): Boolean = true
 
     override fun submit(
         state: State,
@@ -40,8 +40,8 @@ class BeaconLaserRenderer(context: EntityRendererProvider.Context) : EntityRende
 
         poseStack.pushPose()
 
-        poseStack.mulPose(Axis.YN.rotationDegrees(state.yRot))
-        poseStack.mulPose(Axis.XP.rotationDegrees(state.xRot + 90))
+        poseStack.rotate(Axis.YN.rotationDegrees(state.yRot))
+        poseStack.rotate(Axis.XP.rotationDegrees(state.xRot + 90))
 
         poseStack.translate(-0.5f, 0f, -0.5f)
 

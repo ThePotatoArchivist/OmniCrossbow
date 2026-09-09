@@ -31,7 +31,7 @@ object OmniCrossbowEnchantmentEffects {
 
     @JvmField
     val DEFAULT_PROJECTILE = register("default_projectile", validatedListCodec(
-        ConditionalEffect.codec(LootTable.DIRECT_CODEC),
+        ConditionalEffect.codec(LootTable.CODEC),
         LootContextParamSets.ENCHANTED_ENTITY,
     ))
 

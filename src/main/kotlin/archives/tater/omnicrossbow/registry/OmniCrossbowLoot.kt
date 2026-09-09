@@ -15,10 +15,10 @@ object OmniCrossbowLoot {
     val TRIAL_CHAMBER_INJECT = injectOf(BuiltInLootTables.TRIAL_CHAMBERS_REWARD_OMINOUS_RARE)
 
     fun init() {
-        LootTableEvents.MODIFY.register { key, tableBuilder, _, _ ->
+        LootTableEvents.MODIFY.register { key, tableBuilder, _, registryLookup ->
             if (key == BuiltInLootTables.TRIAL_CHAMBERS_REWARD_OMINOUS_RARE)
                 tableBuilder.modifyPools {
-                    it.add(lootTableReference(TRIAL_CHAMBER_INJECT)
+                    it.add(lootTableReference(registryLookup.getOrThrow(TRIAL_CHAMBER_INJECT))
                         .setWeight(2)
                     )
                 }

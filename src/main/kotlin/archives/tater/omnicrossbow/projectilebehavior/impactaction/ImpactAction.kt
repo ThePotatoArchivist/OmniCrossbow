@@ -8,7 +8,7 @@ import archives.tater.omnicrossbow.util.narrow
 import archives.tater.omnicrossbow.util.valueCodec
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
-import net.minecraft.resources.RegistryFileCodec
+import net.minecraft.core.registries.codec.RegistryCodecs
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -39,7 +39,7 @@ fun interface ImpactAction {
             .dispatch(Inline::codec) { it }
 
         @JvmField
-        val CODEC: Codec<ImpactAction> = RegistryFileCodec.create(
+        val CODEC: Codec<ImpactAction> = RegistryCodecs.holder(
             OmniCrossbowRegistries.IMPACT_ACTION,
             INLINE_CODEC.narrow { "Cannot serialize builtin action" }
         ).valueCodec(OmniCrossbowBuiltinRegistries.IMPACT_ACTION)

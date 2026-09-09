@@ -13,7 +13,7 @@
         "condition": {
           "type": "omnicrossbow:check_loot_condition",
           "condition": {
-            "condition": "minecraft:match_tool",
+            "type": "minecraft:match_tool",
             "predicate": {
               "predicates": {
                 "minecraft:intangible_projectile": {}

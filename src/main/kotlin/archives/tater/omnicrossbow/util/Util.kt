@@ -13,17 +13,18 @@ import net.minecraft.advancements.predicates.ItemPredicate
 import net.minecraft.advancements.predicates.MinMaxBounds
 import net.minecraft.core.Holder
 import net.minecraft.core.Registry
-import net.minecraft.core.RegistryCodecs
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
+import net.minecraft.core.registries.codec.RegistryCodecs
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
+import net.minecraft.util.Prediction
 import net.minecraft.util.ProblemReporter
 import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.RandomSource
@@ -55,7 +56,7 @@ val NON_NEGATIVE_DOUBLE: Codec<Double> = Codec.doubleRange(0.0, Double.MAX_VALUE
 
 val ITEM_PREDICATE_SHORT_CODEC: Codec<ItemPredicate> = Codec.either(
     ItemPredicate.CODEC,
-    RegistryCodecs.homogeneousList(Registries.ITEM),
+    RegistryCodecs.holderSet(Registries.ITEM),
 ).xmap(
     { either -> either.map(
         { it },
@@ -116,7 +117,7 @@ fun getEntityHitsPierced(
     predicate: Predicate<Entity> = Predicate { true }
 ): Collection<EntityHitResult> {
     val areaBox = AABB(start, stop).inflate(margin)
-    return ProjectileUtil.getManyEntityHitResult(level, except, start, stop, areaBox, predicate, margin.toFloat(), ClipContext.Block.COLLIDER, false)
+    return ProjectileUtil.getManyEntityHitResult(level, except, start, stop, areaBox, predicate, margin.toFloat(), ClipContext.Block.COLLIDER, false, true)
 }
 
 fun getEntitiesPierced(
@@ -175,7 +176,7 @@ fun Entity.lookAtAngle(angle: Vec3) {
 
 fun LivingEntity.giveOrDrop(stack: ItemStack) {
     if ((this as? Player)?.inventory?.add(stack) == true) return
-    drop(stack, false, false)
+    drop(stack, false, Prediction.SERVER_ONLY)
 }
 
 fun Entity.merge(reporter: ProblemReporter, nbt: CompoundTag) {

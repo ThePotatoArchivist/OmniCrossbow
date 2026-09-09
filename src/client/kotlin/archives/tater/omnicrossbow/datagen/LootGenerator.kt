@@ -13,7 +13,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.exactly
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiConsumer
 
@@ -22,6 +22,10 @@ class LootGenerator(
     private val registryLookupFuture: CompletableFuture<HolderLookup.Provider>,
 ) : SimpleFabricLootTableSubProvider(output, registryLookupFuture, LootContextParamSets.CHEST) {
 
+    override fun run() {
+        generate { _, _ -> }
+    }
+
     override fun generate(output: BiConsumer<ResourceKey<LootTable>, LootTable.Builder>) {
         val registries = registryLookupFuture.join()
         output.accept(OmniCrossbowLoot.TRIAL_CHAMBER_INJECT, lootTable {
@@ -29,7 +33,7 @@ class LootGenerator(
                 item(Items.BOOK) {
                     apply(SetEnchantmentsFunction.Builder().withEnchantment(
                         registries.getOrThrow(OmniCrossbowEnchantments.OMNI),
-                        exactly(1f)
+                        exactly(1)
                     ))
                 }
             }

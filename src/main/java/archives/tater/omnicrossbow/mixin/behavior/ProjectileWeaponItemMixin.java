@@ -124,7 +124,7 @@ public class ProjectileWeaponItemMixin {
             var delayed = delayedProjectiles.get();
             if (delayed != null)
                 weapon.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(Stream.concat(
-                        weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).itemCopies().stream(),
+                        weapon.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY).itemCopies(),
                         delayed.stream()
                 ).toList()));
         }
