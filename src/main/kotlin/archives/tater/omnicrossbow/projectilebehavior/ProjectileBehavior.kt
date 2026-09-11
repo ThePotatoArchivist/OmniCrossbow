@@ -160,7 +160,6 @@ data class ProjectileBehavior(
             ProjectileBehavior(projectileAction, velocityScale, remainder = remainder)
 
         fun getFallback(item: Item): ProjectileBehavior = when (item) {
-            is SpawnEggItem -> OmniCrossbowProjectileActions.FROM_ENTITY_DATA
             is MobBucketItem -> OmniCrossbowProjectileActions.FROM_BUCKET
             is BoatItem -> OmniCrossbowProjectileActions.SPAWN_BOAT
             is MinecartItem -> OmniCrossbowProjectileActions.SPAWN_MINECART
