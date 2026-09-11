@@ -50,14 +50,12 @@ import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition.anyOf
 import net.minecraft.world.level.storage.loot.predicates.FloatValueCheck
-import net.minecraft.world.level.storage.loot.predicates.IntValueCheck.hasValue
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition.invert
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck.checkLocation
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition.hasProperties
 import net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck.weather
 import net.minecraft.world.phys.Vec3
-import folk.sisby.kaleido.lib.quiltconfig.api.annotations.FloatRange
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -161,7 +159,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             ),
             secondary = AllOf(
                 itemParticle,
-                ShowParticle(ParticleConfig(ParticleTypes.SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
+                ShowParticle(ParticleConfig(ParticleTypes.GLOW_SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
                 PlaySound(soundHolder(SoundEvents.GLOW_SQUID_SQUIRT)),
                 OmniCrossbowImpactActions.SHRINK,
             )
@@ -171,7 +169,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             main = ApplyEffects(MobEffectInstance(MobEffects.BLINDNESS, 10 * 20)),
             secondary = AllOf(
                 itemParticle,
-                ShowParticle(ParticleConfig(ParticleTypes.GLOW_SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
+                ShowParticle(ParticleConfig(ParticleTypes.SQUID_INK, count = 0, speed = 0.1), ShowParticle.Anchor.HIT, Vec3.ZERO),
                 PlaySound(soundHolder(SoundEvents.SQUID_SQUIRT)),
                 OmniCrossbowImpactActions.SHRINK,
             )

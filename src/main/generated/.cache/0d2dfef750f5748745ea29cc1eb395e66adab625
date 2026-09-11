@@ -1,4 +1,4 @@
-// 26.3-pre-3	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:item
+// 26.3-rc-2	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:item
 5f4ced27aa31dbdc9bdd0aa93d5e5420c20e43e1 data/omnicrossbow/tags/item/builtin_projectiles.json
 e722e8a4357dfa899493c1d6d1c175aab7f174e1 data/omnicrossbow/tags/item/creative_intangible_projectiles.json
 d5345d99ec0d57340b1dd0badbda6acf2338516d data/omnicrossbow/tags/item/mob_non_intangible_ammo.json

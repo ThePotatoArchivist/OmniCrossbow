@@ -1,4 +1,4 @@
-// 26.3-pre-3	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:damage_type
+// 26.3-rc-2	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:damage_type
 266b0aec71fa43ffeeee20f189640d9ace8fac4e data/minecraft/tags/damage_type/bypasses_armor.json
 6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/bypasses_cooldown.json
 6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/bypasses_effects.json
