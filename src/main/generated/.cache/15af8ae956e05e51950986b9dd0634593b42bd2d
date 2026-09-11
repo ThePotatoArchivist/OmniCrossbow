@@ -1,0 +1,8 @@
+// 26.2	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:entity_type
+dc5a363b41d9e7691eef1cd32cb4ba972a24aabd data/minecraft/tags/entity_type/impact_projectiles.json
+c1b64a45abe8311aeabb800208ad4271ef25dbe2 data/minecraft/tags/entity_type/redirectable_projectile.json
+b6ee0422ad4b951aee0238bf04b2b29c954d81e4 data/omnicrossbow/tags/entity_type/can_always_equip.json
+fc2c9e0a96f8927e3a04de648977ddb1957a4055 data/omnicrossbow/tags/entity_type/extra_beacon_damage.json
+567df452ce65c6a40309be96345df7c4a8ad91c2 data/omnicrossbow/tags/entity_type/grapple_unmoveable.json
+804895b3f41a09af31c2fddc3dc5b8374cdf8981 data/omnicrossbow/tags/entity_type/non_feedable.json
+65ca45c69365d0c6890ba45795a5e19e77d25d7d data/omnicrossbow/tags/entity_type/uncapped_beacon_damage.json

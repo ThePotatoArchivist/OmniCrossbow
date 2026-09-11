@@ -1,0 +1,5 @@
+// 26.2	-999999999-01-01T00:00:00	OmniCrossbow/Damage Types
+1da05ac8465a3968ae014a6fbd1d7ea0fbef6962 data/omnicrossbow/damage_type/beacon.json
+936768220e57ea907a11f5712cc74360a667db84 data/omnicrossbow/damage_type/fire_beam.json
+6d69085a6109d72d09cb49ff5bcac65892cd22a4 data/omnicrossbow/damage_type/fire_projectile.json
+e7fea50b2190c66fb191946a6cef8d4aa9287e6c data/omnicrossbow/damage_type/sonic_boom.json

@@ -1,0 +1,13 @@
+// 26.2	-999999999-01-01T00:00:00	OmniCrossbow/Tags for minecraft:damage_type
+266b0aec71fa43ffeeee20f189640d9ace8fac4e data/minecraft/tags/damage_type/bypasses_armor.json
+6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/bypasses_cooldown.json
+6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/bypasses_effects.json
+266b0aec71fa43ffeeee20f189640d9ace8fac4e data/minecraft/tags/damage_type/bypasses_enchantments.json
+6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/bypasses_invulnerability.json
+dc154c4a29e19516a05f23c62a829951ecd01f0b data/minecraft/tags/damage_type/bypasses_shield.json
+af7d7702ca4f1f4b8329242419d294b072fb9bdd data/minecraft/tags/damage_type/ignites_armor_stands.json
+af7d7702ca4f1f4b8329242419d294b072fb9bdd data/minecraft/tags/damage_type/is_fire.json
+d1d36c2a314a0aa61d3d4a1ac4ea8e93bd58966e data/minecraft/tags/damage_type/is_projectile.json
+6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/no_impact.json
+6a31fe0545c2cbac24a79b196dce6d65d50fe4d8 data/minecraft/tags/damage_type/no_knockback.json
+177663fe7fcf82852ba2c369edd11294878850ca data/minecraft/tags/damage_type/panic_causes.json
