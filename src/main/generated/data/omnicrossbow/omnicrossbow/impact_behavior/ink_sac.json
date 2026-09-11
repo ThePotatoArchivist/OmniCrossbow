@@ -21,7 +21,7 @@
         },
         {
           "type": "omnicrossbow:show_particle",
-          "particle": "minecraft:glow_squid_ink",
+          "particle": "minecraft:squid_ink",
           "speed": 0.1
         },
         {
