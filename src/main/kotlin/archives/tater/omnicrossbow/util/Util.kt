@@ -24,7 +24,6 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth.RAD_TO_DEG
-import net.minecraft.util.Prediction
 import net.minecraft.util.ProblemReporter
 import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.RandomSource
@@ -176,7 +175,7 @@ fun Entity.lookAtAngle(angle: Vec3) {
 
 fun LivingEntity.giveOrDrop(stack: ItemStack) {
     if ((this as? Player)?.inventory?.add(stack) == true) return
-    drop(stack, false, Prediction.SERVER_ONLY)
+    createItemStackToDrop(stack, true, false)?.let { level().addFreshEntity(it) }
 }
 
 fun Entity.merge(reporter: ProblemReporter, nbt: CompoundTag) {
