@@ -100,17 +100,9 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             }, behavior)
         }
 
-        val lootIntangible = toolMatches(itemPredicateBuilder {
-            withComponents {
-                hasAny(DataComponents.INTANGIBLE_PROJECTILE)
-            }
-        })
-
-        val lootNotIntangible = invert(lootIntangible)
+        val lootIntangible = registries.getOrThrow(PredicateGenerator.INTANGIBLE)
 
         val intangible = CheckLootCondition(lootIntangible)
-
-        val notIntangible = CheckLootCondition(lootNotIntangible)
 
         fun ifNotIntangible(action: ImpactAction, otherwise: ImpactAction = OmniCrossbowImpactActions.PASS) = Conditional(
             condition = intangible,
@@ -319,7 +311,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
 
         register(DataComponents.EQUIPPABLE, Conditional(
             condition = CheckLootCondition(allOf(
-                lootNotIntangible,
+                invert(lootIntangible),
                 anyOf(
                     hasProperties(
                         LootContext.EntityTarget.TARGET_ENTITY,

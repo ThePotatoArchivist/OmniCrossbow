@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:match_tool",
+  "predicate": {
+    "predicates": {
+      "minecraft:intangible_projectile": {}
+    }
+  }
+}

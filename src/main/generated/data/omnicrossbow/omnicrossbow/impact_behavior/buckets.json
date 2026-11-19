@@ -3,14 +3,7 @@
     "type": "omnicrossbow:conditional",
     "condition": {
       "type": "omnicrossbow:check_loot_condition",
-      "condition": {
-        "type": "minecraft:match_tool",
-        "predicate": {
-          "predicates": {
-            "minecraft:intangible_projectile": {}
-          }
-        }
-      }
+      "condition": "omnicrossbow:intangible"
     },
     "on_fail": {
       "type": "omnicrossbow:any_of",

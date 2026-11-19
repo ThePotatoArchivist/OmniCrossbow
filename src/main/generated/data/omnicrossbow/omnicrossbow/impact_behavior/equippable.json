@@ -8,14 +8,7 @@
         "terms": [
           {
             "type": "minecraft:inverted",
-            "term": {
-              "type": "minecraft:match_tool",
-              "predicate": {
-                "predicates": {
-                  "minecraft:intangible_projectile": {}
-                }
-              }
-            }
+            "term": "omnicrossbow:intangible"
           },
           {
             "type": "minecraft:any_of",
