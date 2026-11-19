@@ -128,7 +128,7 @@ class ImpactBehaviorGenerator(output: FabricPackOutput, registriesFuture: Comple
             Conditional(
                 condition = AllOf(
                     OmniCrossbowImpactActions.IS_ENTITY,
-                    CheckLootCondition(condition = OmniCrossbowConditions.REPLACEABLE_AT_ORIGIN),
+                    CheckLootCondition(condition = Holder.direct(OmniCrossbowConditions.REPLACEABLE_AT_ORIGIN)),
                 ),
                 onSuccess = SideEffect(
                     main = SetBlock(COBWEB.defaultBlockState()),

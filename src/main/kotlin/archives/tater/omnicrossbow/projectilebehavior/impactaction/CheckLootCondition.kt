@@ -4,11 +4,12 @@ import archives.tater.omnicrossbow.entity.CustomItemProjectile
 import archives.tater.omnicrossbow.util.ContextKeySet
 import archives.tater.omnicrossbow.util.LootContext
 import archives.tater.omnicrossbow.util.center
+import archives.tater.omnicrossbow.util.holderValidatorForContext
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.Holder
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.storage.loot.Validatable
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition
 import net.minecraft.world.phys.BlockHitResult
@@ -17,17 +18,17 @@ import net.minecraft.world.phys.HitResult
 
 @JvmRecord
 data class CheckLootCondition(
-    val condition: LootItemCondition
+    val condition: Holder<LootItemCondition>
 ) : ImpactAction.Inline {
 
-    constructor(builder: LootItemCondition.Builder) : this(builder.build())
+    constructor(builder: LootItemCondition.Builder) : this(Holder.direct(builder.build()))
 
     override fun tryImpact(
         level: ServerLevel,
         projectile: CustomItemProjectile,
         hit: HitResult,
         originalItem: ItemStack,
-    ): Boolean = condition.test(LootContext(level, CUSTOM_PROJECTILE_CONTEXT) {
+    ): Boolean = condition.value().test(LootContext(level, CUSTOM_PROJECTILE_CONTEXT) {
         withParameter(LootContextParams.ORIGIN, if (hit is BlockHitResult) hit.blockPos.center else hit.location)
         withOptionalParameter(LootContextParams.ATTACKING_ENTITY, projectile.owner)
         withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, projectile)
@@ -53,7 +54,7 @@ data class CheckLootCondition(
         }
 
         val CODEC: MapCodec<CheckLootCondition> = RecordCodecBuilder.mapCodec { it.group(
-            LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(CUSTOM_PROJECTILE_CONTEXT)).fieldOf("condition").forGetter(CheckLootCondition::condition)
+            LootItemCondition.CODEC.validate(holderValidatorForContext(CUSTOM_PROJECTILE_CONTEXT)).fieldOf("condition").forGetter(CheckLootCondition::condition)
         ).apply(it, ::CheckLootCondition) }
     }
 }

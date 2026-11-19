@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.TagValueInput
 import net.minecraft.world.level.storage.TagValueOutput
 import net.minecraft.world.level.storage.loot.Validatable
+import net.minecraft.world.level.storage.loot.ValidationContext
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
@@ -46,6 +47,7 @@ import io.netty.buffer.ByteBuf
 import org.joml.Vector3f
 import org.slf4j.Logger
 import java.util.*
+import java.util.function.Function
 import java.util.function.Predicate
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -188,4 +190,14 @@ fun Entity.merge(logger: Logger, nbt: CompoundTag) {
     ScopedCollector(problemPath(), logger).use {
         merge(it, nbt)
     }
+}
+
+fun <T : Validatable> holderValidatorForContext(params: ContextKeySet): Function<Holder<T>, DataResult<Holder<T>>> = Function {
+    val problemCollector = ProblemReporter.Collector()
+    Validatable.validateHolder(ValidationContext(problemCollector, params), it)
+
+    if (problemCollector.isEmpty)
+        DataResult.success(it)
+    else
+        DataResult.error { "Validation error: ${problemCollector.report}" }
 }
